@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  themeStructure: "normal",
+  modern: false,
   themeBackground: "",
   navbarHidden: false,
 };
@@ -11,7 +11,7 @@ const themeSlice = createSlice({
   initialState,
   reducers: {
     changeThemeStructure: (state, action) => {
-      state.themeStructure = action.payload;
+      state.modern = action.payload;
     },
     changeBackground: (state, action) => {
       state.themeBackground = action.payload;

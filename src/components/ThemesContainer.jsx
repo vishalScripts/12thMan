@@ -9,7 +9,7 @@ import backgrounds from "../data/backgrounds";
 function ThemesContainer() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const dispatch = useDispatch();
-  const theme = useSelector((state) => state.theme.themename);
+  const modern = useSelector((state) => state.theme.modern);
   return (
     <div>
       <div
@@ -30,41 +30,13 @@ function ThemesContainer() {
         <div className=" flex flex-col gap-1">
           <div
             onClick={() => {
-              dispatch(changeThemeStructure("normal"));
+              dispatch(changeThemeStructure(!modern));
             }}
-            className={` border-1 border-blue-200 rounded-sm cursor-pointer hover:scale-105 flex flex-col gap-2 duration-700  hover:shadow-2xs group ${
+            className={` border-1 border-blue-200 bg-accent items-center justify-center rounded-sm cursor-pointer hover:scale-105 flex flex-col gap-2 duration-700  hover:shadow-2xs hover:bg-blue-500 group ${
               drawerOpen === false ? "w-0 hidden" : "w-full block"
             }`}
           >
-            <div className="w-full relative rounded-md aspect-video flex items-center justify-center bg-blue-600 ">
-              <div className="opacity-0 w-full h-full text-center  group-hover:opacity-100 duration-700 absolute flex items-center justify-center backdrop-blur-[1px] font-bold text-lg">
-                Normal
-              </div>
-              <img
-                src={normalTheme}
-                className=" w-full h-full object-cover object-center "
-                alt="normal"
-              />
-            </div>
-          </div>
-          <div
-            onClick={() => {
-              dispatch(changeThemeStructure("modern"));
-            }}
-            className={` border-1 border-blue-200 rounded-sm cursor-pointer hover:scale-105 flex flex-col gap-2 duration-700  hover:shadow-2xs group ${
-              drawerOpen === false ? "w-0 hidden" : "w-full block"
-            }`}
-          >
-            <div className="w-full relative rounded-md aspect-video flex items-center justify-center bg-blue-600 ">
-              <div className="opacity-0 w-full h-full text-center  group-hover:opacity-100 duration-700 absolute flex items-center justify-center backdrop-blur-[1px] font-bold text-lg">
-                modern
-              </div>
-              <img
-                src={normalTheme}
-                className=" w-full h-full object-cover object-center "
-                alt="normal"
-              />
-            </div>
+            {modern ? "Normal" : "Modern"}
           </div>
         </div>
         {/* BAckgrounds */}

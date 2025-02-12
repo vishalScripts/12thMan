@@ -9,8 +9,8 @@ import ThemesContainer from "./ThemesContainer";
 function PromodoroComp() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const dispatch = useDispatch();
-  const theme = useSelector((state) => state.theme.themeStructure);
-  console.log(theme);
+  const modern = useSelector((state) => state.theme.modern);
+  console.log(modern);
   const [option, setOption] = useState("promodoro");
   const {
     minutes,
@@ -31,12 +31,10 @@ function PromodoroComp() {
     setOption(opt);
   }
 
-  console.log(theme);
-
-  if (theme === "normal") {
+  if (modern === false) {
     return (
       <div className="w-full flex flex-col  items-center justify-center relative">
-        <div className="h-[70vh] mx-auto shadow-2xl aspect-video border-2 border-white rounded-lg bg-secondary flex flex-col items-center">
+        <div className="h-[70vh] mx-auto shadow-2xl aspect-video border-2 border-white rounded-lg bg-[#ec89d88a] flex flex-col items-center">
           {/* Buttons */}
           <div className="w-full flex items-center justify-center py-2">
             <div className="bg-white rounded-full flex items-center justify-between border-1 border-gray-100">
