@@ -61,7 +61,7 @@ export function useTimer(
           }
           return prevMinutes;
         });
-      }, 10); // 🛠️ Fix: Use 1000ms (1 second) instead of 10ms
+      }, 1000); // 🛠️ Fix: Use 1000ms (1 second) instead of 10ms
     } else {
       clearInterval(intervalRef.current);
     }
