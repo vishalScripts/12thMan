@@ -2,11 +2,17 @@ import React from "react";
 import Container from "./Container/Container";
 import { Link } from "react-router-dom";
 import Logo from "./Logo";
+import { useSelector } from "react-redux";
 
 function Navbar() {
+  const isNavbarHidden = useSelector((state) => state.theme.navbarHidden);
   return (
     <>
-      <nav className="h-[10vh] w-full  border-b-1 border-gray-300 shadow-sm  ">
+      <nav
+        className={`${
+          isNavbarHidden ? "hidden" : "block"
+        } h-[10vh]  w-full  border-b-1 border-gray-300 shadow-sm`}
+      >
         <Container className=" h-full place-items-center grid grid-cols-12 ">
           {/* row 1 */}
           <div className=" h-full justify-self-start flex col-span-2 ">

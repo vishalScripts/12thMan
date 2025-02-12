@@ -7,3 +7,15 @@
   --color-secondary: #c5ccab;
   --color-accent: #cc967c;
 }
+
+/* Hide the scrollbar space but allow scrolling */
+.scrollbar-hide::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+  display: none;
+}
+
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
