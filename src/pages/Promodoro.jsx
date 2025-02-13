@@ -10,6 +10,16 @@ function Promodoro() {
   const background = useSelector((state) => state.theme.themeBackground);
   const dispatch = useDispatch();
 
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement
+        .requestFullscreen()
+        .then(() => setIsFullScreen(true));
+    } else {
+      document.exitFullscreen().then(() => setIsFullScreen(false));
+    }
+  };
+
   console.log(background);
   return (
     <div
@@ -34,15 +44,14 @@ function Promodoro() {
       </video>
       <div
         onClick={() => {
-          setIsFullScreen((prev) => !prev);
           dispatch(hideNavbar(!isFullScreen));
+          toggleFullScreen();
         }}
         className="absolute top-[13%] right-3 w-8 h-8 cursor-pointer bg-accent flex items-center justify-center rounded-lg object-cover  opacity-25 p-1 hover:opacity-100 hover:scale-105 duration-300 z-[9999999999]"
       >
         <ViewfinderCircleIcon />
       </div>
       <PromodoroComp />
-      <Time />
     </div>
   );
 }
