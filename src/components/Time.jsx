@@ -24,9 +24,11 @@ function Time() {
   });
 
   return (
-    <div className="flex flex-col items-center justify-center  ">
-      <div className=" rounded-2xl  text-center">
-        <p className="text-2xl font-mono mt-2">{formattedTime}</p>
+    <div className="flex flex-col  items-center justify-center w-full  ">
+      <div className=" rounded-2xl   text-center w-full flex items-center justify-center">
+        <p className="text-2xl drop-shadow-md  flex items-center justify-center font-mono mt-2">
+          {formattedTime}
+        </p>
       </div>
     </div>
   );

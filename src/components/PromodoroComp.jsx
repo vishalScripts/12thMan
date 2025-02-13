@@ -6,6 +6,11 @@ import { pre } from "motion/react-client";
 import normalTheme from "../assets/normalTheme.png";
 import ThemesContainer from "./ThemesContainer";
 import Time from "./Time";
+import {
+  ArrowPathIcon,
+  PlayIcon,
+  StopCircleIcon,
+} from "@heroicons/react/24/solid";
 
 function PromodoroComp() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -134,13 +139,13 @@ function PromodoroComp() {
           {/* Buttons */}
           <div className="py-4 flex gap-4">
             <Button className="" onClick={start}>
-              Start
+              <PlayIcon className="w-6" />
             </Button>
             <Button className="" onClick={stop}>
-              Stop
+              <StopCircleIcon className="w-6" />
             </Button>
             <Button className="" onClick={reset}>
-              Reset
+              <ArrowPathIcon className="w-6" />
             </Button>
           </div>
         </div>
@@ -152,62 +157,73 @@ function PromodoroComp() {
   } else {
     return (
       <div className="w-full flex flex-col items-center justify-center relative">
-        <div className="h-[70vh] mx-auto  aspect-video  rounded-lg flex flex-col gap-15  items-center justify-center">
+        <div className="h-[70vh] mx-auto  aspect-video  rounded-lg flex flex-col justify-center  items-center ">
           {/* Circular Progress Bar */}
-          <div className="relative   aspect-square">
-            <div className="flex flex-col gap-2 items-center justify-center absolute inset-0">
-              {/* <p>{minutes < 5 ? "Break" : "break in -"}</p> */}
-              <div className="text-text flex items-center justify-center text-center font-bold text-6xl">
-                {minutes}:{seconds < 10 ? `0${seconds}` : seconds}{" "}
-                <select
-                  name="timeSelect"
-                  className=" w-5 hover:scale-125 duration-300 cursor-pointer"
-                  id="timeSelect"
-                  onChange={(e) => {
-                    if (e.target.value === "30") {
-                      type1();
-                    } else if (e.target.value === "60") {
-                      type2();
-                    }
-                  }}
-                >
-                  <option value="30" className="text-sm cursor-pointer">
-                    25-30
-                  </option>
-                  <option value="60" className="text-sm cursor-pointer">
-                    55-60
-                  </option>
-                </select>
-              </div>
-              <p className=" flex items-center justify-center">
-                break:5min{" "}
-                <select
-                  name="brakOption"
-                  id="breakOption"
-                  className="w-4 hover:scale-125 duration-300 cursor-pointer"
-                >
-                  <option
-                    value="0"
-                    className="text-red-600 text-sm hover:text-red-600 "
-                  >
-                    feature comming sooon
-                  </option>
-                </select>
-              </p>
+          <Time />
+          <div className="flex  flex-col  items-center justify-center  inset-0">
+            {/* <p>{minutes < 5 ? "Break" : "break in -"}</p> */}
+            <div className="text-text flex items-center justify-center text-center font-bold text-6xl">
+              {minutes}:{seconds < 10 ? `0${seconds}` : seconds}{" "}
+              <select
+                name="timeSelect"
+                className=" w-5 hover:scale-125 duration-300 cursor-pointer"
+                id="timeSelect"
+                onChange={(e) => {
+                  if (e.target.value === "30") {
+                    type1();
+                  } else if (e.target.value === "60") {
+                    type2();
+                  }
+                }}
+              >
+                <option value="30" className="text-sm cursor-pointer">
+                  25-30
+                </option>
+                <option value="60" className="text-sm cursor-pointer">
+                  55-60
+                </option>
+              </select>
             </div>
+
+            <p className=" flex items-center justify-center flex-row">
+              break:5min{" "}
+              <select
+                name="brakOption"
+                id="breakOption"
+                className="w-4 hover:scale-125 duration-300 cursor-pointer"
+              >
+                <option
+                  value="0"
+                  className="text-red-600 text-sm hover:text-red-600 "
+                >
+                  feature comming sooon
+                </option>
+              </select>
+            </p>
           </div>
 
           {/* Buttons */}
-          <div className="py-4  flex  gap-4">
-            <Button className="" onClick={start}>
-              Start
-            </Button>
-            <Button className="" onClick={stop}>
-              Stop
-            </Button>
-            <Button className="" onClick={reset}>
-              Reset
-            </Button>
+          <div className=" py-4 ">
+            <div className=" flex  gap-4">
+              <Button
+                className="bg-transparent  hover:bg-transparent hover:backdrop-blur-lg hover:border-1  hover:border-text hover:shadow-2xs"
+                onClick={start}
+              >
+                <PlayIcon className="w-6" />
+              </Button>
+              <Button
+                className="bg-transparent  hover:bg-transparent hover:backdrop-blur-lg hover:border-1  hover:border-text hover:shadow-2xs"
+                onClick={stop}
+              >
+                <StopCircleIcon className="w-6" />
+              </Button>
+              <Button
+                className="bg-transparent  hover:bg-transparent hover:backdrop-blur-lg hover:border-1  hover:border-text hover:shadow-2xs"
+                onClick={reset}
+              >
+                <ArrowPathIcon className="w-6" />
+              </Button>
+            </div>
           </div>
         </div>
         {/* Drawer  */}
