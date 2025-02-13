@@ -26,7 +26,7 @@ function Promodoro() {
       className={` ${
         isFullScreen === true
           ? "fixed  w-screen h-screen flex items-center justify-center"
-          : "py-4  h-[90vh]"
+          : "  h-[90vh]"
       }`}
       style={{
         backgroundImage: `url(${background})`,
@@ -34,14 +34,6 @@ function Promodoro() {
         backgroundPosition: "bottom",
       }}
     >
-      <video
-        autoPlay
-        loop
-        muted
-        className="absolute top-0 left-0 w-full h-full object-cover -z-10"
-      >
-        <source src={background} type="video/mp4" />
-      </video>
       <div
         onClick={() => {
           dispatch(hideNavbar(!isFullScreen));
@@ -51,6 +43,14 @@ function Promodoro() {
       >
         <ViewfinderCircleIcon />
       </div>
+      <video
+        autoPlay
+        loop
+        muted
+        className=" fixed w-screen h-screen object-cover object-center "
+      >
+        <source src={background} type="video/mp4" />
+      </video>
       <PromodoroComp />
     </div>
   );

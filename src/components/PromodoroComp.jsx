@@ -39,7 +39,7 @@ function PromodoroComp() {
 
   if (modern === false) {
     return (
-      <div className="w-full flex flex-col  items-center justify-center relative">
+      <div className="py-12 w-full flex flex-col  items-center justify-center relative">
         <div className="h-[70vh] mx-auto shadow-2xl aspect-video border-2 border-white rounded-lg bg-[#ec89d88a] flex flex-col items-center">
           {/* Buttons */}
           <div className="w-full flex items-center justify-center py-2">
@@ -206,19 +206,19 @@ function PromodoroComp() {
           <div className=" py-4 ">
             <div className=" flex  gap-4">
               <Button
-                className="bg-transparent  hover:bg-transparent hover:backdrop-blur-lg hover:border-1  hover:border-text hover:shadow-2xs"
+                className="bg-transparent  hover:bg-transparent hover:backdrop-blur-lg hover:border-1  hover:border-text hover:shadow-2xs backdrop-blur-[2px] "
                 onClick={start}
               >
                 <PlayIcon className="w-6" />
               </Button>
               <Button
-                className="bg-transparent  hover:bg-transparent hover:backdrop-blur-lg hover:border-1  hover:border-text hover:shadow-2xs"
+                className="bg-transparent  hover:bg-transparent hover:backdrop-blur-lg hover:border-1  hover:border-text hover:shadow-2xs backdrop-blur-[2px]"
                 onClick={stop}
               >
                 <StopCircleIcon className="w-6" />
               </Button>
               <Button
-                className="bg-transparent  hover:bg-transparent hover:backdrop-blur-lg hover:border-1  hover:border-text hover:shadow-2xs"
+                className="bg-transparent  hover:bg-transparent hover:backdrop-blur-lg hover:border-1  hover:border-text hover:shadow-2xs backdrop-blur-[2px]"
                 onClick={reset}
               >
                 <ArrowPathIcon className="w-6" />
