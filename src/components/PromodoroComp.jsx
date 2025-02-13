@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { pre } from "motion/react-client";
 import normalTheme from "../assets/normalTheme.png";
 import ThemesContainer from "./ThemesContainer";
+import Time from "./Time";
 
 function PromodoroComp() {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -88,8 +89,10 @@ function PromodoroComp() {
               />
             </svg>
             <div className="flex flex-col items-center justify-center absolute inset-0">
+              <Time />
+
               {/* <p>{minutes < 5 ? "Break" : "break in -"}</p> */}
-              <div className="text-text text-center font-bold text-6xl">
+              <div className="text-text text-center translate-x-4 font-bold text-6xl">
                 {minutes}:{seconds < 10 ? `0${seconds}` : seconds}{" "}
                 <select
                   name="timeSelect"
@@ -111,16 +114,19 @@ function PromodoroComp() {
                   </option>
                 </select>
               </div>
-              <p className="">
-                break:5min{" "}
-                <select name="brakOption" id="breakOption" className="w-4">
-                  <option
-                    value="0"
-                    className="text-red-600 text-sm hover:text-red-600 "
-                  >
-                    feature comming sooon
-                  </option>
-                </select>
+
+              <p className=" flex items-center justify-center flex-col">
+                <div>
+                  break:5min{" "}
+                  <select name="brakOption" id="breakOption" className="w-4">
+                    <option
+                      value="0"
+                      className="text-red-600 text-sm hover:text-red-600 "
+                    >
+                      feature comming sooon
+                    </option>
+                  </select>
+                </div>
               </p>
             </div>
           </div>

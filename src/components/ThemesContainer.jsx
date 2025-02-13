@@ -14,7 +14,7 @@ function ThemesContainer() {
     <div>
       <div
         className={`fixed top-[20%] right-1 duration-500 border-1 border-gray-200 bg-background p-2 rounded-sm shadow-2xs flex flex-col gap-1 ${
-          drawerOpen === true ? "w-34" : "w-10"
+          drawerOpen === true ? "w-34 opacity-30 hover:opacity-100" : "w-10"
         }`}
       >
         <div

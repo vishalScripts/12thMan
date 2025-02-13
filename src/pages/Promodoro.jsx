@@ -4,6 +4,7 @@ import Container from "../components/Container/Container";
 import { useDispatch, useSelector } from "react-redux";
 import { ViewfinderCircleIcon } from "@heroicons/react/24/solid";
 import { hideNavbar } from "../store/themeSlice";
+import Time from "../components/Time";
 function Promodoro() {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const background = useSelector((state) => state.theme.themeBackground);
@@ -41,6 +42,7 @@ function Promodoro() {
         <ViewfinderCircleIcon />
       </div>
       <PromodoroComp />
+      <Time />
     </div>
   );
 }
