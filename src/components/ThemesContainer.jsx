@@ -6,15 +6,15 @@ import Button from "./Button";
 import { PaintBrushIcon } from "@heroicons/react/24/solid";
 import backgrounds from "../data/backgrounds";
 
-function ThemesContainer() {
+function ThemesContainer({ className }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const dispatch = useDispatch();
   const modern = useSelector((state) => state.theme.modern);
   return (
-    <div>
+    <div className="w-full h-full">
       <div
-        className={`fixed top-[20%] right-1 duration-500 border-1 border-gray-200 bg-background p-2 rounded-sm shadow-2xs flex flex-col gap-1 ${
-          drawerOpen === true ? "w-34 opacity-30 hover:opacity-100" : "w-10"
+        className={`${className} w-full duration-500 border-1 border-gray-200 bg-background p-2 rounded-sm shadow-2xs overflow-hidden flex flex-col gap-1 ${
+          drawerOpen ? "h-full" : "h-full"
         }`}
       >
         <div
@@ -32,9 +32,7 @@ function ThemesContainer() {
             onClick={() => {
               dispatch(changeThemeStructure(!modern));
             }}
-            className={` border-1 border-blue-200 bg-accent items-center justify-center rounded-sm cursor-pointer hover:scale-105 flex flex-col gap-2 duration-700  hover:shadow-2xs hover:bg-blue-500 group ${
-              drawerOpen === false ? "w-0 hidden" : "w-full block"
-            }`}
+            className={` border-1 border-blue-200 bg-accent items-center justify-center rounded-sm cursor-pointer hover:scale-105 flex flex-col gap-2 duration-700  hover:shadow-2xs hover:bg-blue-500 group `}
           >
             {modern ? "Normal" : "Modern"}
           </div>
@@ -42,9 +40,13 @@ function ThemesContainer() {
         {/* BAckgrounds */}
         <hr />
         <div
-          className={` flex flex-col gap-2 max-h-60 overflow-scroll scrollbar-hide scroll-smooth scroll-snap-y  ${
-            drawerOpen === false ? "w-0 hidden" : "w-full block"
-          }`}
+          className={` flex flex-col gap-2  overflow-x-hidden  scroll-smooth scroll-snap-y 
+            [&::-webkit-scrollbar]:w-1
+  [&::-webkit-scrollbar-track]:bg-white
+  [&::-webkit-scrollbar-thumb]:bg-slate-700
+  dark:[&::-webkit-scrollbar-track]:bg-white
+  dark:[&::-webkit-scrollbar-thumb]:bg-slate-700
+            `}
         >
           {Object.entries(backgrounds).map(([name, url]) => (
             <div

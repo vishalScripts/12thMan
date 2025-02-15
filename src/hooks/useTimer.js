@@ -16,12 +16,12 @@ export function useTimer(
       console.log("i worked");
       new Notification(message, {
         body: desc,
-        icon: "https://cdn-icons-png.flaticon.com/512/1040/1040230.png", // Custom icon
+        icon: "https://cdn-icons-png.flaticon.com/512/1040/1040230.png",
       });
     } else if (Notification.permission !== "denied") {
       Notification.requestPermission().then((permission) => {
         if (permission === "granted") {
-          sendNotification(); // Call again if permission is granted
+          sendNotification(message, desc); // Pass arguments to avoid undefined values
         }
       });
     }
@@ -61,7 +61,7 @@ export function useTimer(
           }
           return prevMinutes;
         });
-      }, 1000); // 🛠️ Fix: Use 1000ms (1 second) instead of 10ms
+      }, 1); // 🛠️ Fix: Use 1000ms (1 second) instead of 10ms
     } else {
       clearInterval(intervalRef.current);
     }

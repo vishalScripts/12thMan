@@ -5,10 +5,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { ViewfinderCircleIcon } from "@heroicons/react/24/solid";
 import { hideNavbar } from "../store/themeSlice";
 import Time from "../components/Time";
+import Sidebar from "../components/Sidebar";
+import AudioPlayer from "../components/AudioPlayer";
+import { PaintBrushIcon } from "@heroicons/react/24/solid";
+
+import ThemesContainer from "../components/ThemesContainer";
 function Promodoro() {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const background = useSelector((state) => state.theme.themeBackground);
   const dispatch = useDispatch();
+  const isSidebarOpen = useSelector((state) => state.theme.isSidebarHidden);
 
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {
@@ -51,6 +57,25 @@ function Promodoro() {
       >
         <source src={background} type="video/mp4" />
       </video>
+      <Sidebar>
+        <div
+          className={` row-start-2 ${
+            isSidebarOpen ? "row-end-10" : "row-end-3"
+          } duration-300 flex items-center justify-center overflow-hidden`}
+        >
+          {isSidebarOpen ? <ThemesContainer /> : <></>}
+        </div>
+        {/* row 2 */}
+        <div
+          className={`  ${
+            isSidebarOpen
+              ? "row-start-10 row-end-12"
+              : "row-start-3 row-end-4 hidden"
+          } duration-300 flex items-center justify-center overflow-hidden`}
+        >
+          <AudioPlayer />
+        </div>
+      </Sidebar>
       <PromodoroComp />
     </div>
   );

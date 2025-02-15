@@ -6,10 +6,20 @@ const loadState = () => {
     const storedState = localStorage.getItem("themeSettings");
     return storedState
       ? JSON.parse(storedState)
-      : { modern: false, themeBackground: "", navbarHidden: false };
+      : {
+          modern: false,
+          themeBackground: "",
+          navbarHidden: false,
+          isSidebarHidden: false,
+        };
   } catch (error) {
     console.error("Error loading theme settings:", error);
-    return { modern: false, themeBackground: "", navbarHidden: false };
+    return {
+      modern: false,
+      themeBackground: "",
+      navbarHidden: false,
+      isSidebarHidden: false,
+    };
   }
 };
 
@@ -32,9 +42,17 @@ const themeSlice = createSlice({
       state.navbarHidden = action.payload;
       localStorage.setItem("themeSettings", JSON.stringify(state));
     },
+    toggleSidebar: (state, action) => {
+      state.isSidebarHidden = action.payload;
+      localStorage.setItem("themeSettings", JSON.stringify(state));
+    },
   },
 });
 
-export const { changeThemeStructure, changeBackground, hideNavbar } =
-  themeSlice.actions;
+export const {
+  changeThemeStructure,
+  changeBackground,
+  hideNavbar,
+  toggleSidebar,
+} = themeSlice.actions;
 export default themeSlice.reducer;

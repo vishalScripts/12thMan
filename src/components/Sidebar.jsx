@@ -1,29 +1,31 @@
 import React, { useState } from "react";
-import { useSelector } from "react-redux";
 import { Bars3Icon } from "@heroicons/react/24/solid";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleSidebar } from "../store/themeSlice";
 
-function Sidebar({ children, clasname = "" }) {
-  const isFullScreen = useSelector((state) => state.theme.navbarHidden);
-  const [isOpen, setIsOpen] = useState(false);
+function Sidebar({ children, clasname = {} }) {
+  const dispatch = useDispatch();
+
+  const isSidebarOpen = useSelector((state) => state.theme.isSidebarHidden);
+  console.log(isSidebarOpen);
+  // Optional: Forward isOpen and setIsOpen to the parent component using forwardRef if needed
 
   return (
     <div
-      className={`${clasname}  left-0   ${
-        isFullScreen ? "top-0 h-screen" : "top-[10vh] h-[90vh]"
-      } bg-red-600   
-
-      ${isOpen ? "w-30" : "w-10"}
-       p-2 flex flex-col items-center justify-start gap-2
-      `}
+      className={`${clasname}  bg-transparent border-gray-400 shadow-2xl    hover:opacity-100 h-full left-0 fixed duration-500 ${
+        isSidebarOpen ? "w-50" : "w-12"
+      } p-2 grid grid-rows-12 gap-2 z-[999999999]`}
     >
-      {/* row 1 */}
-      <div>
-        <Bars3Icon className=" w-8" />
+      <div className="flex items-center row-start-1 justify-end w-full ">
+        <Bars3Icon
+          onClick={() => dispatch(toggleSidebar(!isSidebarOpen))}
+          className={`  opacity-30  rounded-sm cursor-pointer w-8 aspect-square bg-accent hover:opacity-100 hover:scale-110 duration-300 hover:shadow-2xs`}
+        />
       </div>
-      {/* row-2 */}
       {children}
     </div>
   );
 }
 
-export default Sidebar;
+// Forwarding the ref to Sidebar for access to isOpen state
+export default React.forwardRef(Sidebar);
