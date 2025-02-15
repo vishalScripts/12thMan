@@ -47,7 +47,7 @@ export default function AudioPlayer() {
   };
 
   return (
-    <div className="w-full max-w-md p-4 bg-gray-800 rounded-lg shadow-lg flex flex-col items-center">
+    <div className="w-full max-w-md p-4 bg-transparent backdrop-blur-2xl border-1 border-[#fbf4f959] rounded-lg  shadow-2xs shadow-[#fbf4f959] flex flex-col items-center">
       <audio
         ref={audioRef}
         src="src\assets\Chill Lofi Mix [chill lo-fi hip hop beats] [CLeZyIID9Bo].mp3"

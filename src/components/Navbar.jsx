@@ -11,7 +11,7 @@ function Navbar() {
       <nav
         className={`${
           isNavbarHidden ? "hidden" : "block"
-        } h-[10vh]  w-full  border-b-1 border-gray-300 shadow-sm z-[99999999999999999999999999999999999999]`}
+        } h-[10vh] relative bg-white w-full  border-b-1 border-gray-300 shadow-sm z-[99999999]`}
       >
         <Container className=" h-full place-items-center grid grid-cols-12 ">
           {/* row 1 */}

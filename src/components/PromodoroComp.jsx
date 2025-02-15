@@ -39,7 +39,7 @@ function PromodoroComp() {
 
   if (layoutType === "normal") {
     return (
-      <div className="py-12 w-full duration-1000  flex flex-col  items-center justify-center relative">
+      <div className="py-12 w-full duration-1000 z-10 bg-transparent  flex flex-col  items-center justify-center relative">
         <div className="h-[70vh] mx-auto shadow-2xl aspect-video border-2 border-white rounded-lg bg-[#ec89d88a] flex flex-col items-center">
           {/* Buttons */}
           <div className="w-full flex items-center justify-center py-2">

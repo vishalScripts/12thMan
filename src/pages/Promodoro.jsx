@@ -49,14 +49,7 @@ function Promodoro() {
       >
         <ViewfinderCircleIcon />
       </div>
-      <video
-        autoPlay
-        loop
-        muted
-        className=" fixed w-screen h-screen object-cover object-center "
-      >
-        <source src={background} type="video/mp4" />
-      </video>
+
       <Sidebar>
         <div
           className={` row-start-2 ${
@@ -77,6 +70,14 @@ function Promodoro() {
         </div>
       </Sidebar>
       <PromodoroComp />
+      {/* <video
+        autoPlay
+        loop
+        muted
+        className=" fixed w-screen top-0 left-0 z-0 h-screen object-cover object-center "
+      >
+        <source src={background} type="video/mp4" />
+      </video> */}
     </div>
   );
 }
