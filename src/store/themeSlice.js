@@ -7,7 +7,7 @@ const loadState = () => {
     return storedState
       ? JSON.parse(storedState)
       : {
-          modern: false,
+          layoutType: "normal",
           themeBackground: "",
           navbarHidden: false,
           isSidebarHidden: false,
@@ -15,7 +15,7 @@ const loadState = () => {
   } catch (error) {
     console.error("Error loading theme settings:", error);
     return {
-      modern: false,
+      layoutType: "normal",
       themeBackground: "",
       navbarHidden: false,
       isSidebarHidden: false,
@@ -31,7 +31,7 @@ const themeSlice = createSlice({
   initialState,
   reducers: {
     changeThemeStructure: (state, action) => {
-      state.modern = action.payload;
+      state.layoutType = action.payload;
       localStorage.setItem("themeSettings", JSON.stringify(state));
     },
     changeBackground: (state, action) => {

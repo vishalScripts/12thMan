@@ -1,19 +1,36 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changeThemeStructure, changeBackground } from "../store/themeSlice";
 import normalTheme from "../assets/normalTheme.png";
 import Button from "./Button";
-import { PaintBrushIcon } from "@heroicons/react/24/solid";
+import {
+  PaintBrushIcon,
+  ArrowRightIcon,
+  ArrowLeftIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+} from "@heroicons/react/24/solid";
 import backgrounds from "../data/backgrounds";
 
 function ThemesContainer({ className }) {
+  const layoutType = useSelector((state) => state.theme.layoutType);
+  const themes = ["normal", "modern", "custom"];
+  const [layoutNo, setLayoutNo] = useState(themes.indexOf(layoutType) + 1);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const dispatch = useDispatch();
-  const modern = useSelector((state) => state.theme.modern);
+
+  console.log(layoutType, themes.indexOf(layoutType));
+
+  useEffect(() => {
+    dispatch(changeThemeStructure(themes[layoutNo - 1]));
+  }, [layoutNo, dispatch]);
+
+  const handleNext = () => setLayoutNo((prev) => (prev < 3 ? prev + 1 : 1));
+  const handlePrev = () => setLayoutNo((prev) => (prev > 1 ? prev - 1 : 3));
   return (
     <div className="w-full h-full">
       <div
-        className={`${className} w-full duration-500 border-1 border-gray-200 bg-background p-2 rounded-sm shadow-2xs overflow-hidden flex flex-col gap-1 ${
+        className={`${className} w-full duration-500 border-1 border-gray-200 bg-background p-2 rounded-sm shadow-2xs  flex flex-col gap-1 ${
           drawerOpen ? "h-full" : "h-full"
         }`}
       >
@@ -27,14 +44,56 @@ function ThemesContainer({ className }) {
         </div>
         <hr />
 
-        <div className=" flex flex-col gap-1">
+        <div className=" w-50  h-30  grid overflow-hidden  relative">
           <div
-            onClick={() => {
-              dispatch(changeThemeStructure(!modern));
-            }}
-            className={` border-1 border-blue-200 bg-accent items-center justify-center rounded-sm cursor-pointer hover:scale-105 flex flex-col gap-2 duration-700  hover:shadow-2xs hover:bg-blue-500 group `}
+            className={`absolute w-full h-full flex items-center justify-between z-[9999999999] `}
           >
-            {modern ? "Normal" : "Modern"}
+            <ChevronLeftIcon
+              onClick={() => {
+                handlePrev();
+              }}
+              className="size-4 hover:bg-secondary duration-150 hover:scale-115 rounded-xs aspect-square font-bold cursor-pointer mx-2 "
+            />
+            <ChevronRightIcon
+              onClick={() => {
+                handleNext();
+              }}
+              className="size-4 hover:bg-secondary duration-150 hover:scale-115 rounded-xs aspect-square font-bold cursor-pointer mx-2 "
+            />
+          </div>
+          <div
+            className={`transition-transform duration-[700ms] ease-[cubic-bezier(0.25, 1, 0.5, 1.2)] transform grid grid-cols-3 w-150 place-items-center  ${
+              layoutNo === 1
+                ? "-translate-x-0"
+                : layoutNo === 2
+                ? "-translate-x-50"
+                : "-translate-x-100"
+            }`}
+          >
+            <div
+              onClick={() => {
+                dispatch(changeThemeStructure("normal"));
+              }}
+              className={` border-1 border-blue-200 bg-accent items-center justify-center rounded-sm cursor-pointer hover:scale-105 flex flex-col gap-2 duration-700  hover:shadow-2xs hover:bg-blue-500 group w-36  `}
+            >
+              Normal
+            </div>
+            <div
+              onClick={() => {
+                dispatch(changeThemeStructure("modern"));
+              }}
+              className={` border-1 border-blue-200 bg-accent items-center justify-center rounded-sm cursor-pointer hover:scale-105 flex flex-col gap-2 duration-700  hover:shadow-2xs hover:bg-blue-500 group w-36`}
+            >
+              Modern
+            </div>
+            <div
+              onClick={() => {
+                dispatch(changeThemeStructure("custom"));
+              }}
+              className={` border-1 border-blue-200 bg-accent items-center justify-center rounded-sm cursor-pointer hover:scale-105 flex flex-col gap-2 duration-700  hover:shadow-2xs hover:bg-blue-500 group w-36`}
+            >
+              Custom
+            </div>
           </div>
         </div>
         {/* BAckgrounds */}

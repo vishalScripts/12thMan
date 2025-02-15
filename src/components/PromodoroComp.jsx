@@ -15,8 +15,8 @@ import {
 function PromodoroComp() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const dispatch = useDispatch();
-  const modern = useSelector((state) => state.theme.modern);
-  console.log(modern);
+  const layoutType = useSelector((state) => state.theme.layoutType);
+  console.log(layoutType);
   const [option, setOption] = useState("promodoro");
   const {
     minutes,
@@ -37,9 +37,9 @@ function PromodoroComp() {
     setOption(opt);
   }
 
-  if (modern === false) {
+  if (layoutType === "normal") {
     return (
-      <div className="py-12 w-full  flex flex-col  items-center justify-center relative">
+      <div className="py-12 w-full duration-1000  flex flex-col  items-center justify-center relative">
         <div className="h-[70vh] mx-auto shadow-2xl aspect-video border-2 border-white rounded-lg bg-[#ec89d88a] flex flex-col items-center">
           {/* Buttons */}
           <div className="w-full flex items-center justify-center py-2">
@@ -153,9 +153,9 @@ function PromodoroComp() {
         {/* Drawer  */}
       </div>
     );
-  } else {
+  } else if (layoutType == "modern") {
     return (
-      <div className="w-full flex flex-col items-center justify-center relative">
+      <div className="w-full duration-1000 flex flex-col items-center justify-center relative">
         <div className="h-[70vh] mx-auto  aspect-video  rounded-lg flex flex-col justify-center  items-center ">
           {/* Circular Progress Bar */}
           <Time />
@@ -226,6 +226,12 @@ function PromodoroComp() {
           </div>
         </div>
         {/* Drawer  */}
+      </div>
+    );
+  } else {
+    return (
+      <div className="w-full flex h-full bg-white duration-1000 flex-col items-center justify-center relative">
+        <h1 className="font-bold  text-9xl text-red-500">Comming Soon</h1>
       </div>
     );
   }

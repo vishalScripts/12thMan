@@ -13,7 +13,7 @@ function Sidebar({ children, clasname = {} }) {
   return (
     <div
       className={`${clasname}  bg-transparent border-gray-400 shadow-2xl    hover:opacity-100 h-full left-0 fixed duration-500 ${
-        isSidebarOpen ? "w-50" : "w-12"
+        isSidebarOpen ? "w-50 max-w-50" : "w-12 max-w-12"
       } p-2 grid grid-rows-12 gap-2 z-[999999999]`}
     >
       <div className="flex items-center row-start-1 justify-end w-full ">

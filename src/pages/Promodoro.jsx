@@ -61,7 +61,7 @@ function Promodoro() {
         <div
           className={` row-start-2 ${
             isSidebarOpen ? "row-end-10" : "row-end-3"
-          } duration-300 flex items-center justify-center overflow-hidden`}
+          } duration-300 flex items-center justify-center `}
         >
           {isSidebarOpen ? <ThemesContainer /> : <></>}
         </div>
