@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { Play, Pause, Volume2, VolumeX } from "lucide-react";
+import songSrc from "../assets/LofiMusic.Mp3";
 
 export default function AudioPlayer() {
   const audioRef = useRef(null);
@@ -50,7 +51,7 @@ export default function AudioPlayer() {
     <div className="w-full max-w-md p-4 bg-transparent backdrop-blur-2xl border-1 border-[#fbf4f959] rounded-lg  shadow-2xs shadow-[#fbf4f959] flex flex-col items-center">
       <audio
         ref={audioRef}
-        src="src\assets\Chill Lofi Mix [chill lo-fi hip hop beats] [CLeZyIID9Bo].mp3"
+        src={songSrc}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
       />
