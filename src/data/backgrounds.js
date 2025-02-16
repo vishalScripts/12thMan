@@ -13,7 +13,7 @@ const backgrounds = {
   l: "https://i.pinimg.com/originals/73/5d/73/735d73725f77188e554756b5e11a2bf1.gif",
   m: "https://i.pinimg.com/originals/6d/af/ba/6dafba6b0ed8dd800da4c9e668dc3261.gif",
   n: "https://i.pinimg.com/originals/a9/8a/1f/a98a1fe05019c395040c7872f7a26be4.gif",
-  z: "https://i.pinimg.com/originals/0a/6d/57/0a6d57b8e6d843a490f6a5cd64c6d5c8.gif",
+
   // n: "https://v1.pinimg.com/videos/mc/720p/2b/dd/08/2bdd08ec08817975a38040a0ca10311c.mp4",
 };
 
