@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { Play, Pause, Volume2, VolumeX } from "lucide-react";
-import songSrc from "../assets/LofiMusic.Mp3";
+import songSrc from "../data/LofiMusic.mp3";
 
 export default function AudioPlayer() {
   const audioRef = useRef(null);
