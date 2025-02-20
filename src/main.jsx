@@ -10,6 +10,7 @@ import Home from "./pages/Home.jsx";
 import Promodoro from "./pages/Promodoro.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Calendar from "./pages/Calendar.jsx";
+import Login from "./pages/Login.jsx";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,14 @@ const router = createBrowserRouter([
       {
         path: "/calendar",
         element: <Calendar />,
+      },
+      {
+        path: "/dashboard",
+        element: <Dashboard />,
+      },
+      {
+        path: "/login",
+        element: <Login />,
       },
     ],
   },

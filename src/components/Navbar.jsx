@@ -3,9 +3,14 @@ import Container from "./Container/Container";
 import { Link } from "react-router-dom";
 import Logo from "./Logo";
 import { useSelector } from "react-redux";
+import authService from "../Auth/auth";
 
 function Navbar() {
   const isNavbarHidden = useSelector((state) => state.theme.navbarHidden);
+
+  const handleLogout = async () => {
+    await authService.logout();
+  };
   return (
     <>
       <nav
@@ -44,7 +49,11 @@ function Navbar() {
             </ul>
           </div>
           {/* row 3 */}
-          <div className="  col-span-2"></div>
+          <div className="  col-span-2">
+            <button onClick={handleLogout} className=" bg-purple-600 px-6 py-4">
+              Logout
+            </button>
+          </div>
         </Container>
       </nav>
     </>

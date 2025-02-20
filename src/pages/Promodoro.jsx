@@ -10,6 +10,7 @@ import AudioPlayer from "../components/AudioPlayer";
 import { PaintBrushIcon } from "@heroicons/react/24/solid";
 
 import ThemesContainer from "../components/ThemesContainer";
+import FloatingWidget from "../components/FloatingWidget";
 function Promodoro() {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const background = useSelector((state) => state.theme.themeBackground);
@@ -45,12 +46,12 @@ function Promodoro() {
           dispatch(hideNavbar(!isFullScreen));
           toggleFullScreen();
         }}
-        className="absolute top-[13%] right-3 w-8 h-8 cursor-pointer bg-accent flex items-center justify-center rounded-lg object-cover  opacity-25 p-1 hover:opacity-100 hover:scale-105 duration-300 z-[9999999999]"
+        className="absolute top-[13%] right-3 w-8 h-8 cursor-pointer bg-accent flex items-center justify-center rounded-lg object-cover  opacity-100 p-1 hover:opacity-100 hover:scale-105 duration-300 z-[9999999999]"
       >
         <ViewfinderCircleIcon />
       </div>
 
-      <Sidebar>
+      <Sidebar clasname="fixed">
         <div
           className={` row-start-2 ${
             isSidebarOpen ? "row-end-10" : "row-end-3"
@@ -78,6 +79,7 @@ function Promodoro() {
       >
         <source src={background} type="video/mp4" />
       </video> */}
+      {/* <FloatingWidget /> */}
     </div>
   );
 }

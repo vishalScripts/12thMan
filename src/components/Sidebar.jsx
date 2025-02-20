@@ -3,7 +3,7 @@ import { Bars3Icon } from "@heroicons/react/24/solid";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleSidebar } from "../store/themeSlice";
 
-function Sidebar({ children, clasname = {} }) {
+function Sidebar({ children, clasname = "" }) {
   const dispatch = useDispatch();
 
   const isSidebarOpen = useSelector((state) => state.theme.isSidebarHidden);
@@ -12,7 +12,7 @@ function Sidebar({ children, clasname = {} }) {
 
   return (
     <div
-      className={`${clasname}  bg-transparent border-gray-400 shadow-2xl    hover:opacity-100 h-full left-0 fixed duration-500 ${
+      className={`${clasname}  bg-transparent border-gray-400 shadow-2xl    hover:opacity-100 h-full left-0  duration-500 ${
         isSidebarOpen ? "w-50 max-w-50" : "w-12 max-w-12"
       } p-2 grid grid-rows-12 gap-2 z-[999999999]`}
     >
