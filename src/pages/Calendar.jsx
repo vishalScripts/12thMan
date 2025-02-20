@@ -98,16 +98,22 @@ function Calendar() {
     }
   };
 
+  const formatForInput = (date) => {
+    const pad = (num) => num.toString().padStart(2, "0");
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1);
+    const day = pad(date.getDate());
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  };
+
   const handleDateClick = (info) => {
     const startDate = info.date;
     const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
 
-    const formatForInput = (date) => {
-      return date.toISOString().slice(0, 16);
-    };
-
     setNewEventData({
-      title: "",
+      title: "Enter your title",
       start: formatForInput(startDate),
       end: formatForInput(endDate),
     });
@@ -215,7 +221,6 @@ function Calendar() {
                     }))
                   }
                   className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
-                  required
                 />
               </div>
               <div className="flex justify-end gap-2">
