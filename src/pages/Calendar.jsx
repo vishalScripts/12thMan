@@ -3,7 +3,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux"; // if you are using Redux for global state
 import { CalendarService } from "../services/CalendarServices";
 
 function Calendar() {
@@ -66,6 +66,14 @@ function Calendar() {
             end: createdEvent.end.dateTime,
           },
         ]);
+        // NEW: Create a corresponding task in Appwrite with "done" status set to false.
+        await calendarService.createTask({
+          id: createdEvent.id,
+          title: createdEvent.summary,
+          start: createdEvent.start.dateTime,
+          end: createdEvent.end.dateTime,
+          done: false,
+        });
         return true;
       }
     } catch (error) {
