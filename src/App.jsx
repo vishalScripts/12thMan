@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 import { Outlet } from "react-router-dom";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/navbar";
 import Container from "./components/Container/Container";
 import { useDispatch, useSelector } from "react-redux";
 import authService from "./Auth/auth";
 import { CalendarService } from "./services/CalendarServices";
-import { setUser } from "./store/authSlice";
+import { setUser, logoutUser } from "./store/authSlice";
 import { useNavigate } from "react-router-dom";
 
 function App() {
@@ -17,11 +17,17 @@ function App() {
 
   useEffect(() => {
     const fetchSession = async () => {
-      const session = await authService.getSession();
-      if (session?.token) {
-        dispatch(setUser(session));
-      } else {
-        navigate("/login"); // Redirect to login if no session
+      try {
+        const session = await authService.getSession();
+        if (session?.token) {
+          dispatch(setUser(session));
+        } else {
+          throw new Error("Session expired");
+        }
+      } catch (error) {
+        console.error("Session error:", error);
+        dispatch(logoutUser());
+        navigate("/login");
       }
     };
 

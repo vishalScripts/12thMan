@@ -1,15 +1,21 @@
 import React from "react";
 import Container from "./Container/Container";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Logo from "./Logo";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import authService from "../Auth/auth";
+import ProfileLogo from "./ProfileLogo";
+import { logoutUser } from "../store/authSlice";
 
 function Navbar() {
   const isNavbarHidden = useSelector((state) => state.theme.navbarHidden);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleLogout = async () => {
     await authService.logout();
+    dispatch(logoutUser());
+    navigate("/login");
   };
   return (
     <>
@@ -50,6 +56,7 @@ function Navbar() {
           </div>
           {/* row 3 */}
           <div className="  col-span-2">
+            <ProfileLogo />
             <button onClick={handleLogout} className=" bg-purple-600 px-6 py-4">
               Logout
             </button>

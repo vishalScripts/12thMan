@@ -34,17 +34,13 @@ function Calendar() {
   }, [token]);
 
   const createNewEvent = async (eventData) => {
-    if (!token || !eventData.title || !eventData.start || !eventData.end) {
+    if (!token || !eventData.title || !eventData.start) {
       alert("Please fill in all fields!");
       return false;
     }
 
     const start = new Date(eventData.start);
     const end = new Date(eventData.end);
-    if (start >= end) {
-      alert("End time must be after start time!");
-      return false;
-    }
 
     const newEvent = {
       summary: eventData.title,

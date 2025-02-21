@@ -16,9 +16,9 @@ export class AuthService {
     try {
       await this.account.createOAuth2Session(
         "google",
-        "http://localhost:5173/calendar",
-        "http://localhost:5173/login",
-        ["https://www.googleapis.com/auth/calendar"] // Add required scopes
+        conf.authSucessUrl,
+        conf.authFauilureUrl,
+        ["https://www.googleapis.com/auth/calendar"]
       );
     } catch (error) {
       console.error("Login Error:", error);
@@ -36,17 +36,29 @@ export class AuthService {
 
   async getSession() {
     try {
+      console.log("dfhdsfjdskjfsdjfsd", conf);
       const session = await this.account.getSession("current");
       console.log("Session Data:", session);
+      const data = await this.getUser();
 
       return {
-        token: session?.providerAccessToken, // Google OAuth token
-        userId: session?.userId,
-        email: session?.providerUid,
-        name: session?.name,
+        token: session?.providerAccessToken,
+        data,
       };
     } catch (error) {
       console.error("Error fetching session", error);
+      return null;
+    }
+  }
+
+  async getUser() {
+    try {
+      const data = await this.account.get();
+      console.log("User Data:", data);
+
+      return data;
+    } catch (error) {
+      console.error("Error fetching user data", error);
       return null;
     }
   }
