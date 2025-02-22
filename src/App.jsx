@@ -23,6 +23,8 @@ function App() {
           console.log(session);
           dispatch(setUser(session));
         } else {
+          dispatch(logoutUser());
+          navigate("/login");
           throw new Error("Session expired");
         }
       } catch (error) {

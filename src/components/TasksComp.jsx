@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setTasks, setLoading, setError } from "../store/tasksSlice"; // Import actions
 import { CalendarService } from "../services/CalendarServices";
 
-function TasksComp({ className = "" }) {
+function TasksComp({ className = "", fixedHeight }) {
   const { token } = useSelector((state) => state.auth); // Get the token from the auth state
   const { tasks, loading, error } = useSelector((state) => state.tasks); // Get tasks from the tasks slice
   const dispatch = useDispatch();
@@ -49,15 +49,12 @@ function TasksComp({ className = "" }) {
     }
   };
 
-  if (loading) return <p>Loading tasks...</p>;
-  if (error) return <p>Error loading tasks: {error}</p>;
-
   return (
     <div className={`${className}`}>
-      <h2 className="text-lg text-center bg-secondary font-bold text-gray-800">
+      <h2 className="text-lg text-center mb-2 bg-secondary font-bold text-gray-800">
         Tasks
       </h2>
-      <div>
+      <div className={fixedHeight}>
         {tasks.length === 0 ? (
           <p>No tasks available...</p>
         ) : (

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.3.0",
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fullcalendar/core": "^6.1.15",
     "@fullcalendar/daygrid": "^6.1.15",
     "@fullcalendar/interaction": "^6.1.15",
@@ -21,6 +22,7 @@
     "@tailwindcss/vite": "^4.0.6",
     "appwrite": "^17.0.0",
     "axios": "^1.7.9",
+    "chart.js": "^4.4.8",
     "gapi-script": "^1.2.0",
     "googleapis": "^144.0.0",
     "lucide-react": "^0.475.0",
@@ -31,6 +33,7 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.1.5",
     "react-spotify-player": "^1.0.4",
+    "recharts": "^2.15.1",
     "tailwindcss": "^4.0.6"
   },
   "devDependencies": {

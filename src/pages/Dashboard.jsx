@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { logoutUser } from "../store/authSlice";
 import authService from "../Auth/auth";
 import { Link, useNavigate } from "react-router-dom";
+import EventChart from "../components/EventChart";
+import Button from "../components/Button";
 
 function Dashboard() {
   const { token } = useSelector((state) => state.auth);
@@ -45,34 +47,41 @@ function Dashboard() {
     }
   };
 
+  console.log(tasks);
+
   return (
-    <div className="p-6">
-      <div className="flex items-center space-x-4 mb-6">
+    <div className="p-6 grid grid-cols-12 gap-18  overflow-hidden">
+      <div className="col-span-3 bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500  rounded-3xl shadow-lg flex flex-col p-6 items-center justify-start space-x-6 ">
         <img
-          src="https://via.placeholder.com/100"
+          src="https://picsum.photos/200"
           alt="Profile"
-          className="w-20 h-20 rounded-full border"
+          className="w-24 h-24 rounded-full border-4 border-white shadow-lg"
         />
-        <div>
-          <h2 className="text-xl font-bold">{userData.name}</h2>
-          <p className="text-gray-600">Email: {userData.email}</p>
-          <p className="text-gray-600">
+        <div className="text-white">
+          <h2 className="text-2xl font-semibold mb-2">{userData.name}</h2>
+          <p className="text-lg">{userData.email}</p>
+          <p className="text-sm my-2">
             Registered: {new Date(userData.registration).toLocaleDateString()}
           </p>
           <p
-            className={`text-sm ${
-              userData.status ? "text-green-600" : "text-red-600"
+            className={`text-sm font-medium ${
+              userData.status ? "text-green-300" : "text-red-300"
             }`}
           >
             {userData.status ? "Active" : "Inactive"}
           </p>
-          <button onClick={handleLogout} className=" bg-purple-600 px-6 py-4">
+          <Button
+            onClick={handleLogout}
+            className="mt-4 px-5 py-2 rounded-full text-white bg-black hover:bg-gray-800 transition-colors duration-300"
+          >
             Logout
-          </button>
+          </Button>
         </div>
       </div>
 
-      <h1 className="text-2xl font-bold mb-4">Task Dashboard</h1>
+      <div className="col-span-9 flex items-center justify-center bg-white rounded-2xl shadow-2xl">
+        <EventChart tasks={tasks}></EventChart>
+      </div>
     </div>
   );
 }

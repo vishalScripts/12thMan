@@ -1,6 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 
+// this is time component for live time
 function Time() {
   const [time, setTime] = useState(new Date());
 
