@@ -1,26 +1,26 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setTasks, setLoading, setError } from "../store/tasksSlice"; // Import actions
+import { setTasks, setLoading, setError } from "../store/tasksSlice";
 import { CalendarService } from "../services/CalendarServices";
 
 function TasksComp({ className = "", fixedHeight }) {
-  const { token } = useSelector((state) => state.auth); // Get the token from the auth state
-  const { tasks, loading, error } = useSelector((state) => state.tasks); // Get tasks from the tasks slice
+  const { token } = useSelector((state) => state.auth);
+  const { tasks, loading, error } = useSelector((state) => state.tasks);
   const dispatch = useDispatch();
+  const [filter, setFilter] = useState("all");
 
-  // Fetch tasks when token is available
   useEffect(() => {
     const fetchTasks = async () => {
       if (token) {
-        dispatch(setLoading(true)); // Set loading to true
+        dispatch(setLoading(true));
         try {
           const calendarService = new CalendarService(token);
           const fetchedTasks = await calendarService.fetchTasks();
-          dispatch(setTasks(fetchedTasks)); // Set tasks in Redux store
+          dispatch(setTasks(fetchedTasks));
         } catch (error) {
-          dispatch(setError(error.message)); // Handle error if any
+          dispatch(setError(error.message));
         } finally {
-          dispatch(setLoading(false)); // Set loading to false
+          dispatch(setLoading(false));
         }
       }
     };
@@ -38,7 +38,6 @@ function TasksComp({ className = "", fixedHeight }) {
         newStatus
       );
       if (updatedTask) {
-        // After updating the status, refetch the tasks to get the updated list
         dispatch(setLoading(true));
         const fetchedTasks = await calendarService.fetchTasks();
         dispatch(setTasks(fetchedTasks));
@@ -49,23 +48,64 @@ function TasksComp({ className = "", fixedHeight }) {
     }
   };
 
+  // Filter Logic
+  const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD
+  const filteredTasks = tasks.filter((task) => {
+    if (filter === "done") return task.done;
+    if (filter === "today") return task.start.startsWith(today);
+    return true;
+  });
+
   return (
     <div className={`${className}`}>
       <h2 className="text-lg text-center mb-2 bg-secondary font-bold text-gray-800">
         Tasks
       </h2>
+
+      {/* Filter Buttons */}
+      <div className="flex justify-start gap-2 mb-2">
+        <button
+          className={`px-3 py-0 h-6 text-sm font-bold rounded cursor-pointer ${
+            filter === "all"
+              ? "bg-slate-600 text-white"
+              : "bg-gray-200 text-text"
+          }`}
+          onClick={() => setFilter("all")}
+        >
+          All
+        </button>
+        <button
+          className={`px-3 py-0 h-6 text-sm font-bold rounded cursor-pointer ${
+            filter === "done" ? "bg-slate-600 text-white" : "bg-gray-200"
+          }`}
+          onClick={() => setFilter("done")}
+        >
+          Done
+        </button>
+        <button
+          className={`px-3 py-0 h-6 text-sm font-bold rounded cursor-pointer ${
+            filter === "today"
+              ? "bg-slate-600 text-white"
+              : "bg-gray-200 text-text"
+          }`}
+          onClick={() => setFilter("today")}
+        >
+          Today
+        </button>
+      </div>
+
       <div className={fixedHeight}>
-        {tasks.length === 0 ? (
+        {filteredTasks.length === 0 ? (
           <p>No tasks available...</p>
         ) : (
           <ul className="space-y-4 py-2">
-            {tasks.map((task) => (
+            {filteredTasks.map((task) => (
               <li
                 key={task.$id}
                 className={`px-2 flex gap-2 border-1 rounded shadow-sm overflow-hidden transition-all duration-200 ${
                   task.done
-                    ? "bg-green-50 hover:bg-green-100" // Completed background
-                    : "bg-white hover:bg-accent" // Pending background
+                    ? "bg-green-50 hover:bg-green-100"
+                    : "bg-white hover:bg-accent"
                 } ${task.done ? "h-12" : "h-22"}`}
               >
                 <div className="flex items-center justify-center">
@@ -73,8 +113,8 @@ function TasksComp({ className = "", fixedHeight }) {
                     onClick={() => toggleTaskStatus(task)}
                     className={`w-5 min-w-5 min-h-5 h-5 flex items-center justify-center rounded-full border-2 transition-all duration-200 cursor-pointer hover:scale ${
                       task.done
-                        ? "border-green-500 bg-green-500" // Completed state
-                        : "border-gray-400 bg-white" // Pending state
+                        ? "border-green-500 bg-green-500"
+                        : "border-gray-400 bg-white"
                     }`}
                   >
                     {task.done && (
@@ -97,7 +137,7 @@ function TasksComp({ className = "", fixedHeight }) {
                 </div>
                 <div className="flex items-start flex-col justify-center">
                   <h2 className="font-bold text-lg">{task.title}</h2>
-                  {!task.done && ( // Only show start/end dates if task is not completed
+                  {!task.done && (
                     <>
                       <p className="text-xs">
                         <span className="font-semibold text-sm">Start:</span>{" "}
