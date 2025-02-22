@@ -9,14 +9,7 @@ import { logoutUser } from "../store/authSlice";
 
 function Navbar() {
   const isNavbarHidden = useSelector((state) => state.theme.navbarHidden);
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
 
-  const handleLogout = async () => {
-    await authService.logout();
-    dispatch(logoutUser());
-    navigate("/login");
-  };
   return (
     <>
       <nav
@@ -35,7 +28,7 @@ function Navbar() {
           <div className=" col-span-8">
             <ul className="w-full items-center justify-center gap-6 flex-row flex">
               <Link
-                to="/"
+                to="/dashboard"
                 className="hover:bg-secondary  duration-300 px-4 rounded-sm"
               >
                 <li className="text-lg font-medium">Dashboard</li>
@@ -57,9 +50,6 @@ function Navbar() {
           {/* row 3 */}
           <div className="  col-span-2">
             <ProfileLogo />
-            <button onClick={handleLogout} className=" bg-purple-600 px-6 py-4">
-              Logout
-            </button>
           </div>
         </Container>
       </nav>

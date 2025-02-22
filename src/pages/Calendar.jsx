@@ -3,8 +3,105 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { useSelector, useDispatch } from "react-redux"; // if you are using Redux for global state
+import { useSelector, useDispatch } from "react-redux";
 import { CalendarService } from "../services/CalendarServices";
+import DatePicker from "react-datepicker"; // Import React Datepicker
+import "react-datepicker/dist/react-datepicker.css";
+import TasksComp from "../components/TasksComp";
+
+import { setTasks, setLoading, setError } from "../store/tasksSlice";
+
+// Form component now receives props
+const FormElem = ({
+  newEventData,
+  setNewEventData,
+  handleModalSubmit,
+  setShowModal,
+}) => {
+  return (
+    <form onSubmit={handleModalSubmit}>
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Title
+        </label>
+        <input
+          placeholder="Enter your title.."
+          type="text"
+          value={newEventData.title}
+          onChange={(e) =>
+            setNewEventData((prev) => ({
+              ...prev,
+              title: e.target.value,
+            }))
+          }
+          className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+          required
+        />
+      </div>
+      <div className="flex flex-1 items-center justify-between">
+        <div className="mb-4 w-[48%] ">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Start Time
+          </label>
+          <input
+            type="datetime-local"
+            value={
+              newEventData.start
+                ? new Date(newEventData.start).toISOString().slice(0, 16)
+                : new Date().toISOString().slice(0, 16)
+            }
+            onChange={(e) =>
+              setNewEventData((prev) => ({
+                ...prev,
+                start: e.target.value,
+              }))
+            }
+            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none text-gray-700"
+            required
+          />
+        </div>
+        <div className="mb-4  w-[48%]">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            End Time
+          </label>
+          <input
+            type="datetime-local"
+            value={
+              newEventData.end
+                ? new Date(newEventData.end).toISOString().slice(0, 16) // Formatting to match the input format
+                : new Date(new Date().getTime() + 60 * 60 * 1000)
+                    .toISOString()
+                    .slice(0, 16) // Default to 1 hour later
+            }
+            onChange={(e) =>
+              setNewEventData((prev) => ({
+                ...prev,
+                end: e.target.value, // Save the selected date and time in ISO format
+              }))
+            }
+            className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
+            required
+          />
+        </div>
+      </div>
+      <div className="flex justify-center gap-2">
+        <button
+          type="button"
+          onClick={() => setShowModal(false)}
+          className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          Create Task
+        </button>
+      </div>
+    </form>
+  );
+};
 
 function Calendar() {
   const [events, setEvents] = useState([]);
@@ -17,6 +114,11 @@ function Calendar() {
     start: "",
     end: "",
   });
+
+  const dispatch = useDispatch();
+  const { tasks, loading, error } = useSelector((state) => state.tasks);
+
+  console.log(tasks, loading);
 
   useEffect(() => {
     if (token) {
@@ -32,6 +134,22 @@ function Calendar() {
       });
     }
   }, [token]);
+
+  const fetchTasks = async () => {
+    console.log("i was ere");
+    if (token) {
+      dispatch(setLoading(true)); // Set loading to true
+      try {
+        const calendarService = new CalendarService(token);
+        const fetchedTasks = await calendarService.fetchTasks();
+        dispatch(setTasks(fetchedTasks)); // Set tasks in Redux store
+      } catch (error) {
+        dispatch(setError(error.message)); // Handle error if any
+      } finally {
+        dispatch(setLoading(false)); // Set loading to false
+      }
+    }
+  };
 
   const createNewEvent = async (eventData) => {
     if (!token || !eventData.title || !eventData.start) {
@@ -63,13 +181,18 @@ function Calendar() {
           },
         ]);
         // NEW: Create a corresponding task in Appwrite with "done" status set to false.
-        await calendarService.createTask({
+        const taskCreate = await calendarService.createTask({
           id: createdEvent.id,
           title: createdEvent.summary,
           start: createdEvent.start.dateTime,
           end: createdEvent.end.dateTime,
           done: false,
         });
+
+        if (taskCreate) {
+          fetchTasks();
+        }
+
         return true;
       }
     } catch (error) {
@@ -109,7 +232,7 @@ function Calendar() {
     const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
 
     setNewEventData({
-      title: "Enter your title",
+      title: "",
       start: formatForInput(startDate),
       end: formatForInput(endDate),
     });
@@ -165,103 +288,39 @@ function Calendar() {
     <div className="flex h-[90vh] bg-gray-100 font-sans">
       {/* Event Creation Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+        <div className="fixed inset-0 backdrop-blur-xs bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg border-1 shadow-2xl p-6 w-full max-w-md">
             <h3 className="text-lg font-semibold mb-4">Create New Event</h3>
-            <form onSubmit={handleModalSubmit}>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Title
-                </label>
-                <input
-                  type="text"
-                  value={newEventData.title}
-                  onChange={(e) =>
-                    setNewEventData((prev) => ({
-                      ...prev,
-                      title: e.target.value,
-                    }))
-                  }
-                  className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Start Time
-                </label>
-                <input
-                  type="datetime-local"
-                  value={newEventData.start}
-                  onChange={(e) =>
-                    setNewEventData((prev) => ({
-                      ...prev,
-                      start: e.target.value,
-                    }))
-                  }
-                  className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  End Time
-                </label>
-                <input
-                  type="datetime-local"
-                  value={newEventData.end}
-                  onChange={(e) =>
-                    setNewEventData((prev) => ({
-                      ...prev,
-                      end: e.target.value,
-                    }))
-                  }
-                  className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div className="flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                >
-                  Create Event
-                </button>
-              </div>
-            </form>
+            <FormElem
+              newEventData={newEventData}
+              setNewEventData={setNewEventData}
+              handleModalSubmit={handleModalSubmit}
+              setShowModal={setShowModal}
+            />
           </div>
         </div>
       )}
 
       {/* Sidebar for Creating Events */}
-      <div className="w-[22%] bg-white shadow-lg p-6 flex flex-col gap-6 border-r border-gray-200">
-        <h2 className="text-2xl font-bold text-gray-800">Create Event</h2>
-        <div className="flex flex-col gap-4">
-          <input
-            type="text"
-            placeholder="Event Title"
-            value={eventTitle}
-            onChange={(e) => setEventTitle(e.target.value)}
-            className="p-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-blue-500"
+      <div
+        className="w-[22%] bg-white shadow-lg p-3 flex flex-col gap-6 h-full overflow-y-scroll scroll-smooth scroll-snap-y 
+            [&::-webkit-scrollbar]:w-1
+  [&::-webkit-scrollbar-track]:bg-white
+  [&::-webkit-scrollbar-thumb]:bg-slate-700
+  dark:[&::-webkit-scrollbar-track]:bg-white
+  dark:[&::-webkit-scrollbar-thumb]:bg-slate-700
+          border-r border-gray-200"
+      >
+        <div className="flex gap-2 flex-col border-b-1 py-2">
+          <h2 className="text-2xl font-bold ">Create Task</h2>
+          <FormElem
+            newEventData={newEventData}
+            setNewEventData={setNewEventData}
+            handleModalSubmit={handleModalSubmit}
           />
-          <input
-            type="datetime-local"
-            value={eventDate}
-            onChange={(e) => setEventDate(e.target.value)}
-            className="p-3 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            onClick={handleCreateEvent}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
-          >
-            Add Event
-          </button>
+        </div>
+        <div className="h-full ">
+          <TasksComp className="" />
         </div>
       </div>
 
@@ -269,6 +328,7 @@ function Calendar() {
       <div className="flex-1 h-full p-6">
         <div className="bg-white shadow-lg rounded-lg overflow-hidden h-full">
           <FullCalendar
+            key={loading ? "loading" : "loaded"}
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             initialView="timeGridDay"
             events={events}
@@ -288,7 +348,20 @@ function Calendar() {
             eventResize={handleEventResize}
             dateClick={handleDateClick}
             eventClick={(info) => {
-              alert(`Event: ${info.event.title}`);
+              console.log(info);
+            }}
+            eventDidMount={(info) => {
+              console.log("Event Mounted", info);
+
+              // Check if the event title matches any task title and the task is marked as done
+              const task = tasks.find(
+                (task) => task.title === info.event.title && task.done === true
+              );
+
+              if (task) {
+                // Change the background color if matched and task is done
+                info.el.style.backgroundColor = "#FF5733"; // Or any color you want
+              }
             }}
           />
         </div>

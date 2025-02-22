@@ -20,6 +20,7 @@ function App() {
       try {
         const session = await authService.getSession();
         if (session?.token) {
+          console.log(session);
           dispatch(setUser(session));
         } else {
           throw new Error("Session expired");

@@ -1,22 +1,33 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import { CalendarService } from "../services/CalendarServices";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutUser } from "../store/authSlice";
+import authService from "../Auth/auth";
+import { Link, useNavigate } from "react-router-dom";
 
 function Dashboard() {
   const { token } = useSelector((state) => state.auth);
+  const userData = useSelector((state) => state.auth.userData);
   const [tasks, setTasks] = useState([]);
 
-  // Fetch tasks from Appwrite when the component mounts or when the token changes.
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleLogout = async () => {
+    await authService.logout();
+    dispatch(logoutUser());
+    navigate("/login");
+  };
+
+  console.log(userData);
+
   useEffect(() => {
     if (token) {
       const calendarService = new CalendarService(token);
-      calendarService.fetchTasks().then((fetchedTasks) => {
-        setTasks(fetchedTasks);
-      });
+      calendarService.fetchTasks().then(setTasks);
     }
   }, [token]);
 
-  // Toggle the task's done status.
   const toggleTaskStatus = async (task) => {
     if (!token) return;
     const calendarService = new CalendarService(token);
@@ -36,36 +47,32 @@ function Dashboard() {
 
   return (
     <div className="p-6">
+      <div className="flex items-center space-x-4 mb-6">
+        <img
+          src="https://via.placeholder.com/100"
+          alt="Profile"
+          className="w-20 h-20 rounded-full border"
+        />
+        <div>
+          <h2 className="text-xl font-bold">{userData.name}</h2>
+          <p className="text-gray-600">Email: {userData.email}</p>
+          <p className="text-gray-600">
+            Registered: {new Date(userData.registration).toLocaleDateString()}
+          </p>
+          <p
+            className={`text-sm ${
+              userData.status ? "text-green-600" : "text-red-600"
+            }`}
+          >
+            {userData.status ? "Active" : "Inactive"}
+          </p>
+          <button onClick={handleLogout} className=" bg-purple-600 px-6 py-4">
+            Logout
+          </button>
+        </div>
+      </div>
+
       <h1 className="text-2xl font-bold mb-4">Task Dashboard</h1>
-      {tasks.length === 0 ? (
-        <p>No tasks available.</p>
-      ) : (
-        <ul className="space-y-4">
-          {tasks.map((task) => (
-            <li key={task.$id} className="bg-white p-4 rounded shadow">
-              <h2 className="font-semibold">{task.title}</h2>
-              <p>
-                <strong>Start:</strong> {new Date(task.start).toLocaleString()}
-              </p>
-              <p>
-                <strong>End:</strong> {new Date(task.end).toLocaleString()}
-              </p>
-              <div className="mt-2">
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={task.done}
-                    onChange={() => toggleTaskStatus(task)}
-                  />
-                  <span className="ml-2">
-                    {task.done ? "Completed" : "Pending"}
-                  </span>
-                </label>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
   );
 }
