@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 import { Outlet } from "react-router-dom";
-import Navbar from "./components/navbar";
+import Navbar from "./components/Navbar";
 import Container from "./components/Container/Container";
 import { useDispatch, useSelector } from "react-redux";
 import authService from "./Auth/auth";
