@@ -21,6 +21,7 @@ import ThemesContainer from "../components/ThemesContainer";
 import FloatingWidget from "../components/FloatingWidget";
 import { div } from "motion/react-client";
 import MusicContainer from "../components/MusicContainer";
+import { useTimer } from "../hooks/useTimer";
 function Promodoro() {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const background = useSelector((state) => state.theme.themeBackground);
@@ -29,6 +30,19 @@ function Promodoro() {
   const [showThemeContainer, setShowThemeContainer] = useState(false);
   const [showTasksContainer, setShowTasksContainer] = useState(false);
   const [activeContainer, setActiveContainer] = useState(null);
+  const {
+    minutes,
+    seconds,
+    isRunning,
+    start,
+    stop,
+    reset,
+    type1,
+    type2,
+    hours,
+    totalTime,
+    custom,
+  } = useTimer();
 
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {
@@ -40,7 +54,6 @@ function Promodoro() {
     }
   };
 
-  console.log(background);
   return (
     <div
       className={` ${
@@ -131,6 +144,10 @@ function Promodoro() {
           {activeContainer === "tasks" && (
             <div className="bg-white rounded-sm h-full overflow-hidden py-4 px-2">
               <TasksComp
+                start={start}
+                stop={stop}
+                reset={reset}
+                custom={custom}
                 className="h-full"
                 fixedHeight="h-[95%] overflow-y-scroll overflow-x-hidden  scroll-smooth scroll-snap-y 
             [&::-webkit-scrollbar]:w-1
@@ -144,7 +161,19 @@ function Promodoro() {
         </div>
       </div>
 
-      <PromodoroComp />
+      <PromodoroComp
+        minutes={minutes}
+        seconds={seconds}
+        start={start}
+        stop={stop}
+        isRunning={isRunning}
+        type1={type1}
+        type2={type2}
+        totalTime={totalTime}
+        reset={reset}
+        hours={hours}
+        custom={custom}
+      />
       {/* <video
         autoPlay
         loop

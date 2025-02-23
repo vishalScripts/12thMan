@@ -2,8 +2,21 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setTasks, setLoading, setError } from "../store/tasksSlice";
 import { CalendarService } from "../services/CalendarServices";
+import Button from "./Button";
+import {
+  ArrowPathIcon,
+  PlayIcon,
+  StopCircleIcon,
+} from "@heroicons/react/24/solid";
 
-function TasksComp({ className = "", fixedHeight }) {
+function TasksComp({
+  className = "",
+  fixedHeight,
+  start,
+  stop,
+  reset,
+  custom,
+}) {
   const { token } = useSelector((state) => state.auth);
   const { tasks, loading, error } = useSelector((state) => state.tasks);
   const dispatch = useDispatch();
@@ -48,19 +61,46 @@ function TasksComp({ className = "", fixedHeight }) {
     }
   };
 
-  // Filter Logic
-  const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD
+  // Filter tasks based on chosen filter
+  const today = new Date().toISOString().split("T")[0];
   const filteredTasks = tasks.filter((task) => {
     if (filter === "done") return task.done;
     if (filter === "today") return task.start.startsWith(today);
     return true;
   });
 
+  // When the Play button for a task is clicked,
+  // calculate the duration between task.start and task.end
+  // and call custom(h, m, s)
+  const handlePlayTask = (task) => {
+    const startDate = new Date(task.start);
+    const endDate = new Date(task.end);
+    const diffMs = endDate - startDate; // difference in milliseconds
+    const totalSeconds = Math.floor(diffMs / 1000);
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    console.log(`Task "${task.title}" duration: ${h}h ${m}m ${s}s`);
+    // Call the custom timer function with calculated duration
+    custom(h, m, s);
+  };
+
   return (
     <div className={`${className}`}>
       <h2 className="text-lg text-center mb-2 bg-secondary font-bold text-gray-800">
         Tasks
       </h2>
+      <div className="py-4 flex gap-4">
+        <Button onClick={start}>
+          <PlayIcon className="w-6" />
+        </Button>
+        <Button onClick={stop}>
+          <StopCircleIcon className="w-6" />
+        </Button>
+        <Button onClick={reset}>
+          <ArrowPathIcon className="w-6" />
+        </Button>
+      </div>
 
       {/* Filter Buttons */}
       <div className="flex justify-start gap-2 mb-2">
@@ -150,6 +190,17 @@ function TasksComp({ className = "", fixedHeight }) {
                     </>
                   )}
                 </div>
+                {/* If task is not done, add a Play button to calculate duration and call custom */}
+                {!task.done && (
+                  <div className="flex items-center justify-center">
+                    <Button
+                      onClick={() => handlePlayTask(task)}
+                      className="ml-2 bg-blue-500 text-white px-2 py-1 rounded"
+                    >
+                      Play
+                    </Button>
+                  </div>
+                )}
               </li>
             ))}
           </ul>

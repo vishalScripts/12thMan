@@ -1,5 +1,6 @@
 import { Client, Databases, ID } from "appwrite";
 import conf from "../conf/conf";
+import authService from "../Auth/auth";
 
 export class CalendarService {
   constructor(token) {
@@ -16,21 +17,16 @@ export class CalendarService {
 
   async fetchEvents() {
     try {
-      const response = await fetch(
+      console.log("Using token:", this.token);
+      const response = await this.makeAuthenticatedCall(
         "https://www.googleapis.com/calendar/v3/calendars/primary/events",
-        {
-          headers: {
-            Authorization: `Bearer ${this.token}`,
-          },
-        }
+        { method: "GET" }
       );
-
       if (!response.ok) {
         const errorResponse = await response.json();
         console.error("Error Response:", errorResponse);
         throw new Error("Failed to fetch events");
       }
-
       const data = await response.json();
       return data.items;
     } catch (error) {
@@ -41,12 +37,11 @@ export class CalendarService {
 
   async createEvent(event) {
     try {
-      const response = await fetch(
+      const response = await this.makeAuthenticatedCall(
         "https://www.googleapis.com/calendar/v3/calendars/primary/events",
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${this.token}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
@@ -57,13 +52,11 @@ export class CalendarService {
           }),
         }
       );
-
       if (!response.ok) {
         const errorResponse = await response.json();
         console.error("Error Response:", errorResponse);
         throw new Error("Failed to create event");
       }
-
       const data = await response.json();
       return data;
     } catch (error) {
@@ -74,12 +67,12 @@ export class CalendarService {
 
   async updateEvent(eventId, event) {
     try {
-      const response = await fetch(
+      // Use the authenticated call wrapper here as well
+      const response = await this.makeAuthenticatedCall(
         `https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`,
         {
           method: "PUT",
           headers: {
-            Authorization: `Bearer ${this.token}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
@@ -90,13 +83,11 @@ export class CalendarService {
           }),
         }
       );
-
       if (!response.ok) {
         const errorResponse = await response.json();
         console.error("Error Response:", errorResponse);
         throw new Error("Failed to update event");
       }
-
       const data = await response.json();
       return data;
     } catch (error) {
@@ -105,14 +96,45 @@ export class CalendarService {
     }
   }
 
+  async makeAuthenticatedCall(url, options = {}) {
+    // Ensure we have a valid token before making the call.
+    await this.ensureValidToken();
+    // Add the Authorization header using the current token.
+    options.headers = {
+      ...options.headers,
+      Authorization: `Bearer ${this.token}`,
+    };
+
+    // Make the API call.
+    let response = await fetch(url, options);
+    // If you get a 401, the token might have expired recently.
+    if (response.status === 401) {
+      console.log("Token might be expired. Refreshing token...");
+      await this.ensureValidToken();
+      // Update the header with the refreshed token and try again.
+      options.headers.Authorization = `Bearer ${this.token}`;
+      response = await fetch(url, options);
+    }
+    return response;
+  }
+
+  async ensureValidToken() {
+    const session = await authService.getSession();
+    if (!session) {
+      throw new Error("Session expired. Please login again.");
+    }
+    this.token = session.token;
+    return this.token;
+  }
+
   // NEW: Methods for task storage in Appwrite
 
   async createTask(taskData) {
     try {
       const result = await this.databases.createDocument(
-        conf.appwriteDatabaseId, // NEW: Pass the database ID from your config.
-        conf.appwriteCollectionId, // Collection ID (make sure this collection exists in Appwrite)
-        ID.unique(), // Use Appwrite's ID.unique() to generate a unique document ID.
+        conf.appwriteDatabaseId,
+        conf.appwriteCollectionId,
+        ID.unique(),
         {
           googleEventId: taskData.id,
           title: taskData.title,
@@ -131,8 +153,8 @@ export class CalendarService {
   async updateTaskStatus(taskId, done) {
     try {
       const result = await this.databases.updateDocument(
-        conf.appwriteDatabaseId, // NEW: Pass the database ID.
-        conf.appwriteCollectionId, // Collection ID.
+        conf.appwriteDatabaseId,
+        conf.appwriteCollectionId,
         taskId,
         {
           done: done,
@@ -149,7 +171,7 @@ export class CalendarService {
     try {
       console.log(conf.appwriteDatabaseId, conf.appwriteCollectionId);
       const result = await this.databases.listDocuments(
-        conf.appwriteDatabaseId, // NEW: Pass the database ID.
+        conf.appwriteDatabaseId,
         conf.appwriteCollectionId
       );
       return result.documents;
