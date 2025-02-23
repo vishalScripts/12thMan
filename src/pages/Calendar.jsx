@@ -118,8 +118,6 @@ function Calendar() {
   const dispatch = useDispatch();
   const { tasks, loading, error } = useSelector((state) => state.tasks);
 
-  console.log(tasks, loading);
-
   useEffect(() => {
     if (token) {
       const calendarService = new CalendarService(token);
@@ -229,14 +227,20 @@ function Calendar() {
   };
 
   const handleDateClick = (info) => {
-    const startDate = info.date;
-    const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
+    const startDate = new Date(info.date); // Get clicked date (UTC)
+
+    // Convert UTC to local time
+    const localStartDate = new Date(
+      startDate.getTime() - startDate.getTimezoneOffset() * 60000
+    );
+    const localEndDate = new Date(localStartDate.getTime() + 60 * 60 * 1000); // 1 hour later
 
     setNewEventData({
       title: "",
-      start: formatForInput(startDate),
-      end: formatForInput(endDate),
+      start: formatForInput(localStartDate),
+      end: formatForInput(localEndDate),
     });
+
     setShowModal(true);
   };
 
