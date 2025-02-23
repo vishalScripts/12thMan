@@ -124,7 +124,8 @@ function Calendar() {
     if (token) {
       const calendarService = new CalendarService(token);
       calendarService.fetchEvents().then((fetchedEvents) => {
-        const formattedEvents = fetchedEvents.map((event) => ({
+        console.log(fetchedEvents);
+        const formattedEvents = fetchedEvents.items.map((event) => ({
           id: event.id,
           title: event.summary || "No Title",
           start: event.start?.date || event.start?.dateTime,

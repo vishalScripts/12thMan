@@ -30,6 +30,8 @@ function Promodoro() {
   const [showThemeContainer, setShowThemeContainer] = useState(false);
   const [showTasksContainer, setShowTasksContainer] = useState(false);
   const [activeContainer, setActiveContainer] = useState(null);
+
+  const [task, setTask] = useState();
   const {
     minutes,
     seconds,
@@ -148,6 +150,7 @@ function Promodoro() {
                 stop={stop}
                 reset={reset}
                 custom={custom}
+                totalTime={totalTime}
                 className="h-full"
                 fixedHeight="h-[95%] overflow-y-scroll overflow-x-hidden  scroll-smooth scroll-snap-y 
             [&::-webkit-scrollbar]:w-1

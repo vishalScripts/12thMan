@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setTasks, setLoading, setError } from "../store/tasksSlice";
+import {
+  setTasks,
+  setLoading,
+  setError,
+  setRunningTask,
+} from "../store/tasksSlice";
 import { CalendarService } from "../services/CalendarServices";
 import Button from "./Button";
 import {
@@ -16,9 +21,12 @@ function TasksComp({
   stop,
   reset,
   custom,
+  totalTime,
 }) {
   const { token } = useSelector((state) => state.auth);
-  const { tasks, loading, error } = useSelector((state) => state.tasks);
+  const { tasks, loading, error, runningTask } = useSelector(
+    (state) => state.tasks
+  );
   const dispatch = useDispatch();
   const [filter, setFilter] = useState("all");
 
@@ -83,24 +91,21 @@ function TasksComp({
     console.log(`Task "${task.title}" duration: ${h}h ${m}m ${s}s`);
     // Call the custom timer function with calculated duration
     custom(h, m, s);
+
+    dispatch(setRunningTask(task));
   };
+
+  useEffect(() => {
+    if (totalTime === 0) {
+      toggleTaskStatus(runningTask);
+    }
+  }, [totalTime]);
 
   return (
     <div className={`${className}`}>
       <h2 className="text-lg text-center mb-2 bg-secondary font-bold text-gray-800">
         Tasks
       </h2>
-      <div className="py-4 flex gap-4">
-        <Button onClick={start}>
-          <PlayIcon className="w-6" />
-        </Button>
-        <Button onClick={stop}>
-          <StopCircleIcon className="w-6" />
-        </Button>
-        <Button onClick={reset}>
-          <ArrowPathIcon className="w-6" />
-        </Button>
-      </div>
 
       {/* Filter Buttons */}
       <div className="flex justify-start gap-2 mb-2">

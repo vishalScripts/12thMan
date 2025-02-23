@@ -29,6 +29,9 @@ function PromodoroComp({
   const dispatch = useDispatch();
   const layoutType = useSelector((state) => state.theme.layoutType);
   const [option, setOption] = useState("promodoro");
+  const { tasks, loading, error, runningTask } = useSelector(
+    (state) => state.tasks
+  );
 
   useEffect(() => {
     if (isRunning) {
@@ -201,6 +204,7 @@ function PromodoroComp({
           {/* Circular Progress Bar */}
           <Time />
           <div className="flex  flex-col  items-center justify-center  inset-0">
+            <h2>{runningTask.title}</h2>
             {/* <p>{minutes < 5 ? "Break" : "break in -"}</p> */}
             <div className="text-text flex items-center justify-center text-center font-bold text-6xl">
               {hours < 10 ? `0${hours}` : hours}:
