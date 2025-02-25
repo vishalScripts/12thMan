@@ -1,75 +1,45 @@
+// src/components/TasksComp.jsx
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  setTasks,
-  setLoading,
-  setError,
-  setRunningTask,
-} from "../store/tasksSlice";
-import { CalendarService } from "../services/CalendarServices";
+import { setTasks, setLoading, setError, setRunningTask } from "../store/tasksSlice";
+import CalendarService from "../services/CalendarService";
 import Button from "./Button";
-import {
-  ArrowPathIcon,
-  PlayIcon,
-  StopCircleIcon,
-} from "@heroicons/react/24/solid";
 
-function TasksComp({
-  className = "",
-  fixedHeight,
-  start,
-  stop,
-  reset,
-  custom,
-  totalTime,
-}) {
-  const { token } = useSelector((state) => state.auth);
-  const { tasks, loading, error, runningTask } = useSelector(
-    (state) => state.tasks
-  );
+function TasksComp({ className = "", fixedHeight, custom, totalTime }) {
+  const { tasks, loading, runningTask } = useSelector((state) => state.tasks);
   const dispatch = useDispatch();
   const [filter, setFilter] = useState("all");
 
   useEffect(() => {
     const fetchTasks = async () => {
-      if (token) {
-        dispatch(setLoading(true));
-        try {
-          const calendarService = new CalendarService(token);
-          const fetchedTasks = await calendarService.fetchTasks();
-          dispatch(setTasks(fetchedTasks));
-        } catch (error) {
-          dispatch(setError(error.message));
-        } finally {
-          dispatch(setLoading(false));
-        }
-      }
-    };
-
-    fetchTasks();
-  }, [token, dispatch]);
-
-  const toggleTaskStatus = async (task) => {
-    if (!token) return;
-    const calendarService = new CalendarService(token);
-    const newStatus = !task.done;
-    try {
-      const updatedTask = await calendarService.updateTaskStatus(
-        task.$id,
-        newStatus
-      );
-      if (updatedTask) {
-        dispatch(setLoading(true));
+      const calendarService = new CalendarService();
+      dispatch(setLoading(true));
+      try {
         const fetchedTasks = await calendarService.fetchTasks();
         dispatch(setTasks(fetchedTasks));
+      } catch (error) {
+        dispatch(setError(error.message));
+      } finally {
         dispatch(setLoading(false));
       }
+    };
+    fetchTasks();
+  }, [dispatch]);
+
+  const toggleTaskStatus = async (task) => {
+    const calendarService = new CalendarService();
+    const newStatus = !task.done;
+    try {
+      await calendarService.updateTaskStatus(task.id, newStatus);
+      dispatch(setLoading(true));
+      const fetchedTasks = await calendarService.fetchTasks();
+      dispatch(setTasks(fetchedTasks));
+      dispatch(setLoading(false));
     } catch (error) {
       dispatch(setError(error.message));
     }
   };
 
-  // Filter tasks based on chosen filter
   const today = new Date().toISOString().split("T")[0];
   const filteredTasks = tasks.filter((task) => {
     if (filter === "done") return task.done;
@@ -77,43 +47,32 @@ function TasksComp({
     return true;
   });
 
-  // When the Play button for a task is clicked,
-  // calculate the duration between task.start and task.end
-  // and call custom(h, m, s)
   const handlePlayTask = (task) => {
     const startDate = new Date(task.start);
     const endDate = new Date(task.end);
-    const diffMs = endDate - startDate; // difference in milliseconds
-    const totalSeconds = Math.floor(diffMs / 1000);
+    const totalSeconds = Math.floor((endDate - startDate) / 1000);
     const h = Math.floor(totalSeconds / 3600);
     const m = Math.floor((totalSeconds % 3600) / 60);
     const s = totalSeconds % 60;
-    console.log(`Task "${task.title}" duration: ${h}h ${m}m ${s}s`);
-    // Call the custom timer function with calculated duration
     custom(h, m, s);
-
     dispatch(setRunningTask(task));
   };
 
   useEffect(() => {
-    if (totalTime === 0) {
+    if (totalTime === 0 && runningTask) {
       toggleTaskStatus(runningTask);
     }
-  }, [totalTime]);
+  }, [totalTime, runningTask]);
 
   return (
-    <div className={`${className}`}>
+    <div className={className}>
       <h2 className="text-lg text-center mb-2 bg-secondary font-bold text-gray-800">
         Tasks
       </h2>
-
-      {/* Filter Buttons */}
       <div className="flex justify-start gap-2 mb-2">
         <button
           className={`px-3 py-0 h-6 text-sm font-bold rounded cursor-pointer ${
-            filter === "all"
-              ? "bg-slate-600 text-white"
-              : "bg-gray-200 text-text"
+            filter === "all" ? "bg-slate-600 text-white" : "bg-gray-200"
           }`}
           onClick={() => setFilter("all")}
         >
@@ -129,16 +88,13 @@ function TasksComp({
         </button>
         <button
           className={`px-3 py-0 h-6 text-sm font-bold rounded cursor-pointer ${
-            filter === "today"
-              ? "bg-slate-600 text-white"
-              : "bg-gray-200 text-text"
+            filter === "today" ? "bg-slate-600 text-white" : "bg-gray-200"
           }`}
           onClick={() => setFilter("today")}
         >
           Today
         </button>
       </div>
-
       <div className={fixedHeight}>
         {filteredTasks.length === 0 ? (
           <p>No tasks available...</p>
@@ -146,17 +102,15 @@ function TasksComp({
           <ul className="space-y-4 py-2">
             {filteredTasks.map((task) => (
               <li
-                key={task.$id}
-                className={`px-2 flex gap-2 border-1 rounded shadow-sm overflow-hidden transition-all duration-200 ${
-                  task.done
-                    ? "bg-green-50 hover:bg-green-100"
-                    : "bg-white hover:bg-accent"
-                } ${task.done ? "h-12" : "h-22"}`}
+                key={task.id}
+                className={`px-2 flex gap-2 border rounded shadow-sm transition-all duration-200 ${
+                  task.done ? "bg-green-50" : "bg-white"
+                }`}
               >
                 <div className="flex items-center justify-center">
                   <button
                     onClick={() => toggleTaskStatus(task)}
-                    className={`w-5 min-w-5 min-h-5 h-5 flex items-center justify-center rounded-full border-2 transition-all duration-200 cursor-pointer hover:scale ${
+                    className={`w-5 h-5 flex items-center justify-center rounded-full border-2 transition-all duration-200 cursor-pointer ${
                       task.done
                         ? "border-green-500 bg-green-500"
                         : "border-gray-400 bg-white"
@@ -168,7 +122,6 @@ function TasksComp({
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
                           strokeLinecap="round"
@@ -180,7 +133,7 @@ function TasksComp({
                     )}
                   </button>
                 </div>
-                <div className="flex items-start flex-col justify-center">
+                <div className="flex flex-col justify-center">
                   <h2 className="font-bold text-lg">{task.title}</h2>
                   {!task.done && (
                     <>
@@ -195,7 +148,6 @@ function TasksComp({
                     </>
                   )}
                 </div>
-                {/* If task is not done, add a Play button to calculate duration and call custom */}
                 {!task.done && (
                   <div className="flex items-center justify-center">
                     <Button

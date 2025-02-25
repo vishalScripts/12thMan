@@ -23,6 +23,7 @@
     "appwrite": "^17.0.0",
     "axios": "^1.7.9",
     "chart.js": "^4.4.8",
+    "firebase": "^11.3.1",
     "gapi-script": "^1.2.0",
     "googleapis": "^144.0.0",
     "lucide-react": "^0.475.0",
