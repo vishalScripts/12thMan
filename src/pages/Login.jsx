@@ -9,11 +9,11 @@ function Login() {
 
   const handleLogin = async () => {
     try {
-      const userData = await authService.login();
-      console.log(userData);
-      // if (userData) {
-      //   dispatch(setUser(userData));
-      // }
+      await authService.login();
+      const userData = await authService.getStoredUser();
+      if (userData) {
+        dispatch(setUser(userData));
+      }
     } catch (error) {
       console.error("login failed:", error);
     }

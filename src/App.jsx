@@ -14,7 +14,7 @@ function App() {
       try {
         const userData = await authService.getStoredUser();
         if (userData) {
-          dispatch(setUser(userData)); // Automatically set user if token exists
+          dispatch(setUser(userData));
         }
       } catch (error) {
         console.error("Auto login failed:", error);
