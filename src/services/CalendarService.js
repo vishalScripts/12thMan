@@ -1,59 +1,46 @@
-// src/services/CalendarService.js
 import authService from "./AuthService";
 import { db } from "../firebaseConfig";
-import { collection, addDoc, getDocs, doc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 
 export class CalendarService {
   constructor() {
-    // Reference Firestore collection for tasks
     this.tasksCollection = collection(db, "tasks");
-    // Token will be managed via authService
-    this.token = null;
   }
 
-  // Ensure we have a valid token; if not, login to obtain one.
-  async ensureValidToken() {
-    try {
-      const user = await authService.getSession();
-      if (!this.token) {
-        const { token } = await authService.login();
-        this.token = token;
-      }
-      // (Optional) You may add logic to check token expiry here.
-      return this.token;
-    } catch (error) {
-      throw new Error("Session expired. Please login again.");
-    }
-  }
-
-  // Helper: Make an API call with authentication headers.
   async makeAuthenticatedCall(url, options = {}) {
-    await this.ensureValidToken();
+    let token = await authService.getValidToken(); // Get a valid token
+
     options.headers = {
       ...options.headers,
-      Authorization: `Bearer ${this.token}`,
+      Authorization: `Bearer ${token}`,
     };
+
     let response = await fetch(url, options);
+
     if (response.status === 401) {
-      console.log("Token might be expired. Refreshing token...");
-      this.token = await authService.refreshToken();
-      options.headers.Authorization = `Bearer ${this.token}`;
+      console.log("Token expired. Refreshing token...");
+      token = await authService.refreshToken();
+      options.headers.Authorization = `Bearer ${token}`;
       response = await fetch(url, options);
     }
+
     return response;
   }
 
-  // Google Calendar API: Fetch events.
   async fetchEvents() {
-    await this.ensureValidToken();
     try {
       const response = await this.makeAuthenticatedCall(
         "https://www.googleapis.com/calendar/v3/calendars/primary/events",
         { method: "GET" }
       );
+
       if (!response.ok) {
-        const errorResponse = await response.json();
-        console.error("Error Response:", errorResponse);
         throw new Error("Failed to fetch events");
       }
       return await response.json();
@@ -63,9 +50,7 @@ export class CalendarService {
     }
   }
 
-  // Create a new calendar event.
   async createEvent(event) {
-    await this.ensureValidToken();
     try {
       const response = await this.makeAuthenticatedCall(
         "https://www.googleapis.com/calendar/v3/calendars/primary/events",
@@ -75,11 +60,8 @@ export class CalendarService {
           body: JSON.stringify(event),
         }
       );
-      if (!response.ok) {
-        const errorResponse = await response.json();
-        console.error("Error Response:", errorResponse);
-        throw new Error("Failed to create event");
-      }
+
+      if (!response.ok) throw new Error("Failed to create event");
       return await response.json();
     } catch (error) {
       console.error("Error creating event:", error);
@@ -87,36 +69,17 @@ export class CalendarService {
     }
   }
 
-  // Update an existing calendar event.
   async updateEvent(eventId, updatedEvent) {
-    await this.ensureValidToken();
     try {
-      let response = await fetch(
+      const response = await this.makeAuthenticatedCall(
         `https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`,
         {
           method: "PUT",
-          headers: {
-            Authorization: `Bearer ${this.token}`,
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(updatedEvent),
         }
       );
-      if (response.status === 401) {
-        console.log("Token expired, refreshing token...");
-        this.token = await authService.refreshToken();
-        response = await fetch(
-          `https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`,
-          {
-            method: "PUT",
-            headers: {
-              Authorization: `Bearer ${this.token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(updatedEvent),
-          }
-        );
-      }
+
       if (!response.ok) throw new Error("Failed to update event");
       return await response.json();
     } catch (error) {
@@ -125,9 +88,6 @@ export class CalendarService {
     }
   }
 
-  // --- Firestore Tasks Methods ---
-
-  // Create a new task in Firestore.
   async createTask(taskData) {
     try {
       const docRef = await addDoc(this.tasksCollection, {
@@ -145,7 +105,6 @@ export class CalendarService {
     }
   }
 
-  // Fetch tasks from Firestore.
   async fetchTasks() {
     try {
       const querySnapshot = await getDocs(this.tasksCollection);
@@ -156,7 +115,6 @@ export class CalendarService {
     }
   }
 
-  // Update the status of a task.
   async updateTaskStatus(taskId, done) {
     try {
       const taskRef = doc(db, "tasks", taskId);

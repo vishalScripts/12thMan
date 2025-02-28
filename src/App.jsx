@@ -3,8 +3,7 @@ import "./App.css";
 import { Outlet } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "./store/authSlice";
-// import authService from "./Auth/auth";
-import authService from "./services/authService"
+import authService from "./services/AuthService";
 import Navbar from "./components/Navbar";
 
 function App() {
@@ -12,9 +11,13 @@ function App() {
 
   useEffect(() => {
     const autoLogin = async () => {
-      const userData = await authService.getStoredUser();
-      if (userData) {
-        dispatch(setUser(userData)); // Automatically set user if token exists
+      try {
+        const userData = await authService.getStoredUser();
+        if (userData) {
+          dispatch(setUser(userData)); // Automatically set user if token exists
+        }
+      } catch (error) {
+        console.error("Auto login failed:", error);
       }
     };
 

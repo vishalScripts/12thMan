@@ -1,4 +1,3 @@
-// src/services/AuthService.js
 import { auth, provider } from "../firebaseConfig";
 import {
   signInWithPopup,
@@ -10,12 +9,16 @@ import {
 export class AuthService {
   async login() {
     try {
-      // Force consent to ensure Calendar scope is granted
       const result = await signInWithPopup(auth, provider);
-      console.log("Logged in user:", result.user);
-      // The access token should include the Calendar scope if granted
       const token = result._tokenResponse.oauthAccessToken;
-      console.log("Access token:", token);
+      const expiresIn = 3600 * 1000; // Firebase tokens expire in 1 hour
+      const expiryTime = Date.now() + expiresIn;
+
+      // Store user data and token details in localStorage
+      localStorage.setItem("user", JSON.stringify(result.user));
+      localStorage.setItem("token", token);
+      localStorage.setItem("tokenExpiry", expiryTime.toString());
+
       return { user: result.user, token };
     } catch (error) {
       console.error("Login Error:", error);
@@ -23,9 +26,27 @@ export class AuthService {
     }
   }
 
+  async getStoredUser() {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const token = localStorage.getItem("token");
+    const tokenExpiry = parseInt(localStorage.getItem("tokenExpiry"), 10);
+
+    if (user && token && tokenExpiry) {
+      if (Date.now() < tokenExpiry) {
+        return { user, token };
+      } else {
+        return this.refreshToken();
+      }
+    }
+    return null;
+  }
+
   async logout() {
     try {
       await signOut(auth);
+      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      localStorage.removeItem("tokenExpiry");
       console.log("Logged out successfully");
     } catch (error) {
       console.error("Logout Error:", error);
@@ -47,15 +68,31 @@ export class AuthService {
     try {
       const user = auth.currentUser;
       if (!user) throw new Error("No user logged in");
-      // Reauthenticate to force a new token with the correct scopes
+
+      // Reauthenticate to force a new token
       const result = await reauthenticateWithPopup(user, provider);
       const newToken = result._tokenResponse.oauthAccessToken;
-      console.log("Token refreshed:", newToken);
+      const expiresIn = 3600 * 1000; // Firebase tokens expire in 1 hour
+      const expiryTime = Date.now() + expiresIn;
+
+      // Store the new token and expiry time
+      localStorage.setItem("token", newToken);
+      localStorage.setItem("tokenExpiry", expiryTime.toString());
+
+      console.log("Token refreshed automatically:", newToken);
       return newToken;
     } catch (error) {
       console.error("Error refreshing token:", error);
       throw error;
     }
+  }
+
+  async getValidToken() {
+    const tokenExpiry = parseInt(localStorage.getItem("tokenExpiry"), 10);
+    if (!tokenExpiry || Date.now() >= tokenExpiry) {
+      return this.refreshToken();
+    }
+    return localStorage.getItem("token");
   }
 }
 
