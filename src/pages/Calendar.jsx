@@ -7,11 +7,27 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { useSelector, useDispatch } from "react-redux";
 import CalendarService from "../services/CalendarService";
 import "react-datepicker/dist/react-datepicker.css";
-import TasksComp from "../components/TasksComp.jsx"
+import TasksComp from "../components/TasksComp.jsx";
 import { setTasks, setLoading, setError } from "../store/tasksSlice";
 
+// Utility function to format Date objects into 'YYYY-MM-DDTHH:mm' (local time)
+const formatForInput = (date) => {
+  const pad = (num) => num.toString().padStart(2, "0");
+  const year = date.getFullYear();
+  const month = pad(date.getMonth() + 1);
+  const day = pad(date.getDate());
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+};
+
 // Form component for creating an event
-const FormElem = ({ newEventData, setNewEventData, handleModalSubmit, setShowModal }) => {
+const FormElem = ({
+  newEventData,
+  setNewEventData,
+  handleModalSubmit,
+  setShowModal,
+}) => {
   return (
     <form onSubmit={handleModalSubmit}>
       <div className="mb-4">
@@ -36,11 +52,7 @@ const FormElem = ({ newEventData, setNewEventData, handleModalSubmit, setShowMod
           </label>
           <input
             type="datetime-local"
-            value={
-              newEventData.start
-                ? new Date(newEventData.start).toISOString().slice(0, 16)
-                : new Date().toISOString().slice(0, 16)
-            }
+            value={newEventData.start || formatForInput(new Date())}
             onChange={(e) =>
               setNewEventData((prev) => ({ ...prev, start: e.target.value }))
             }
@@ -55,11 +67,8 @@ const FormElem = ({ newEventData, setNewEventData, handleModalSubmit, setShowMod
           <input
             type="datetime-local"
             value={
-              newEventData.end
-                ? new Date(newEventData.end).toISOString().slice(0, 16)
-                : new Date(new Date().getTime() + 60 * 60 * 1000)
-                    .toISOString()
-                    .slice(0, 16)
+              newEventData.end ||
+              formatForInput(new Date(new Date().getTime() + 60 * 60 * 1000))
             }
             onChange={(e) =>
               setNewEventData((prev) => ({ ...prev, end: e.target.value }))
@@ -90,8 +99,6 @@ const FormElem = ({ newEventData, setNewEventData, handleModalSubmit, setShowMod
 
 function Calendar() {
   const [events, setEvents] = useState([]);
-  const [eventTitle, setEventTitle] = useState("");
-  const [eventDate, setEventDate] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [newEventData, setNewEventData] = useState({
     title: "",
@@ -139,12 +146,25 @@ function Calendar() {
       alert("Please fill in all fields!");
       return false;
     }
+    // Parse the local date string as local time
     const start = new Date(eventData.start);
     const end = new Date(eventData.end);
+
+    console.log("before", start);
+    console.log("before", end);
+    console.log("after", start.toISOString());
+    console.log("after", end.toISOString());
+
     const newEvent = {
       summary: eventData.title,
-      start: { dateTime: start.toISOString() },
-      end: { dateTime: end.toISOString() },
+      start: {
+        dateTime: start.toISOString(), // UTC time
+        timeZone: "Asia/Kolkata", // specify your time zone
+      },
+      end: {
+        dateTime: end.toISOString(),
+        timeZone: "Asia/Kolkata",
+      },
     };
     try {
       const calendarService = new CalendarService();
@@ -178,40 +198,17 @@ function Calendar() {
     }
   };
 
-  const handleCreateEvent = async () => {
-    const startDate = new Date(eventDate);
-    const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
-    const success = await createNewEvent({
-      title: eventTitle,
-      start: eventDate,
-      end: endDate.toISOString().slice(0, 16),
-    });
-    if (success) {
-      setEventTitle("");
-      setEventDate("");
-    }
-  };
-
-  const formatForInput = (date) => {
-    const pad = (num) => num.toString().padStart(2, "0");
-    const year = date.getFullYear();
-    const month = pad(date.getMonth() + 1);
-    const day = pad(date.getDate());
-    const hours = pad(date.getHours());
-    const minutes = pad(date.getMinutes());
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
-  };
-
   const handleDateClick = (info) => {
+    // Use the provided date directly (it is already in local time)
     const startDate = new Date(info.date);
-    const localStartDate = new Date(
-      startDate.getTime() - startDate.getTimezoneOffset() * 60000
-    );
-    const localEndDate = new Date(localStartDate.getTime() + 60 * 60 * 1000);
+    const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
+    console.log("in handle date time", startDate);
+    console.log("in handle date time", endDate);
+
     setNewEventData({
       title: "",
-      start: formatForInput(localStartDate),
-      end: formatForInput(localEndDate),
+      start: formatForInput(startDate),
+      end: formatForInput(endDate),
     });
     setShowModal(true);
   };
@@ -228,8 +225,11 @@ function Calendar() {
   const handleEventDrop = async (info) => {
     const updatedEvent = {
       summary: info.event.title,
-      start: { dateTime: info.event.start.toISOString() },
-      end: { dateTime: info.event.end.toISOString() },
+      start: {
+        dateTime: info.event.start.toISOString(),
+        timeZone: "Asia/Kolkata",
+      },
+      end: { dateTime: info.event.end.toISOString(), timeZone: "Asia/Kolkata" },
     };
     const calendarService = new CalendarService();
     await calendarService.updateEvent(info.event.id, updatedEvent);
@@ -244,8 +244,11 @@ function Calendar() {
   const handleEventResize = async (info) => {
     const updatedEvent = {
       summary: info.event.title,
-      start: { dateTime: info.event.start.toISOString() },
-      end: { dateTime: info.event.end.toISOString() },
+      start: {
+        dateTime: info.event.start.toISOString(),
+        timeZone: "Asia/Kolkata",
+      },
+      end: { dateTime: info.event.end.toISOString(), timeZone: "Asia/Kolkata" },
     };
     const calendarService = new CalendarService();
     await calendarService.updateEvent(info.event.id, updatedEvent);
