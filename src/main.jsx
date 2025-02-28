@@ -11,6 +11,7 @@ import Promodoro from "./pages/Promodoro.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Calendar from "./pages/Calendar.jsx";
 import Login from "./pages/Login.jsx";
+import AuthLayout from "./components/AuthLayout.jsx";
 
 const router = createBrowserRouter([
   {
@@ -23,19 +24,35 @@ const router = createBrowserRouter([
       },
       {
         path: "/promodoro",
-        element: <Promodoro />,
+        element: (
+          <AuthLayout>
+            <Promodoro />
+          </AuthLayout>
+        ),
       },
       {
         path: "/calendar",
-        element: <Calendar />,
+        element: (
+          <AuthLayout>
+            <Calendar />
+          </AuthLayout>
+        ),
       },
       {
         path: "/dashboard",
-        element: <Dashboard />,
+        element: (
+          <AuthLayout>
+            <Dashboard />
+          </AuthLayout>
+        ),
       },
       {
         path: "/login",
-        element: <Login />,
+        element: (
+          <AuthLayout authentication={false}>
+            <Login />
+          </AuthLayout>
+        ),
       },
     ],
   },

@@ -3,9 +3,11 @@ import authService from "../services/AuthService";
 import Button from "../components/Button";
 import { useDispatch } from "react-redux";
 import { setUser } from "../store/authSlice";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     try {
@@ -14,6 +16,8 @@ function Login() {
       if (userData) {
         dispatch(setUser(userData));
       }
+
+      navigate("/Dashboard");
     } catch (error) {
       console.error("login failed:", error);
     }
