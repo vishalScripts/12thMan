@@ -1,7 +1,12 @@
 // src/components/TasksComp.jsx
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setTasks, setLoading, setError, setRunningTask } from "../store/tasksSlice";
+import {
+  setTasks,
+  setLoading,
+  setError,
+  setRunningTask,
+} from "../store/tasksSlice";
 import CalendarService from "../services/CalendarService";
 import Button from "./Button";
 
@@ -43,7 +48,12 @@ function TasksComp({ className = "", fixedHeight, custom, totalTime }) {
   const today = new Date().toISOString().split("T")[0];
   const filteredTasks = tasks.filter((task) => {
     if (filter === "done") return task.done;
-    if (filter === "today") return task.start.startsWith(today);
+    if (filter === "today") {
+      // Compare local dates
+      const taskDate = new Date(task.start).toLocaleDateString();
+      const todayLocal = new Date().toLocaleDateString();
+      return taskDate === todayLocal;
+    }
     return true;
   });
 
