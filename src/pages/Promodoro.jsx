@@ -146,6 +146,8 @@ function Promodoro() {
           {activeContainer === "tasks" && (
             <div className="bg-white rounded-sm h-full overflow-hidden py-4 px-2">
               <TasksComp
+                timer={true}
+                isRunning={isRunning}
                 start={start}
                 stop={stop}
                 reset={reset}

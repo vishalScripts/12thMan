@@ -9,11 +9,23 @@ import {
 } from "../store/tasksSlice";
 import CalendarService from "../services/CalendarService";
 import Button from "./Button";
+import { PauseIcon, PlayIcon } from "@heroicons/react/24/solid";
+import { LoadingOutlined } from "@ant-design/icons";
+import { Flex, Spin } from "antd";
+import { div } from "motion/react-client";
 
-function TasksComp({ className = "", fixedHeight, custom, totalTime }) {
+function TasksComp({
+  className = "",
+  fixedHeight,
+  custom,
+  totalTime,
+  isRunning,
+  timer = false,
+}) {
   const { tasks, loading, runningTask } = useSelector((state) => state.tasks);
   const dispatch = useDispatch();
   const [filter, setFilter] = useState("all");
+  console.log(runningTask);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -112,37 +124,19 @@ function TasksComp({ className = "", fixedHeight, custom, totalTime }) {
           <ul className="space-y-4 py-2">
             {filteredTasks.map((task) => (
               <li
+                onClick={
+                  timer && !task.done ? () => handlePlayTask(task) : () => {}
+                }
                 key={task.id}
-                className={`px-2 flex gap-2 border rounded shadow-sm transition-all duration-200 ${
-                  task.done ? "bg-green-50" : "bg-white"
+                className={`px-2 flex gap-2 items-center justify-between relative border border-slate-300 rounded shadow-sm transition-all duration-200 cursor-pointer ${
+                  (task.done ? "!bg-green-200 " : "bg-white",
+                  runningTask.id == task.id
+                    ? "bg-yellow-200"
+                    : task.done
+                    ? "bg-green-200"
+                    : "bg-white")
                 }`}
               >
-                <div className="flex items-center justify-center">
-                  <button
-                    onClick={() => toggleTaskStatus(task)}
-                    className={`w-5 h-5 flex items-center justify-center rounded-full border-2 transition-all duration-200 cursor-pointer ${
-                      task.done
-                        ? "border-green-500 bg-green-500"
-                        : "border-gray-400 bg-white"
-                    }`}
-                  >
-                    {task.done && (
-                      <svg
-                        className="w-3 h-3 text-white"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                    )}
-                  </button>
-                </div>
                 <div className="flex flex-col justify-center">
                   <h2 className="font-bold text-lg">{task.title}</h2>
                   {!task.done && (
@@ -158,14 +152,40 @@ function TasksComp({ className = "", fixedHeight, custom, totalTime }) {
                     </>
                   )}
                 </div>
-                {!task.done && (
-                  <div className="flex items-center justify-center">
-                    <Button
-                      onClick={() => handlePlayTask(task)}
-                      className="ml-2 bg-blue-500 text-white px-2 py-1 rounded"
-                    >
-                      Play
-                    </Button>
+                {timer ? (
+                  <></>
+                ) : (
+                  <div className="flex items-center justify-center ">
+                    {loading ? (
+                      <div>
+                        <Spin indicator={<LoadingOutlined spin />} />
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => toggleTaskStatus(task)}
+                        className={`w-5 h-5 flex items-center justify-center rounded-full border-2 transition-all duration-200 cursor-pointer hover:rotate-12 hover:scale-105 ${
+                          task.done
+                            ? "border-green-500 bg-green-400"
+                            : "border-gray-400 hover:bg-green-200 bg-white"
+                        }`}
+                      >
+                        {task.done && (
+                          <svg
+                            className="w-5 h-5 text-white"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                        )}
+                      </button>
+                    )}
                   </div>
                 )}
               </li>
