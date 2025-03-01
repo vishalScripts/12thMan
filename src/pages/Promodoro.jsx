@@ -22,6 +22,8 @@ import FloatingWidget from "../components/FloatingWidget";
 import { div } from "motion/react-client";
 import MusicContainer from "../components/MusicContainer";
 import { useTimer } from "../hooks/useTimer";
+
+import { motion, AnimatePresence } from "framer-motion";
 function Promodoro() {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const background = useSelector((state) => state.theme.themeBackground);
@@ -54,6 +56,12 @@ function Promodoro() {
     } else {
       document.exitFullscreen().then(() => setIsFullScreen(false));
     }
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: { opacity: 1, x: 0, transition: { duration: 0.3 } },
+    exit: { opacity: 0, x: -20, transition: { duration: 0.2 } },
   };
 
   return (
@@ -136,33 +144,62 @@ function Promodoro() {
             </div>
           </div>
         </div>
-        <div className="       w-64 h-[80vh] ml-6">
-          {activeContainer === "theme" && <ThemesContainer />}
-          {activeContainer === "music" && (
-            <div className="bg-white rounded-sm h-full py-4 px-2">
-              <MusicContainer />
-            </div>
-          )}
-          {activeContainer === "tasks" && (
-            <div className="bg-white rounded-sm h-full overflow-hidden py-4 px-2">
-              <TasksComp
-                timer={true}
-                isRunning={isRunning}
-                start={start}
-                stop={stop}
-                reset={reset}
-                custom={custom}
-                totalTime={totalTime}
+        <div className="w-64 h-[80vh] ml-6">
+          <AnimatePresence mode="wait">
+            {activeContainer === "theme" && (
+              <motion.div
+                key="theme"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
                 className="h-full"
-                fixedHeight="h-[95%] overflow-y-scroll overflow-x-hidden  scroll-smooth scroll-snap-y 
+              >
+                <ThemesContainer />
+              </motion.div>
+            )}
+
+            {activeContainer === "music" && (
+              <motion.div
+                key="music"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className="bg-white rounded-sm h-full py-4 px-2"
+              >
+                <MusicContainer />
+              </motion.div>
+            )}
+
+            {activeContainer === "tasks" && (
+              <motion.div
+                key="tasks"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className="bg-white rounded-sm h-full overflow-hidden py-4 px-2"
+              >
+                <TasksComp
+                  timer={true}
+                  isRunning={isRunning}
+                  start={start}
+                  stop={stop}
+                  reset={reset}
+                  custom={custom}
+                  totalTime={totalTime}
+                  className="h-full"
+                  fixedHeight="h-[95%] overflow-y-scroll overflow-x-hidden scroll-smooth scroll-snap-y 
             [&::-webkit-scrollbar]:w-1
-  [&::-webkit-scrollbar-track]:bg-white
-  [&::-webkit-scrollbar-thumb]:bg-slate-700
-  dark:[&::-webkit-scrollbar-track]:bg-white
-  dark:[&::-webkit-scrollbar-thumb]:bg-slate-700"
-              />
-            </div>
-          )}
+            [&::-webkit-scrollbar-track]:bg-white
+            [&::-webkit-scrollbar-thumb]:bg-slate-700
+            dark:[&::-webkit-scrollbar-track]:bg-white
+            dark:[&::-webkit-scrollbar-thumb]:bg-slate-700"
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
 

@@ -11,6 +11,8 @@ import {
   ChevronRightIcon,
 } from "@heroicons/react/24/solid";
 import backgrounds from "../data/backgrounds";
+import { motion, AnimatePresence } from "framer-motion";
+import { useInView } from "framer-motion";
 
 function ThemesContainer({ className }) {
   const layoutType = useSelector((state) => state.theme.layoutType);
@@ -27,6 +29,9 @@ function ThemesContainer({ className }) {
 
   const handleNext = () => setLayoutNo((prev) => (prev < 3 ? prev + 1 : 1));
   const handlePrev = () => setLayoutNo((prev) => (prev > 1 ? prev - 1 : 3));
+
+  const ref = React.useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px 0px" });
   return (
     <div className="w-full h-full">
       <div
@@ -107,30 +112,43 @@ function ThemesContainer({ className }) {
   dark:[&::-webkit-scrollbar-thumb]:bg-slate-700
             `}
         >
-          {Object.entries(backgrounds).map(([name, url]) => (
-            <div
-              onClick={() => dispatch(changeBackground(url))}
-              key={name}
-              className="border-1 border-blue-200 rounded-sm cursor-pointer hover:scale-105 hover:shadow-2xs group duration-700 aspect-video scroll-snap-start"
-            >
-              {url.endsWith(".mp4") ? (
-                <video
-                  autoPlay
-                  loop
-                  muted
-                  className="w-full h-full object-cover"
-                >
-                  <source src={url} type="video/mp4" />
-                </video>
-              ) : (
-                <img
-                  src={url}
-                  className="w-full h-full object-cover"
-                  alt={name}
-                />
-              )}
-            </div>
-          ))}
+          {Object.entries(backgrounds).map(([name, url], index) => {
+            const ref = React.useRef(null);
+            const isInView = useInView(ref, {
+              once: true,
+              margin: "-50px 0px",
+            });
+
+            return (
+              <motion.div
+                ref={ref}
+                initial={{ opacity: 0, y: 10 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.1, delay: index * 0.05 }}
+                onClick={() => dispatch(changeBackground(url))}
+                key={name}
+                className="border-1 border-blue-200 rounded-sm cursor-pointer hover:scale-105 hover:shadow-2xs group duration-700 aspect-video scroll-snap-start"
+              >
+                {url.endsWith(".mp4") ? (
+                  <video
+                    autoPlay
+                    loop
+                    muted
+                    className="w-full h-full object-cover"
+                  >
+                    <source src={url} type="video/mp4" />
+                  </video>
+                ) : (
+                  <img
+                    src={url}
+                    className="w-full h-full object-cover"
+                    alt={name}
+                  />
+                )}
+              </motion.div>
+            );
+          })}
+
           <div
             onClick={() => {
               dispatch(changeBackground(""));

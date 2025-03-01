@@ -204,7 +204,9 @@ function PromodoroComp({
           {/* Circular Progress Bar */}
           <Time />
           <div className="flex  flex-col  items-center justify-center  inset-0">
-            <h2>{runningTask.title}</h2>
+            <h1 className="text-2xl text-start bg-[#0000001e] rounded-md rounded-b-none border border-[#0000001e]  border-b-1 border-b-slate-900 w-full px-2">
+              {runningTask.title}
+            </h1>
             {/* <p>{minutes < 5 ? "Break" : "break in -"}</p> */}
             <div className="text-text flex items-center justify-center text-center font-bold text-6xl">
               {hours < 10 ? `0${hours}` : hours}:
