@@ -20,10 +20,7 @@ function Signup() {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      alert("Passwords do not match!");
-      return;
-    }
+
     try {
       const user = await authService.signup(email, password, name, username);
       const token = localStorage.getItem("token");
