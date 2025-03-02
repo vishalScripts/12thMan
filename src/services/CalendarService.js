@@ -91,7 +91,7 @@ export class CalendarService {
   async createTask(taskData) {
     try {
       const docRef = await addDoc(this.tasksCollection, {
-        googleEventId: taskData.id,
+        googleEventId: taskData.id || null,
         title: taskData.title,
         start: taskData.start,
         end: taskData.end,
@@ -123,6 +123,19 @@ export class CalendarService {
       return true;
     } catch (error) {
       console.error("Error updating task status:", error);
+      return false;
+    }
+  }
+
+  // New method to update the task (title, start, end, etc.)
+  async updateTask(taskId, updatedData) {
+    try {
+      const taskRef = doc(db, "tasks", taskId);
+      await updateDoc(taskRef, updatedData);
+      console.log("Task updated successfully");
+      return true;
+    } catch (error) {
+      console.error("Error updating task:", error);
       return false;
     }
   }

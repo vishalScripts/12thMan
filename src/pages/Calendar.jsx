@@ -110,21 +110,20 @@ function Calendar() {
 
   useEffect(() => {
     const calendarService = new CalendarService();
+    // Fetch tasks from Firebase and map them to FullCalendar's event format
     calendarService
-      .fetchEvents()
-      .then((fetchedEvents) => {
-        // Use optional chaining to safely get the items array
-        const items = fetchedEvents?.items || [];
-        const formattedEvents = items.map((event) => ({
-          id: event.id,
-          title: event.summary || "No Title",
-          start: event.start?.dateTime || event.start?.date,
-          end: event.end?.dateTime || event.end?.date,
+      .fetchTasks()
+      .then((fetchedTasks) => {
+        const formattedTasks = fetchedTasks.map((task) => ({
+          id: task.id,
+          title: task.title,
+          start: task.start,
+          end: task.end,
         }));
-        setEvents(formattedEvents);
+        setEvents(formattedTasks);
       })
       .catch((err) => {
-        console.error("Error fetching events:", err);
+        console.error("Error fetching tasks:", err);
       });
   }, []);
 
@@ -141,6 +140,7 @@ function Calendar() {
     }
   };
 
+  // Create a new task in Firebase instead of creating an event on Google Calendar
   const createNewEvent = async (eventData) => {
     if (!eventData.title || !eventData.start) {
       alert("Please fill in all fields!");
@@ -155,45 +155,31 @@ function Calendar() {
     console.log("after", start.toISOString());
     console.log("after", end.toISOString());
 
-    const newEvent = {
-      summary: eventData.title,
-      start: {
-        dateTime: start.toISOString(), // UTC time
-        timeZone: "Asia/Kolkata", // specify your time zone
-      },
-      end: {
-        dateTime: end.toISOString(),
-        timeZone: "Asia/Kolkata",
-      },
-    };
     try {
       const calendarService = new CalendarService();
-      const createdEvent = await calendarService.createEvent(newEvent);
-      if (createdEvent) {
+      // Create the task in Firebase
+      const createdTask = await calendarService.createTask({
+        title: eventData.title,
+        start: start.toISOString(),
+        end: end.toISOString(),
+        done: false,
+      });
+      if (createdTask) {
         setEvents((prev) => [
           ...prev,
           {
-            id: createdEvent.id,
-            title: createdEvent.summary,
-            start: createdEvent.start.dateTime,
-            end: createdEvent.end.dateTime,
+            id: createdTask.id,
+            title: createdTask.title,
+            start: createdTask.start,
+            end: createdTask.end,
           },
         ]);
-        // Create a corresponding task in Firestore
-        const taskCreated = await calendarService.createTask({
-          id: createdEvent.id,
-          title: createdEvent.summary,
-          start: createdEvent.start.dateTime,
-          end: createdEvent.end.dateTime,
-          done: false,
-        });
-        if (taskCreated) {
-          fetchTasks();
-        }
+        // Optionally refresh tasks from Redux store
+        fetchTasks();
         return true;
       }
     } catch (error) {
-      alert("Error creating event: " + error.message);
+      alert("Error creating task: " + error.message);
       return false;
     }
   };
@@ -223,16 +209,13 @@ function Calendar() {
   };
 
   const handleEventDrop = async (info) => {
-    const updatedEvent = {
-      summary: info.event.title,
-      start: {
-        dateTime: info.event.start.toISOString(),
-        timeZone: "Asia/Kolkata",
-      },
-      end: { dateTime: info.event.end.toISOString(), timeZone: "Asia/Kolkata" },
+    const updatedData = {
+      title: info.event.title,
+      start: info.event.start.toISOString(),
+      end: info.event.end.toISOString(),
     };
     const calendarService = new CalendarService();
-    await calendarService.updateEvent(info.event.id, updatedEvent);
+    await calendarService.updateTask(info.event.id, updatedData);
     const updatedEvents = events.map((event) =>
       event.id === info.event.id
         ? { ...event, start: info.event.start, end: info.event.end }
@@ -242,16 +225,13 @@ function Calendar() {
   };
 
   const handleEventResize = async (info) => {
-    const updatedEvent = {
-      summary: info.event.title,
-      start: {
-        dateTime: info.event.start.toISOString(),
-        timeZone: "Asia/Kolkata",
-      },
-      end: { dateTime: info.event.end.toISOString(), timeZone: "Asia/Kolkata" },
+    const updatedData = {
+      title: info.event.title,
+      start: info.event.start.toISOString(),
+      end: info.event.end.toISOString(),
     };
     const calendarService = new CalendarService();
-    await calendarService.updateEvent(info.event.id, updatedEvent);
+    await calendarService.updateTask(info.event.id, updatedData);
     const updatedEvents = events.map((event) =>
       event.id === info.event.id
         ? { ...event, start: info.event.start, end: info.event.end }
