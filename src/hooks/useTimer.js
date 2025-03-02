@@ -65,7 +65,7 @@ export function useTimer(
 
           return newTotalTime;
         });
-      }, 1);
+      }, 1000);
     } else {
       clearInterval(intervalRef.current);
     }

@@ -9,6 +9,7 @@ import CalendarService from "../services/CalendarService";
 import "react-datepicker/dist/react-datepicker.css";
 import TasksComp from "../components/TasksComp.jsx";
 import { setTasks, setLoading, setError } from "../store/tasksSlice";
+import Button from "../components/Button.jsx";
 
 // Utility function to format Date objects into 'YYYY-MM-DDTHH:mm' (local time)
 const formatForInput = (date) => {
@@ -79,19 +80,16 @@ const FormElem = ({
         </div>
       </div>
       <div className="flex justify-center gap-2">
-        <button
+        <Button
           type="button"
           onClick={() => setShowModal(false)}
-          className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded"
+          className="px-4 py-2 text-white bg-gray-500 hover:bg-gray-400 rounded"
         >
           Cancel
-        </button>
-        <button
-          type="submit"
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-        >
+        </Button>
+        <Button type="submit" className="px-4 py-2  text-white rounded ">
           Create Task
-        </button>
+        </Button>
       </div>
     </form>
   );
@@ -286,7 +284,7 @@ function Calendar() {
               center: "title",
               right: "dayGridMonth,timeGridWeek,timeGridDay",
             }}
-            eventBackgroundColor="#6366F1"
+            eventBackgroundColor="#d33cb4"
             eventTextColor="#ffffff"
             dayMaxEvents={2}
             selectable={true}
@@ -301,7 +299,7 @@ function Calendar() {
                 (task) => task.title === info.event.title && task.done === true
               );
               if (task) {
-                info.el.style.backgroundColor = "#FF5733";
+                info.el.style.backgroundColor = "#00c951";
               }
             }}
           />

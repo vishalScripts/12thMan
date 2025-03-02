@@ -18,6 +18,7 @@ function App() {
         if (userData) {
           dispatch(setUser(userData));
         }
+        navigate("/dashboard");
       } catch (error) {
         console.error("Auto login failed:", error);
       }

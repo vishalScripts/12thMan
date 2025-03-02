@@ -301,24 +301,24 @@ function PromodoroComp({
           {/* Buttons */}
           <div className=" py-4 ">
             <div className=" flex  gap-4">
-              <Button
-                className="bg-transparent  hover:bg-transparent hover:backdrop-blur-lg hover:border-1  hover:border-text hover:shadow-2xs backdrop-blur-[2px] "
+              <button
+                className="py-1 px-5 cursor-pointer hover:scale-110 duration-300 border border-text rounded-md bg-transparent  hover:bg-transparent hover:backdrop-blur-lg hover:border-1  hover:border-text hover:shadow-2xs backdrop-blur-[2px] "
                 onClick={start}
               >
                 <PlayIcon className="w-6" />
-              </Button>
-              <Button
-                className="bg-transparent  hover:bg-transparent hover:backdrop-blur-lg hover:border-1  hover:border-text hover:shadow-2xs backdrop-blur-[2px]"
+              </button>
+              <button
+                className="py-1 px-5 cursor-pointer hover:scale-110 duration-300 border border-text rounded-md bg-transparent  hover:bg-transparent hover:backdrop-blur-lg hover:border-1  hover:border-text hover:shadow-2xs backdrop-blur-[2px]"
                 onClick={stop}
               >
                 <StopCircleIcon className="w-6" />
-              </Button>
-              <Button
-                className="bg-transparent  hover:bg-transparent hover:backdrop-blur-lg hover:border-1  hover:border-text hover:shadow-2xs backdrop-blur-[2px]"
+              </button>
+              <button
+                className="py-1 px-5 cursor-pointer hover:scale-110 duration-300 border border-text rounded-md  bg-transparent  hover:bg-transparent hover:backdrop-blur-lg hover:border-1  hover:border-text hover:shadow-2xs backdrop-blur-[2px] "
                 onClick={reset}
               >
                 <ArrowPathIcon className="w-6" />
-              </Button>
+              </button>
             </div>
           </div>
         </div>

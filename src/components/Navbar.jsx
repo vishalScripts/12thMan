@@ -6,16 +6,23 @@ import { useDispatch, useSelector } from "react-redux";
 // import authService from "../Auth/auth";
 import ProfileLogo from "./ProfileLogo";
 import { logoutUser } from "../store/authSlice";
+import { Button } from "antd";
 
 function Navbar() {
   const isNavbarHidden = useSelector((state) => state.theme.navbarHidden);
+  const userStatus = useSelector((state) => state.auth.status);
+
+  const handleLogout = async () => {
+    await authService.logout();
+    dispatch(logoutUser());
+  };
 
   return (
     <>
       <nav
         className={`${
           isNavbarHidden ? "hidden" : "block"
-        } h-[10vh] relative bg-white w-full  border-b-1 border-gray-300 shadow-sm z-[99999999]`}
+        } h-[10vh] relative bg-white w-full  border-b-1 border-gray-300 shadow-sm z-[99999999] `}
       >
         <Container className=" h-full place-items-center grid grid-cols-12 ">
           {/* row 1 */}
@@ -48,8 +55,18 @@ function Navbar() {
             </ul>
           </div>
           {/* row 3 */}
-          <div className="  col-span-2">
-            <ProfileLogo />
+          <div className="  col-span-2 flex items-center justify-center">
+            {userStatus ? (
+              <ProfileLogo />
+            ) : (
+              <button
+                variant="filled"
+                onClick={handleLogout}
+                className=" px-4 py-1 cursor-pointer bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+              >
+                <Link to="/login">Login</Link>
+              </button>
+            )}
           </div>
         </Container>
       </nav>
