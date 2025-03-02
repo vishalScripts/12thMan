@@ -1,11 +1,13 @@
 import authService from "./AuthService";
-import { db } from "../firebaseConfig";
+import { db, auth } from "../firebaseConfig"; // imported auth from firebaseConfig
 import {
   collection,
   addDoc,
   getDocs,
   doc,
   updateDoc,
+  query, // added import
+  where, // added import
 } from "firebase/firestore";
 
 export class CalendarService {
@@ -90,12 +92,18 @@ export class CalendarService {
 
   async createTask(taskData) {
     try {
+      // Use Firebase Auth to get the current user
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error("User is not authenticated");
+      }
       const docRef = await addDoc(this.tasksCollection, {
         googleEventId: taskData.id || null,
         title: taskData.title,
         start: taskData.start,
         end: taskData.end,
         done: taskData.done,
+        userId: user.uid, // Associate task with current user
       });
       console.log("Task created with ID:", docRef.id);
       return { id: docRef.id, ...taskData };
@@ -107,7 +115,17 @@ export class CalendarService {
 
   async fetchTasks() {
     try {
-      const querySnapshot = await getDocs(this.tasksCollection);
+      // Use Firebase Auth to get the current user
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error("User is not authenticated");
+      }
+      // Query to filter tasks by current user's uid
+      const tasksQuery = query(
+        this.tasksCollection,
+        where("userId", "==", user.uid)
+      );
+      const querySnapshot = await getDocs(tasksQuery);
       return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     } catch (error) {
       console.error("Error fetching tasks:", error);

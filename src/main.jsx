@@ -10,7 +10,8 @@ import Home from "./pages/Home.jsx";
 import Promodoro from "./pages/Promodoro.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Calendar from "./pages/Calendar.jsx";
-import Login from "./pages/Login.jsx";
+import Login from "./components/Login.jsx";
+import Signup from "./components/Signup.jsx";
 import AuthLayout from "./components/AuthLayout.jsx";
 
 const router = createBrowserRouter([
@@ -51,6 +52,14 @@ const router = createBrowserRouter([
         element: (
           <AuthLayout authentication={false}>
             <Login />
+          </AuthLayout>
+        ),
+      },
+      {
+        path: "/Signup",
+        element: (
+          <AuthLayout authentication={false}>
+            <Signup />
           </AuthLayout>
         ),
       },

@@ -1,10 +1,15 @@
-import { auth, provider } from "../firebaseConfig";
+// src/services/AuthService.js
+import { auth, provider, db } from "../firebaseConfig";
 import {
   signInWithPopup,
+  signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
   reauthenticateWithPopup,
+  createUserWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
+import { collection, addDoc } from "firebase/firestore";
 
 export class AuthService {
   async login() {
@@ -22,6 +27,24 @@ export class AuthService {
       return { user: result.user, token };
     } catch (error) {
       console.error("Login Error:", error);
+      throw error;
+    }
+  }
+
+  async loginWithEmail(email, password) {
+    try {
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      const token = await result.user.getIdToken();
+      const expiresIn = 3600 * 1000;
+      const expiryTime = Date.now() + expiresIn;
+
+      localStorage.setItem("user", JSON.stringify(result.user));
+      localStorage.setItem("token", token);
+      localStorage.setItem("tokenExpiry", expiryTime.toString());
+
+      return { user: result.user, token };
+    } catch (error) {
+      console.error("Email login error:", error);
       throw error;
     }
   }
@@ -72,10 +95,9 @@ export class AuthService {
       // Reauthenticate to force a new token
       const result = await reauthenticateWithPopup(user, provider);
       const newToken = result._tokenResponse.oauthAccessToken;
-      const expiresIn = 3600 * 1000; // Firebase tokens expire in 1 hour
+      const expiresIn = 3600 * 1000;
       const expiryTime = Date.now() + expiresIn;
 
-      // Store the new token and expiry time
       localStorage.setItem("token", newToken);
       localStorage.setItem("tokenExpiry", expiryTime.toString());
 
@@ -93,6 +115,42 @@ export class AuthService {
       return this.refreshToken();
     }
     return localStorage.getItem("token");
+  }
+
+  // New signup method that accepts username, name, email, and password.
+  async signup(email, password, name, username) {
+    try {
+      // Create the user with email and password
+      const result = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      // Update the user's display name with the provided name
+      await updateProfile(result.user, { displayName: name });
+
+      // Store additional user info (username, name, email) in Firestore
+      await addDoc(collection(db, "users"), {
+        uid: result.user.uid,
+        username: username,
+        name: name,
+        email: email,
+      });
+
+      const token = await result.user.getIdToken();
+      const expiresIn = 3600 * 1000;
+      const expiryTime = Date.now() + expiresIn;
+
+      localStorage.setItem("user", JSON.stringify(result.user));
+      localStorage.setItem("token", token);
+      localStorage.setItem("tokenExpiry", expiryTime.toString());
+
+      return result.user;
+    } catch (error) {
+      console.error("Signup Error:", error);
+      throw error;
+    }
   }
 }
 
