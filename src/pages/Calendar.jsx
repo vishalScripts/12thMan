@@ -87,7 +87,7 @@ const FormElem = ({
         >
           Cancel
         </Button>
-        <Button type="submit" className="px-4 py-2  text-white rounded ">
+        <Button type="submit" className="px-4 py-2 text-white rounded ">
           Create Task
         </Button>
       </div>
@@ -105,6 +105,7 @@ function Calendar() {
   });
   const dispatch = useDispatch();
   const { tasks, loading } = useSelector((state) => state.tasks);
+  const calendarRef = useRef(null);
 
   useEffect(() => {
     const calendarService = new CalendarService();
@@ -182,6 +183,16 @@ function Calendar() {
     }
   };
 
+  // Handler for selecting a time range by dragging on the calendar
+  const handleSelect = (info) => {
+    setNewEventData({
+      title: "",
+      start: formatForInput(info.start),
+      end: formatForInput(info.end),
+    });
+    setShowModal(true);
+  };
+
   const handleDateClick = (info) => {
     // Use the provided date directly (it is already in local time)
     const startDate = new Date(info.date);
@@ -237,8 +248,6 @@ function Calendar() {
     );
     setEvents(updatedEvents);
   };
-
-  const calendarRef = useRef(null);
 
   useEffect(() => {
     if (calendarRef.current) {
@@ -298,6 +307,7 @@ function Calendar() {
             eventTextColor="#ffffff"
             dayMaxEvents={2}
             selectable={true}
+            select={handleSelect} // New selection callback for drag selection
             editable={true}
             eventResizableFromStart={true}
             eventDrop={handleEventDrop}
