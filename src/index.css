@@ -28,3 +28,15 @@
   scrollbar-width: thin;
   scrollbar-color: black;
 }
+
+.fc-timegrid-now-indicator-arrow {
+  border-top-color: #ff5722 !important; /* Change the arrow color */
+}
+
+.fc-timegrid-now-indicator-line {
+  border-top: 2px solid #ff5722 !important; /* Make the line bolder and more vibrant */
+}
+
+.fc-timegrid-slot.fc-timegrid-slot-lane.fc-timegrid-slot-label[data-time*=":00"] {
+  background: linear-gradient(to right, rgba(255, 87, 34, 0.1), transparent);
+}

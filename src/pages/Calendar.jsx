@@ -1,5 +1,5 @@
 // src/components/Calendar.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -238,6 +238,15 @@ function Calendar() {
     setEvents(updatedEvents);
   };
 
+  const calendarRef = useRef(null);
+
+  useEffect(() => {
+    if (calendarRef.current) {
+      const calendarApi = calendarRef.current.getApi();
+      calendarApi.scrollToTime(new Date()); // Scrolls to the current time
+    }
+  }, []);
+
   return (
     <div className="flex h-[90vh] bg-gray-100 font-sans">
       {/* Modal for creating a new event */}
@@ -274,6 +283,7 @@ function Calendar() {
       <div className="flex-1 h-full p-6">
         <div className="bg-white shadow-lg rounded-lg overflow-hidden h-full">
           <FullCalendar
+            ref={calendarRef}
             key={loading ? "loading" : "loaded"}
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
             initialView="timeGridDay"
@@ -294,6 +304,7 @@ function Calendar() {
             eventResize={handleEventResize}
             dateClick={handleDateClick}
             eventClick={(info) => console.log(info)}
+            nowIndicator={true}
             eventDidMount={(info) => {
               const task = tasks.find(
                 (task) => task.title === info.event.title && task.done === true

@@ -44,7 +44,7 @@ function Navbar() {
                 to="/promodoro"
                 className="hover:bg-secondary duration-300 px-4 rounded-sm"
               >
-                <li className="text-lg font-medium">Promodoro</li>
+                <li className="text-lg font-medium">Pomodoro</li>
               </Link>
               <Link
                 to="/calendar"

@@ -169,7 +169,7 @@ function TasksComp({
                     runningTask.id == task.id
                       ? "bg-yellow-200"
                       : task.done
-                      ? "bg-green-200"
+                      ? "bg-green-200 line-through"
                       : "bg-white")
                   }`}
                 >
