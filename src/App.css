@@ -1,11 +1,12 @@
 @import "tailwindcss";
-
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+@custom-variant dark (&:where(.dark, .dark *));
 @theme {
-  --color-text: #160914;
-  --color-background: #fbf4f9;
-  --color-primary: #d33cb4;
-  --color-secondary: #ec89d8;
-  --color-secondary-hover: #c5ccaba8;
-  --color-accent: #89b8b6;
-  --color-accent-hover: #e4c1b1;
+  --color-text: #1a0e23; /* Deep purple for focus and depth */
+  --color-background: #fdfcff; /* Soft off-white for a light, uplifting feel */
+  --color-primary: #8f5fe8; /* Vibrant purple-blue for a futuristic, determined vibe */
+  --color-secondary: #ff9fe8; /* Cheerful pink for motivation and warmth */
+  --color-secondary-hover: #c9a9ff; /* Softer purple glow for interaction */
+  --color-accent: #6fd3c7; /* Refreshing teal for balance and clarity */
+  --color-accent-hover: #ffd789; /* Warm golden tone for progress and success */
 }

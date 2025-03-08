@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import { useTimer } from "../hooks/useTimer";
 import Button from "./Button";
 import { useDispatch, useSelector } from "react-redux";
-import { pre } from "motion/react-client";
+import {
+  incrementPomodoros,
+  addStudyTime,
+  addBreakTime,
+} from "../store/statsSlice"; // Import actions
 import normalTheme from "../assets/normalTheme.png";
 import ThemesContainer from "./ThemesContainer";
 import Time from "./Time";
@@ -32,6 +36,59 @@ function PromodoroComp({
   const { tasks, loading, error, runningTask } = useSelector(
     (state) => state.tasks
   );
+
+  // Track the current session type (work or break)
+  const [sessionType, setSessionType] = useState("work");
+  // Track time elapsed in the current session
+  const [elapsedTime, setElapsedTime] = useState(0);
+
+  // Track when timer started
+  const [startTime, setStartTime] = useState(null);
+
+  // Handle starting the timer
+  const handleStart = () => {
+    start();
+    setStartTime(Date.now());
+  };
+
+  // Handle stopping the timer
+  const handleStop = () => {
+    stop();
+    if (startTime) {
+      const timeSpentInHours = (Date.now() - startTime) / 1000 / 60 / 60;
+
+      // If it was a work session, increment study time
+      if (sessionType === "work") {
+        dispatch(addStudyTime(timeSpentInHours));
+      } else {
+        // Otherwise it was a break
+        dispatch(addBreakTime(timeSpentInHours));
+      }
+
+      setStartTime(null);
+    }
+  };
+
+  // When timer completes
+  useEffect(() => {
+    if (totalTime === 0 && !isRunning && startTime) {
+      // If work session completed, increment pomodoro count
+      if (sessionType === "work") {
+        dispatch(incrementPomodoros());
+
+        // Auto-switch to break mode (5 min)
+        setSessionType("break");
+        const breakMinutes = 5;
+        custom(0, breakMinutes, 0);
+      } else {
+        // Break completed, switch back to work
+        setSessionType("work");
+        type1(); // Default back to work timer
+      }
+
+      setStartTime(null);
+    }
+  }, [totalTime, isRunning]);
 
   useEffect(() => {
     if (isRunning) {
@@ -80,6 +137,16 @@ function PromodoroComp({
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
+  // Helper function to handle different timer presets
+  const handleTimerPreset = (preset) => {
+    setSessionType("work"); // Set to work mode when manually changing timer
+    if (preset === "type1") {
+      type1();
+    } else if (preset === "type2") {
+      type2();
+    }
+  };
 
   if (layoutType === "normal") {
     return (

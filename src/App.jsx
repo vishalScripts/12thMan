@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { setUser } from "./store/authSlice";
 import authService from "./services/AuthService";
 import Navbar from "./components/Navbar";
+import { ToastContainer, toast } from "react-toastify";
 
 function App() {
   const dispatch = useDispatch();
@@ -33,6 +34,7 @@ function App() {
       <main className="bg-background">
         <Outlet />
       </main>
+      <ToastContainer />
     </>
   );
 }

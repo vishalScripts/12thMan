@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { toast } from "react-toastify";
 
 export function useTimer(
   initialHours = 0,
@@ -24,17 +25,25 @@ export function useTimer(
       JSON.stringify({ hours, minutes, seconds, isRunning, totalTime })
     );
   }
-
-  function sendNotification(message, desc) {
+  function sendNotification(title, message) {
     if (Notification.permission === "granted") {
-      new Notification(message, {
-        body: desc,
-        icon: "https://cdn-icons-png.flaticon.com/512/1040/1040230.png",
+      new Notification(title, {
+        body: message,
+        icon: "https://i.pinimg.com/originals/a4/03/ab/a403ab437cabe6b1d988cd7a74ffa046.gif", // Custom icon
+        badge:
+          "https://i.pinimg.com/originals/a4/03/ab/a403ab437cabe6b1d988cd7a74ffa046.gif", // Small icon (optional)
+        vibrate: [200, 100, 200], // Vibration pattern (works on mobile)
+      });
+
+      toast.info(`${title} - ${message}`, {
+        position: "bottom-center",
+        autoClose: 5000,
+        style: { backgroundColor: "#2D3748", color: "#F7FAFC" }, // Custom styling for toast
       });
     } else if (Notification.permission !== "denied") {
       Notification.requestPermission().then((permission) => {
         if (permission === "granted") {
-          sendNotification(message, desc);
+          sendNotification(title, message);
         }
       });
     }
@@ -52,6 +61,12 @@ export function useTimer(
           }
 
           const newTotalTime = prevTotalTime - 1;
+
+          // Send notification when 5 minutes remain (300 seconds)
+          if (newTotalTime === 300) {
+            sendNotification("Almost done!", "Only 5 minutes remaining!");
+          }
+
           const newHours = Math.floor(newTotalTime / 3600);
           const newMinutes = Math.floor((newTotalTime % 3600) / 60);
           const newSeconds = newTotalTime % 60;
