@@ -13,9 +13,18 @@ import Button from "./Button";
 import { PauseIcon, PlayIcon } from "@heroicons/react/24/solid";
 import { LoadingOutlined } from "@ant-design/icons";
 import { Flex, Spin } from "antd";
-import { div } from "motion/react-client";
 import Notification from "./Notification";
 import { motion, AnimatePresence } from "framer-motion";
+
+// Color variables to match our landing page theme
+const COLORS = {
+  primary: "var(--color-primary, #8f5fe8)",
+  secondary: "var(--color-secondary, #ff9fe8)",
+  accent: "var(--color-accent, #6fd3c7)",
+  background: "var(--color-background, #fdfcff)",
+  text: "var(--color-text, #1a0e23)",
+  secondaryHover: "var(--color-secondary-hover, #c9a9ff)",
+};
 
 function TasksComp({
   className = "",
@@ -101,7 +110,7 @@ function TasksComp({
   };
 
   return (
-    <div className={className}>
+    <div className={`${className}`}>
       <AnimatePresence>
         {notifications.map((notif) => (
           <Notification
@@ -143,71 +152,165 @@ function TasksComp({
           Today
         </button>
       </div>
-      <div className={fixedHeight}>
+
+      {/* Tasks List */}
+      <div className={`${fixedHeight} overflow-y-auto`}>
         {filteredTasks.length === 0 ? (
-          <p>No tasks available...</p>
+          <div className="flex flex-col items-center justify-center h-32 text-gray-400">
+            <svg
+              className="w-12 h-12 mb-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+              />
+            </svg>
+            <p className="text-sm">No tasks available...</p>
+          </div>
         ) : (
-          <ul className="space-y-4 py-2">
+          <ul className="space-y-3">
             <AnimatePresence>
               {filteredTasks.map((task, index) => (
                 <motion.li
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }} // Stagger effect
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
                   onClick={
                     timer && !task.done
                       ? () => {
                           handlePlayTask(task);
-                          addNotification("Timer started", "sucess");
+                          addNotification("Timer started", "success");
                         }
                       : () => {}
                   }
                   key={task.id}
-                  className={`px-2 flex gap-2 items-center justify-between relative border border-slate-300 rounded shadow-sm transition-all duration-200 cursor-pointer ${
-                    (task.done ? "!bg-green-200 " : "bg-white",
-                    runningTask.id == task.id
-                      ? "bg-yellow-200"
-                      : task.done
-                      ? "bg-green-200 line-through"
-                      : "bg-white")
-                  }`}
+                  className={`p-3 flex gap-3 items-center justify-between relative rounded-sm border transition-all duration-200 
+                    ${
+                      runningTask.id === task.id
+                        ? "bg-amber-50 border-amber-200 shadow-md"
+                        : task.done
+                        ? "bg-green-50 border-green-200"
+                        : "bg-white border-gray-100 hover:border-purple-200 hover:shadow-sm"
+                    }
+                    ${timer && !task.done ? "cursor-pointer" : ""}
+                  `}
                 >
-                  <div className="flex flex-col justify-center">
-                    <h2 className="font-bold text-lg">{task.title}</h2>
+                  <div className="flex flex-col justify-center flex-1">
+                    <h3
+                      className={`font-medium text-gray-800 ${
+                        task.done ? "line-through text-gray-500" : ""
+                      }`}
+                    >
+                      {task.title}
+                    </h3>
                     {!task.done && (
-                      <>
-                        <p className="text-xs">
-                          <span className="font-semibold text-sm">Start:</span>{" "}
-                          {new Date(task.start).toLocaleString()}
-                        </p>
-                        <p className="text-xs">
-                          <span className="font-semibold text-sm">End:</span>{" "}
-                          {new Date(task.end).toLocaleString()}
-                        </p>
-                      </>
+                      <div className="mt-1   flex">
+                        <div className="">
+                          <p className="text-xs w-4 h-full  text-gray-500 flex items-center">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 30 24"
+                              className=" h-full min-w-6  rotate-90"
+                            >
+                              <path
+                                d="M4 12h21"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              />
+
+                              <circle
+                                cx="6"
+                                cy="12"
+                                r="3"
+                                fill="currentColor"
+                              />
+
+                              <path
+                                d="M24 16l4-4-4-4"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              />
+                            </svg>
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-500 flex items-center">
+                            {new Date(task.start).toLocaleString(undefined, {
+                              month: "short",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </p>
+
+                          <p className="text-xs text-gray-500 flex items-center">
+                            {new Date(task.end).toLocaleString(undefined, {
+                              month: "short",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </p>
+                        </div>
+                      </div>
                     )}
                   </div>
+
                   {timer ? (
-                    <></>
+                    runningTask.id === task.id && (
+                      <div className="p-2 rounded-full bg-amber-100">
+                        <svg
+                          className="w-4 h-4 text-amber-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                      </div>
+                    )
                   ) : (
-                    <div className="flex items-center justify-center ">
+                    <div className="flex items-center justify-center">
                       {loading ? (
-                        <div>
-                          <Spin indicator={<LoadingOutlined spin />} />
-                        </div>
+                        <Spin
+                          indicator={
+                            <LoadingOutlined
+                              style={{ color: COLORS.primary }}
+                              spin
+                            />
+                          }
+                        />
                       ) : (
                         <button
-                          onClick={() => toggleTaskStatus(task)}
-                          className={`w-5 h-5 flex items-center justify-center rounded-full border-2 transition-all duration-200 cursor-pointer hover:rotate-12 hover:scale-105 ${
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleTaskStatus(task);
+                          }}
+                          className={`w-6 h-6 flex items-center justify-center rounded-full border-2 transition-all duration-200 hover:scale-110 cursor-pointer ${
                             task.done
-                              ? "border-green-500 bg-green-400"
-                              : "border-gray-400 hover:bg-green-200 bg-white"
+                              ? "border-green-500 bg-green-500 text-white"
+                              : "border-purple-300 hover:border-purple-500 bg-white"
                           }`}
                         >
                           {task.done && (
                             <svg
-                              className="w-5 h-5 text-white"
+                              className="w-4 h-4"
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
