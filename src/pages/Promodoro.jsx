@@ -100,7 +100,7 @@ function Promodoro() {
 
       {/*! side bar */}
 
-      <div className="fixed z-[999] bottom-0 flex items-center justify-center  left-0  h-[90vh]  bg-[#ffffff0d]">
+      <div className="fixed z-[999] bottom-0 flex items-center justify-center  left-0  h-[90vh]  ">
         <div className="w-12 px-2 h-[80%] grid-cols-1  items-center grid-rows-12 grid justify-center">
           <div
             onClick={() => {

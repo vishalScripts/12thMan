@@ -252,7 +252,7 @@ function Dashboard() {
               </div>
 
               {/* Stats Section */}
-              <div className="bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-8 mb-6 transform transition duration-300 hover:scale-[1.01] hover:shadow-xl backdrop-blur-sm bg-opacity-90 dark:bg-opacity-90 border border-gray-100 dark:border-gray-700">
+              <div className="bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-8 mb-6 transform transition duration-300  hover:shadow-xl backdrop-blur-sm bg-opacity-90 dark:bg-opacity-90 border border-gray-100 dark:border-gray-700">
                 <h2 className="text-2xl font-bold mb-6 flex items-center text-gray-800 dark:text-gray-100">
                   <FiBarChart2 className="mr-2 text-secondary" />
                   Your Stats
