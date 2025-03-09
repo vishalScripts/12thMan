@@ -10,11 +10,17 @@ import {
 } from "../store/tasksSlice";
 import CalendarService from "../services/CalendarService";
 import Button from "./Button";
-import { PauseIcon, PlayIcon } from "@heroicons/react/24/solid";
+import {
+  PauseIcon,
+  PlayIcon,
+  PlusCircleIcon,
+  ArrowTurnDownLeftIcon,
+} from "@heroicons/react/24/solid";
 import { LoadingOutlined } from "@ant-design/icons";
 import { Flex, Spin } from "antd";
 import Notification from "./Notification";
 import { motion, AnimatePresence } from "framer-motion";
+import uptodown from "../assets/uptodown.svg";
 
 // Color variables to match our landing page theme
 const COLORS = {
@@ -33,6 +39,8 @@ function TasksComp({
   totalTime,
   isRunning,
   timer = false,
+  setShowModal,
+  showModal,
 }) {
   const { tasks, loading, runningTask } = useSelector((state) => state.tasks);
   const dispatch = useDispatch();
@@ -175,6 +183,43 @@ function TasksComp({
         ) : (
           <ul className="space-y-3">
             <AnimatePresence>
+              {timer ? (
+                <></>
+              ) : (
+                <motion.li
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.3, delay: 1 * 0.05 }}
+                  className={`px-3 py-2 flex gap-3 items-center justify-between relative rounded-sm border transition-all duration-200 
+                    bg-white border-gray-100 hover:border-purple-200 hover:shadow-sm cursor-pointer group hover:bg-amber-50
+                  `}
+                  onClick={() => setShowModal(true)}
+                >
+                  <div className="flex flex-col justify-center flex-1">
+                    <h3 className={`font-medium text-gray-800 `}>
+                      Create task...
+                    </h3>
+                  </div>
+
+                  <div className="box-border p-1 duration-300 rounded-full group-hover:bg-amber-100">
+                    <PlusCircleIcon className="w-6 group-hover:scale-105 h-6 text-2xl text-amber-600" />
+                    {/* <svg
+                    className="w-4 h-4 text-amber-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg> */}
+                  </div>
+                </motion.li>
+              )}
               {filteredTasks.map((task, index) => (
                 <motion.li
                   initial={{ opacity: 0, y: 10 }}
@@ -210,39 +255,15 @@ function TasksComp({
                       {task.title}
                     </h3>
                     {!task.done && (
-                      <div className="mt-1   flex">
-                        <div className="">
-                          <p className="text-xs w-4 h-full  text-gray-500 flex items-center">
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 30 24"
-                              className=" h-full min-w-6  rotate-90"
-                            >
-                              <path
-                                d="M4 12h21"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                              />
-
-                              <circle
-                                cx="6"
-                                cy="12"
-                                r="3"
-                                fill="currentColor"
-                              />
-
-                              <path
-                                d="M24 16l4-4-4-4"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                              />
-                            </svg>
-                          </p>
+                      <div className="mt-1   items-center justify-start flex">
+                        <div className="flex  flex-col h-8 w-2 min-h-full items-center justify-center">
+                          {" "}
+                          <img
+                            src={uptodown}
+                            className=" h-[60%] opacity-50 object-cover w-2  object-center"
+                            alt=""
+                            srcset=""
+                          />
                         </div>
                         <div>
                           <p className="text-xs text-gray-500 flex items-center">
