@@ -7,6 +7,7 @@ import { setUser } from "./store/authSlice";
 import authService from "./services/AuthService";
 import Navbar from "./components/Navbar";
 import { ToastContainer, toast } from "react-toastify";
+import AlarmSystem from "./components/AlarmSystem";
 
 function App() {
   const dispatch = useDispatch();
@@ -31,7 +32,7 @@ function App() {
   return (
     <>
       <Navbar />
-      <main className="bg-background">
+      <main className="bg-background ">
         <Outlet />
       </main>
       <ToastContainer />

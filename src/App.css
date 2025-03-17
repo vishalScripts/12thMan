@@ -9,4 +9,15 @@
   --color-secondary-hover: #c9a9ff; /* Softer purple glow for interaction */
   --color-accent: #6fd3c7; /* Refreshing teal for balance and clarity */
   --color-accent-hover: #ffd789; /* Warm golden tone for progress and success */
+
+  --animate-wiggle: wiggle 0.2s ease-in-out infinite;
+  @keyframes wiggle {
+    0%,
+    100% {
+      transform: rotate(-12deg);
+    }
+    50% {
+      transform: rotate(12deg);
+    }
+  }
 }

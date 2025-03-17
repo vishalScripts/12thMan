@@ -54,6 +54,7 @@ function TasksComp({
       dispatch(setLoading(true));
       try {
         const fetchedTasks = await calendarService.fetchTasks();
+        console.log(fetchedTasks, "this is what fatched task looks like");
         dispatch(setTasks(fetchedTasks));
       } catch (error) {
         dispatch(setError(error.message));

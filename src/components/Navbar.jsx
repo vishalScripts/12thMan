@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ProfileLogo from "./ProfileLogo";
 import { logoutUser } from "../store/authSlice";
 import { Button } from "antd";
+import AlarmSystem from "./AlarmSystem";
 
 function Navbar() {
   const isNavbarHidden = useSelector((state) => state.theme.navbarHidden);
@@ -55,7 +56,7 @@ function Navbar() {
             </ul>
           </div>
           {/* row 3 */}
-          <div className="  col-span-2 flex items-center justify-center">
+          <div className="   col-span-2 flex items-center justify-center">
             {userStatus ? (
               <ProfileLogo />
             ) : (
@@ -66,7 +67,10 @@ function Navbar() {
               >
                 <Link to="/login">Login</Link>
               </button>
-            )}
+            )}{" "}
+            <div>
+              <AlarmSystem />
+            </div>
           </div>
         </Container>
       </nav>

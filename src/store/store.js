@@ -4,6 +4,7 @@ import themeSlice from "./themeSlice";
 import authSlice from "./authSlice";
 import tasksSlice from "./tasksSlice";
 import statsSlice from "./statsSlice";
+import alarmsSlice from "./alarmsSlice";
 
 export default configureStore({
   reducer: {
@@ -11,5 +12,6 @@ export default configureStore({
     auth: authSlice,
     tasks: tasksSlice,
     stats: statsSlice,
+    alarms: alarmsSlice,
   },
 });

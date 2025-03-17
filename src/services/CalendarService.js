@@ -157,6 +157,71 @@ export class CalendarService {
       return false;
     }
   }
+
+  // for alarms
+
+  async fetchAlarms() {
+    try {
+      const userId = auth.currentUser;
+      const alarmsRef = collection(db, "alarms");
+      const q = query(alarmsRef, where("userId", "==", userId));
+      const alarmsSnapshot = await getDocs(q);
+
+      return alarmsSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+    } catch (error) {
+      console.error("Error fetching alarms:", error);
+      throw error;
+    }
+  }
+
+  async createAlarm(alarmData) {
+    try {
+      const userId = String(auth.currentUser);
+      const alarmsRef = collection(db, "alarms");
+      const docRef = await addDoc(alarmsRef, {
+        ...alarmData,
+        userId,
+      });
+
+      return docRef.id;
+    } catch (error) {
+      console.error("Error creating alarm:", error);
+      throw error;
+    }
+  }
+
+  async updateAlarmStatus(alarmId, active) {
+    try {
+      const alarmRef = doc(db, "alarms", alarmId);
+      await updateDoc(alarmRef, { active });
+    } catch (error) {
+      console.error("Error updating alarm status:", error);
+      throw error;
+    }
+  }
+
+  async markAlarmTriggered(alarmId) {
+    try {
+      const alarmRef = doc(db, "alarms", alarmId);
+      await updateDoc(alarmRef, { triggered: true });
+    } catch (error) {
+      console.error("Error marking alarm as triggered:", error);
+      throw error;
+    }
+  }
+
+  async deleteAlarm(alarmId) {
+    try {
+      const alarmRef = doc(db, "alarms", alarmId);
+      await deleteDoc(alarmRef);
+    } catch (error) {
+      console.error("Error deleting alarm:", error);
+      throw error;
+    }
+  }
 }
 
 export default CalendarService;

@@ -17,6 +17,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import authService from "../services/AuthService";
 import { logoutUser } from "../store/authSlice";
 import StatsDashboard from "../components/StatsDashboard";
+import TextToSpeech from "../components/TextToSpeech;";
 
 function Dashboard() {
   const user = useSelector((state) => state.auth.user);
@@ -207,6 +208,7 @@ function Dashboard() {
       {/* Main Content */}
       <main className="flex-1 overflow-auto transition-all duration-300 p-6 md:p-10">
         <AnimatePresence exitBeforeEnter>
+          <TextToSpeech />
           {activeTab === "home" && (
             <motion.div
               key="home"

@@ -598,8 +598,8 @@ function Calendar() {
               right: "dayGridMonth,timeGridWeek,timeGridDay",
             }}
             themeSystem="standard"
-            eventBackgroundColor="#8f5fe8" // Primary color
-            eventBorderColor="#8f5fe8"
+            eventBackgroundColor="#8f5fe84a" // Primary color
+            eventBorderColor="#8f5fe875"
             eventTextColor="#ffffff"
             dayMaxEvents={3}
             selectable={true}
@@ -630,7 +630,7 @@ function Calendar() {
               return (
                 <div
                   className={`p-1 rounded-lg transition-all duration-300 h-full w-full ${
-                    isDone ? "bg-accent opacity-90" : "bg-primary"
+                    isDone ? "bg-[#00c9514a]" : "bg-[#8f5fe84a]"
                   } hover:opacity-90 cursor-pointer`}
                 >
                   <div className="text-white font-medium text-sm overflow-hidden">
@@ -667,8 +667,8 @@ function Calendar() {
                 (task) => task.id === info.event.id && task.done === true
               );
               if (task) {
-                info.el.style.backgroundColor = "#6fd3c7"; // Accent color for completed tasks
-                info.el.style.borderColor = "#6fd3c7";
+                info.el.style.backgroundColor = "#00c9514a"; // Accent color for completed tasks
+                info.el.style.borderColor = "#00c951";
               }
             }}
             dayHeaderContent={(args) => {
