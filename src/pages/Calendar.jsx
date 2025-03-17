@@ -41,73 +41,220 @@ const FormElem = ({
   setShowModal,
   showModal,
 }) => {
+  // Common time presets
+  const timePresets = [
+    { label: "15m", minutes: 15 },
+    { label: "30m", minutes: 30 },
+    { label: "1h", minutes: 60 },
+    { label: "2h", minutes: 120 },
+  ];
+
+  // Split datetime into date and time parts
+  const getDatePart = (dateTimeString) => {
+    if (!dateTimeString) return "";
+    return dateTimeString.split("T")[0];
+  };
+
+  const getTimePart = (dateTimeString) => {
+    if (!dateTimeString) return "";
+    return dateTimeString.split("T")[1];
+  };
+
+  // Combine date and time into datetime string
+  const combineDateAndTime = (date, time) => {
+    if (!date) return "";
+    return `${date}T${time || "00:00"}`;
+  };
+
+  // Handle date change
+  const handleStartDateChange = (e) => {
+    const newDate = e.target.value;
+    const currentTime = getTimePart(newEventData.start) || "00:00";
+    setNewEventData((prev) => ({
+      ...prev,
+      start: combineDateAndTime(newDate, currentTime),
+    }));
+  };
+
+  const handleEndDateChange = (e) => {
+    const newDate = e.target.value;
+    const currentTime = getTimePart(newEventData.end) || "00:00";
+    setNewEventData((prev) => ({
+      ...prev,
+      end: combineDateAndTime(newDate, currentTime),
+    }));
+  };
+
+  // Handle time change
+  const handleStartTimeChange = (e) => {
+    const newTime = e.target.value;
+    const currentDate =
+      getDatePart(newEventData.start) ||
+      getDatePart(formatForInput(new Date()));
+    setNewEventData((prev) => ({
+      ...prev,
+      start: combineDateAndTime(currentDate, newTime),
+    }));
+  };
+
+  const handleEndTimeChange = (e) => {
+    const newTime = e.target.value;
+    const currentDate =
+      getDatePart(newEventData.end) || getDatePart(formatForInput(new Date()));
+    setNewEventData((prev) => ({
+      ...prev,
+      end: combineDateAndTime(currentDate, newTime),
+    }));
+  };
+
+  // Handle preset selection
+  const handlePresetClick = (minutes) => {
+    const startTime = newEventData.start
+      ? new Date(newEventData.start)
+      : new Date();
+    const endTime = new Date(startTime.getTime() + minutes * 60 * 1000);
+
+    setNewEventData((prev) => ({
+      ...prev,
+      start: formatForInput(startTime),
+      end: formatForInput(endTime),
+    }));
+  };
+
+  // Handle "Now" button click
+  const setStartToNow = () => {
+    const now = new Date();
+    // If we already have a duration, preserve it
+    let endTime;
+    if (newEventData.start && newEventData.end) {
+      const currentDuration =
+        new Date(newEventData.end) - new Date(newEventData.start);
+      endTime = new Date(now.getTime() + currentDuration);
+    } else {
+      endTime = new Date(now.getTime() + 60 * 60 * 1000); // Default 1 hour
+    }
+
+    setNewEventData((prev) => ({
+      ...prev,
+      start: formatForInput(now),
+      end: formatForInput(endTime),
+    }));
+  };
+
+  // Get defaults
+  const defaultStart = newEventData.start || formatForInput(new Date());
+  const defaultEnd =
+    newEventData.end ||
+    formatForInput(new Date(new Date().getTime() + 60 * 60 * 1000));
+
   return (
-    <form onSubmit={handleModalSubmit} className="space-y-4">
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+    <form onSubmit={handleModalSubmit} className="space-y-4 max-w-md mx-auto">
+      <div>
+        <label className="block text-sm font-medium text-gray-600 mb-1">
           Title
         </label>
         <input
-          placeholder="Enter your title..."
+          placeholder="Enter task title..."
           type="text"
           value={newEventData.title}
           onChange={(e) =>
             setNewEventData((prev) => ({ ...prev, title: e.target.value }))
           }
-          className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary transition-all duration-300 focus:outline-none bg-gray-50"
+          className="w-full p-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition duration-200 outline-none bg-gray-50 text-gray-800"
           required
         />
       </div>
-      <div className="flex flex-1 items-center justify-between gap-3">
-        <div className="mb-4 w-[48%]">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Start Time
+
+      <div className="flex items-center gap-2">
+        <div className="flex-shrink-0">
+          <label className="block text-sm font-medium text-gray-600 mb-1">
+            Duration:
           </label>
+        </div>
+        <div className="flex flex-wrap gap-1">
+          {timePresets.map((preset) => (
+            <button
+              key={preset.minutes}
+              type="button"
+              onClick={() => handlePresetClick(preset.minutes)}
+              className="px-2 py-1 text-xs cursor-pointer bg-gray-100 hover:bg-gray-200 rounded transition-all duration-200"
+            >
+              {preset.label}
+            </button>
+          ))}
+        </div>
+        <div className="flex-shrink-0 ml-auto">
+          <button
+            type="button"
+            onClick={setStartToNow}
+            className="text-xs cursor-pointer px-1 rounded hover:text-white duration-200 hover:bg-[#8f5fe8d9] text-primary hover:text-primary-dark"
+          >
+            Now
+          </button>
+        </div>
+      </div>
+
+      {/* Start Date/Time */}
+      <div>
+        <label className="block text-sm font-medium text-gray-600 mb-1">
+          Start:
+        </label>
+        <div className="flex gap-2">
           <input
-            type="datetime-local"
-            value={newEventData.start || formatForInput(new Date())}
-            onChange={(e) =>
-              setNewEventData((prev) => ({ ...prev, start: e.target.value }))
-            }
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary transition-all duration-300 focus:outline-none text-gray-700 bg-gray-50"
+            type="date"
+            value={getDatePart(defaultStart)}
+            onChange={handleStartDateChange}
+            className="w-3/5 p-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition duration-200 outline-none bg-gray-50 text-gray-800"
             required
           />
-        </div>
-        <div className="mb-4 w-[48%]">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            End Time
-          </label>
           <input
-            type="datetime-local"
-            value={
-              newEventData.end ||
-              formatForInput(new Date(new Date().getTime() + 60 * 60 * 1000))
-            }
-            onChange={(e) =>
-              setNewEventData((prev) => ({ ...prev, end: e.target.value }))
-            }
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary transition-all duration-300 focus:outline-none text-gray-700 bg-gray-50"
+            type="time"
+            value={getTimePart(defaultStart)}
+            onChange={handleStartTimeChange}
+            className="w-2/5 p-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition duration-200 outline-none bg-gray-50 text-gray-800"
             required
           />
         </div>
       </div>
-      <div className="flex justify-center gap-3 w-full ">
+
+      {/* End Date/Time */}
+      <div>
+        <label className="block text-sm font-medium text-gray-600 mb-1">
+          End:
+        </label>
+        <div className="flex gap-2">
+          <input
+            type="date"
+            value={getDatePart(defaultEnd)}
+            onChange={handleEndDateChange}
+            className="w-3/5 p-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition duration-200 outline-none bg-gray-50 text-gray-800"
+            required
+          />
+          <input
+            type="time"
+            value={getTimePart(defaultEnd)}
+            onChange={handleEndTimeChange}
+            className="w-2/5 p-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition duration-200 outline-none bg-gray-50 text-gray-800"
+            required
+          />
+        </div>
+      </div>
+
+      <div className="flex justify-end gap-2 pt-2">
         {setShowModal && (
           <Button
             type="button"
             onClick={() => setShowModal(false)}
-            className="px-5 py-2.5 text-white bg-gray-500 hover:bg-gray-400 rounded-lg transition-all duration-300 shadow-md"
+            className="px-3 py-1.5 text-sm text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-200 font-medium"
           >
             Cancel
           </Button>
         )}
         <Button
           type="submit"
-          className={`px-5 py-2.5 text-white rounded-lg transition-all duration-300 shadow-md  hover:bg-secondary-hover bg-primary${
-            showModal ? " px-5 " : "px-10"
-          }`}
+          className="px-3 py-1.5 text-sm text-white bg-primary hover:bg-secondary-hover rounded-lg transition-all duration-200 font-medium"
         >
-          Create Task
+          {newEventData.id ? "Update" : "Create"}
         </Button>
       </div>
     </form>
@@ -127,16 +274,17 @@ const EventDetailsModal = ({
   const isCompleted = task?.done || false;
 
   return (
-    <div className="fixed inset-0 backdrop-blur-[1px]  bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-xl border shadow-2xl p-6 w-full max-w-md transform transition-all duration-300">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-bold text-color-text">{event.title}</h3>
+    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-xl shadow-lg p-5 w-full max-w-md transform transition-all duration-300">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-semibold text-gray-800">{event.title}</h3>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors"
+            className="text-gray-400 hover:text-gray-600 transition-colors"
+            aria-label="Close"
           >
             <svg
-              className="w-6 h-6"
+              className="w-5 h-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -152,10 +300,10 @@ const EventDetailsModal = ({
           </button>
         </div>
 
-        <div className="space-y-4 mb-6">
-          <div className="flex items-center gap-2 text-gray-700">
+        <div className="space-y-3 mb-5 text-gray-600">
+          <div className="flex items-center gap-2.5">
             <svg
-              className="w-5 h-5 text-accent"
+              className="w-4 h-4 text-primary"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -168,12 +316,12 @@ const EventDetailsModal = ({
                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
               ></path>
             </svg>
-            <span>Starts: {formatDateForDisplay(event.start)}</span>
+            <span>{formatDateForDisplay(event.start)}</span>
           </div>
 
-          <div className="flex items-center gap-2 text-gray-700">
+          <div className="flex items-center gap-2.5">
             <svg
-              className="w-5 h-5 text-accent"
+              className="w-4 h-4 text-primary"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -186,12 +334,12 @@ const EventDetailsModal = ({
                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
               ></path>
             </svg>
-            <span>Ends: {formatDateForDisplay(event.end)}</span>
+            <span>{formatDateForDisplay(event.end)}</span>
           </div>
 
-          <div className="flex items-center gap-2 text-gray-700">
+          <div className="flex items-center gap-2.5">
             <svg
-              className="w-5 h-5 text-accent"
+              className="w-4 h-4 text-primary"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -204,35 +352,76 @@ const EventDetailsModal = ({
                 d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
               ></path>
             </svg>
-            <span>Status: {isCompleted ? "Completed" : "Pending"}</span>
+            <div className="flex items-center">
+              <span className="mr-2">Status:</span>
+              <span
+                className={`px-2 py-0.5 text-xs font-medium rounded-full ${
+                  isCompleted
+                    ? "bg-green-100 text-green-800"
+                    : "bg-blue-100 text-blue-800"
+                }`}
+              >
+                {isCompleted ? "Completed" : "Pending"}
+              </span>
+            </div>
           </div>
         </div>
 
         <div className="flex justify-between gap-2">
           <Button
-            onClick={onDelete}
-            className="px-4 py-2 text-white bg-red-500 hover:bg-red-600 rounded-lg transition-all duration-300 shadow-md"
-          >
-            Delete
-          </Button>
-
-          <Button
             onClick={onToggleComplete}
-            className={`px-4 py-2 text-white rounded-lg transition-all duration-300 shadow-md ${
+            className={`flex-1 py-2 text-white rounded-lg transition-all duration-200 font-medium ${
               isCompleted
                 ? "bg-yellow-500 hover:bg-yellow-600"
-                : "bg-accent hover:bg-accent-hover"
+                : "bg-green-500 hover:bg-green-600"
             }`}
           >
             {isCompleted ? "Mark Incomplete" : "Mark Complete"}
           </Button>
 
-          <Button
-            onClick={onEdit}
-            className="px-4 py-2 text-white bg-primary hover:bg-secondary-hover rounded-lg transition-all duration-300 shadow-md"
-          >
-            Edit
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={onDelete}
+              className="p-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-all duration-200"
+              aria-label="Delete"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                ></path>
+              </svg>
+            </Button>
+
+            <Button
+              onClick={onEdit}
+              className="p-2 text-primary bg-primary/10 hover:bg-primary/20 rounded-lg transition-all duration-200"
+              aria-label="Edit"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                ></path>
+              </svg>
+            </Button>
+          </div>
         </div>
       </div>
     </div>
