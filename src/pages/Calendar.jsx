@@ -616,8 +616,6 @@ function Calendar() {
               startTime: "09:00",
               endTime: "17:00",
             }}
-            slotMinTime="06:00:00"
-            slotMaxTime="22:00:00"
             eventTimeFormat={{
               hour: "2-digit",
               minute: "2-digit",
