@@ -787,8 +787,8 @@ function Calendar() {
               right: "dayGridMonth,timeGridWeek,timeGridDay",
             }}
             themeSystem="standard"
-            eventBackgroundColor="#8f5fe84a" // Primary color
-            eventBorderColor="#8f5fe875"
+            eventBackgroundColor="#8f5fe89a" // Primary color
+            eventBorderColor="#8f5fe89a"
             eventTextColor="#ffffff"
             dayMaxEvents={3}
             selectable={true}
@@ -817,7 +817,7 @@ function Calendar() {
               return (
                 <div
                   className={`p-1 rounded-lg transition-all duration-300 h-full w-full ${
-                    isDone ? "bg-[#00c9514a]" : "bg-[#8f5fe84a]"
+                    isDone ? "bg-[#00c9519a]" : "bg-[#8f5fe89a]"
                   } hover:opacity-90 cursor-pointer`}
                 >
                   <div className="text-white font-medium text-sm overflow-hidden">
