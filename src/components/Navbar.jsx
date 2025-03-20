@@ -15,6 +15,10 @@ function Navbar() {
   const containerRef = useRef(null);
   const [bgPosition, setBgPosition] = useState({ left: 0, width: 0 });
 
+  const handleLogout = async () => {
+    await authService.logout();
+    dispatch(logoutUser());
+  };
   // Function to check if a link is active
   const isActive = (path) => location.pathname === path;
 
@@ -44,7 +48,7 @@ function Navbar() {
 
       <Container className="h-full place-items-center grid grid-cols-12 relative">
         {/* Logo */}
-        <div className="h-full justify-self-start flex col-span-2">
+        <div className="h-full justify-self-start flex col-span-2 bg-white">
           <Link to={"/"}>
             <Logo />
           </Link>
