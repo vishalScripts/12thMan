@@ -165,22 +165,61 @@ function TasksComp({
       {/* Tasks List */}
       <div className={`${fixedHeight} overflow-y-auto`}>
         {filteredTasks.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-32 text-gray-400">
-            <svg
-              className="w-12 h-12 mb-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-              />
-            </svg>
-            <p className="text-sm">No tasks available...</p>
-          </div>
+          <>
+            {timer ? (
+              <></>
+            ) : (
+              <motion.li
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={{ duration: 0.3, delay: 1 * 0.05 }}
+                className={`px-3 py-2 flex gap-3 items-center justify-between relative rounded-sm border transition-all duration-200 
+                    bg-white border-gray-100 hover:border-purple-200 hover:shadow-sm cursor-pointer group hover:bg-amber-50
+                  `}
+                onClick={() => setShowModal(true)}
+              >
+                <div className="flex flex-col justify-center flex-1">
+                  <h3 className={`font-medium text-gray-800 `}>
+                    Create task...
+                  </h3>
+                </div>
+
+                <div className="box-border p-1 duration-300 rounded-full group-hover:bg-amber-100">
+                  <PlusCircleIcon className="w-6 group-hover:scale-105 h-6 text-2xl text-amber-600" />
+                  {/* <svg
+                    className="w-4 h-4 text-amber-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg> */}
+                </div>
+              </motion.li>
+            )}
+            <div className="flex flex-col items-center justify-center h-32 text-gray-400">
+              <svg
+                className="w-12 h-12 mb-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                />
+              </svg>
+              <p className="text-sm">No tasks available...</p>
+            </div>
+          </>
         ) : (
           <ul className="space-y-3">
             <AnimatePresence>

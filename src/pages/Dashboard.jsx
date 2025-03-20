@@ -208,7 +208,6 @@ function Dashboard() {
       {/* Main Content */}
       <main className="flex-1 overflow-auto transition-all duration-300 p-6 md:p-10">
         <AnimatePresence exitBeforeEnter>
-          <TextToSpeech />
           {activeTab === "home" && (
             <motion.div
               key="home"
