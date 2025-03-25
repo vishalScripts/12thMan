@@ -490,21 +490,30 @@ function SetAlarmForm({ tasks, createAlarm }) {
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Notify me
+          Notify me, <span className="text-gray-800">Before:</span>
         </label>
-        <select
-          value={minutesBefore}
-          onChange={(e) => setMinutesBefore(Number(e.target.value))}
-          className="w-full p-2 border border-gray-300 rounded text-sm"
-          disabled={isSubmitting}
-        >
-          <option value={5}>5 minutes before</option>
-          <option value={15}>15 minutes before</option>
-          <option value={30}>30 minutes before</option>
-          <option value={60}>1 hour before</option>
-          <option value={120}>2 hours before</option>
-          <option value={1440}>1 day before</option>
-        </select>
+        <div className="flex flex-wrap gap-2">
+          {[2, 5, 15, 30, 60, 120, 1440].map((time) => (
+            <button
+              key={time}
+              onClick={() => setMinutesBefore(time)}
+              className={`px-2 py-1 text-xs cursor-pointer bg-gray-100 hover:bg-gray-200 rounded transition-all duration-200 ${
+                minutesBefore === time
+                  ? "bg-gray-700 text-white"
+                  : " bg-gray-100 hover:bg-gray-200 "
+              }`}
+              disabled={isSubmitting}
+            >
+              {time === 60
+                ? "1hr"
+                : time === 120
+                ? "2hr"
+                : time === 1440
+                ? "1d"
+                : `${time} m`}
+            </button>
+          ))}
+        </div>
       </div>
 
       <button
