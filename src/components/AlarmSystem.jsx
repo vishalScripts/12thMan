@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  BellIcon,
+  BellAlertIcon,
   BellSlashIcon,
   XMarkIcon,
   SpeakerXMarkIcon,
@@ -30,7 +30,10 @@ const COLORS = {
 };
 
 function AlarmSystem() {
-  const { tasks } = useSelector((state) => state.tasks);
+  const tasks = useSelector((state) => state.tasks.tasks);
+
+  console.log("Tasks:", tasks);
+
   const { alarms, loading } = useSelector(
     (state) => state.alarms || { alarms: [], loading: false }
   );
@@ -406,7 +409,7 @@ function AlarmSystem() {
             }`}
           >
             {activeNotifications.length > 0 ? (
-              <BellIcon
+              <BellAlertIcon
                 className={`w-6 h-6 cursor-pointer ${
                   currentlyPlaying
                     ? "text-orange-500 animate-wiggle"
@@ -414,7 +417,7 @@ function AlarmSystem() {
                 }`}
               />
             ) : (
-              <BellIcon className="w-6 h-6  text-gray-500" />
+              <BellAlertIcon className="w-6 h-6  text-gray-500" />
             )}
           </button>
         </Badge>
@@ -426,7 +429,7 @@ function AlarmSystem() {
 // Sub-component for setting new alarms
 function SetAlarmForm({ tasks, createAlarm }) {
   const [selectedTask, setSelectedTask] = useState("");
-  const [minutesBefore, setMinutesBefore] = useState(15);
+  const [minutesBefore, setMinutesBefore] = useState([15]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
 
@@ -439,14 +442,25 @@ function SetAlarmForm({ tasks, createAlarm }) {
 
     setIsSubmitting(true);
     try {
-      const alarmId = await createAlarm(selectedTask, minutesBefore);
-      if (alarmId) {
-        setMessage({ text: "Alarm set successfully", type: "success" });
+      // Create multiple alarms for each selected time
+      const alarmPromises = minutesBefore.map((minutes) =>
+        createAlarm(selectedTask, minutes)
+      );
+
+      const alarmIds = await Promise.all(alarmPromises);
+
+      // Check if all alarms were created successfully
+      if (alarmIds.every((id) => id !== null)) {
+        setMessage({
+          text: `Alarm${minutesBefore.length > 1 ? "s" : ""} set successfully`,
+          type: "success",
+        });
         setSelectedTask("");
+        setMinutesBefore([15]); // Reset to default
         // Reset message after 3 seconds
         setTimeout(() => setMessage({ text: "", type: "" }), 3000);
       } else {
-        setMessage({ text: "Failed to set alarm", type: "error" });
+        setMessage({ text: "Failed to set one or more alarms", type: "error" });
       }
     } catch (error) {
       setMessage({ text: error.message || "An error occurred", type: "error" });
@@ -455,10 +469,38 @@ function SetAlarmForm({ tasks, createAlarm }) {
     }
   };
 
+  const toggleMinutesBefore = (time) => {
+    setMinutesBefore((prev) =>
+      prev.includes(time)
+        ? prev.filter((t) => t !== time)
+        : [...prev, time].sort((a, b) => a - b)
+    );
+  };
+
   // Filter out tasks that are already done or in the past
-  const availableTasks = tasks.filter((task) => {
-    return !task.done && new Date(task.start) > new Date();
+  tasks.forEach((task) => {
+    console.log(
+      "Task Start:",
+      new Date(task.start),
+      "Current Time:",
+      new Date()
+    );
+    console.log(
+      "Comparison:",
+      new Date(task.start).toISOString() > new Date().toISOString()
+    );
   });
+
+  const availableTasks = tasks.filter((task) => {
+    if (!task.start) return false; // Skip tasks with no start time
+
+    const taskTime = new Date(task.start).getTime();
+    const currentTime = new Date().getTime();
+
+    return !task.done && taskTime > currentTime;
+  });
+
+  console.log(availableTasks);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
@@ -495,12 +537,13 @@ function SetAlarmForm({ tasks, createAlarm }) {
         <div className="flex flex-wrap gap-2">
           {[2, 5, 15, 30, 60, 120, 1440].map((time) => (
             <button
+              type="button"
               key={time}
-              onClick={() => setMinutesBefore(time)}
-              className={`px-2 py-1 text-xs cursor-pointer bg-gray-100 hover:bg-gray-200 rounded transition-all duration-200 ${
-                minutesBefore === time
+              onClick={() => toggleMinutesBefore(time)}
+              className={`px-2 py-1 text-xs cursor-pointer hover:bg-gray-200 rounded transition-all duration-200 ${
+                minutesBefore.includes(time)
                   ? "bg-gray-700 text-white"
-                  : " bg-gray-100 hover:bg-gray-200 "
+                  : "bg-gray-100 hover:bg-gray-200"
               }`}
               disabled={isSubmitting}
             >
@@ -514,13 +557,29 @@ function SetAlarmForm({ tasks, createAlarm }) {
             </button>
           ))}
         </div>
+        {minutesBefore.length > 0 && (
+          <div className="text-xs text-gray-600 mt-1">
+            Selected:{" "}
+            {minutesBefore
+              .map((m) =>
+                m === 60
+                  ? "1hr"
+                  : m === 120
+                  ? "2hr"
+                  : m === 1440
+                  ? "1d"
+                  : `${m}m`
+              )
+              .join(", ")}
+          </div>
+        )}
       </div>
 
       <button
         type="submit"
-        disabled={isSubmitting}
+        disabled={isSubmitting || minutesBefore.length === 0}
         className={`w-full py-2 px-4 text-white font-medium rounded transition-colors cursor-pointer ${
-          isSubmitting
+          isSubmitting || minutesBefore.length === 0
             ? "bg-gray-400 cursor-not-allowed"
             : "bg-purple-600 hover:bg-purple-700"
         }`}
@@ -533,7 +592,7 @@ function SetAlarmForm({ tasks, createAlarm }) {
             Setting alarm...
           </span>
         ) : (
-          "Set Alarm"
+          `Set Alarm${minutesBefore.length > 1 ? "s" : ""}`
         )}
       </button>
 
