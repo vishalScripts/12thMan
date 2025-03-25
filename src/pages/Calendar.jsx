@@ -41,7 +41,7 @@ const FormElem = ({
   setShowModal,
   showModal,
 }) => {
-  // Common time presets
+  const [errors, setErrors] = useState({});
   const timePresets = [
     { label: "15m", minutes: 15 },
     { label: "30m", minutes: 30 },
@@ -49,7 +49,32 @@ const FormElem = ({
     { label: "2h", minutes: 120 },
   ];
 
-  // Split datetime into date and time parts
+  const validateForm = (data) => {
+    const newErrors = {};
+    if (!data.title.trim()) newErrors.title = "Title is required";
+
+    const start = new Date(data.start);
+    const end = new Date(data.end);
+
+    if (!data.start || isNaN(start)) newErrors.start = "Invalid start time";
+    if (!data.end || isNaN(end)) newErrors.end = "Invalid end time";
+    if (start >= end) newErrors.date = "End time must be after start time";
+
+    return newErrors;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const validationErrors = validateForm(newEventData);
+
+    if (Object.keys(validationErrors).length === 0) {
+      handleModalSubmit(e);
+      setErrors({});
+    } else {
+      setErrors(validationErrors);
+    }
+  };
+
   const getDatePart = (dateTimeString) => {
     if (!dateTimeString) return "";
     return dateTimeString.split("T")[0];
@@ -60,13 +85,11 @@ const FormElem = ({
     return dateTimeString.split("T")[1];
   };
 
-  // Combine date and time into datetime string
   const combineDateAndTime = (date, time) => {
     if (!date) return "";
     return `${date}T${time || "00:00"}`;
   };
 
-  // Handle date change
   const handleStartDateChange = (e) => {
     const newDate = e.target.value;
     const currentTime = getTimePart(newEventData.start) || "00:00";
@@ -85,7 +108,6 @@ const FormElem = ({
     }));
   };
 
-  // Handle time change
   const handleStartTimeChange = (e) => {
     const newTime = e.target.value;
     const currentDate =
@@ -107,7 +129,6 @@ const FormElem = ({
     }));
   };
 
-  // Handle preset selection
   const handlePresetClick = (minutes) => {
     const startTime = newEventData.start
       ? new Date(newEventData.start)
@@ -121,17 +142,15 @@ const FormElem = ({
     }));
   };
 
-  // Handle "Now" button click
   const setStartToNow = () => {
     const now = new Date();
-    // If we already have a duration, preserve it
     let endTime;
     if (newEventData.start && newEventData.end) {
       const currentDuration =
         new Date(newEventData.end) - new Date(newEventData.start);
       endTime = new Date(now.getTime() + currentDuration);
     } else {
-      endTime = new Date(now.getTime() + 60 * 60 * 1000); // Default 1 hour
+      endTime = new Date(now.getTime() + 60 * 60 * 1000);
     }
 
     setNewEventData((prev) => ({
@@ -141,14 +160,13 @@ const FormElem = ({
     }));
   };
 
-  // Get defaults
   const defaultStart = newEventData.start || formatForInput(new Date());
   const defaultEnd =
     newEventData.end ||
     formatForInput(new Date(new Date().getTime() + 60 * 60 * 1000));
 
   return (
-    <form onSubmit={handleModalSubmit} className="space-y-4 max-w-md mx-auto">
+    <form onSubmit={handleSubmit} className="space-y-4 max-w-md mx-auto">
       <div>
         <label className="block text-sm font-medium text-gray-600 mb-1">
           Title
@@ -161,8 +179,10 @@ const FormElem = ({
             setNewEventData((prev) => ({ ...prev, title: e.target.value }))
           }
           className="w-full p-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition duration-200 outline-none bg-gray-50 text-gray-800"
-          required
         />
+        {errors.title && (
+          <div className="text-red-500 text-sm mt-1">{errors.title}</div>
+        )}
       </div>
 
       <div className="flex items-center gap-2">
@@ -194,7 +214,6 @@ const FormElem = ({
         </div>
       </div>
 
-      {/* Start Date/Time */}
       <div>
         <label className="block text-sm font-medium text-gray-600 mb-1">
           Start:
@@ -205,19 +224,19 @@ const FormElem = ({
             value={getDatePart(defaultStart)}
             onChange={handleStartDateChange}
             className="w-3/5 p-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition duration-200 outline-none bg-gray-50 text-gray-800"
-            required
           />
           <input
             type="time"
             value={getTimePart(defaultStart)}
             onChange={handleStartTimeChange}
             className="w-2/5 p-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition duration-200 outline-none bg-gray-50 text-gray-800"
-            required
           />
         </div>
+        {errors.start && (
+          <div className="text-red-500 text-sm mt-1">{errors.start}</div>
+        )}
       </div>
 
-      {/* End Date/Time */}
       <div>
         <label className="block text-sm font-medium text-gray-600 mb-1">
           End:
@@ -228,17 +247,22 @@ const FormElem = ({
             value={getDatePart(defaultEnd)}
             onChange={handleEndDateChange}
             className="w-3/5 p-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition duration-200 outline-none bg-gray-50 text-gray-800"
-            required
           />
           <input
             type="time"
             value={getTimePart(defaultEnd)}
             onChange={handleEndTimeChange}
             className="w-2/5 p-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition duration-200 outline-none bg-gray-50 text-gray-800"
-            required
           />
         </div>
+        {errors.end && (
+          <div className="text-red-500 text-sm mt-1">{errors.end}</div>
+        )}
       </div>
+
+      {errors.date && (
+        <div className="text-red-500 text-sm mt-1">{errors.date}</div>
+      )}
 
       <div className="flex justify-end gap-2 pt-2">
         {setShowModal && (
