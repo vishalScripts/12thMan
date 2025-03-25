@@ -40,8 +40,8 @@ function TasksComp({
   totalTime,
   isRunning,
   timer = false,
-  setShowModal,
-  showModal,
+
+  createTaskInTaskComp,
 }) {
   const { tasks, loading, runningTask } = useSelector((state) => state.tasks);
   const dispatch = useDispatch();
@@ -181,7 +181,7 @@ function TasksComp({
                 className={`px-3 py-2 flex gap-3 items-center justify-between relative rounded-sm border transition-all duration-200 
                     bg-white border-gray-100 hover:border-purple-200 hover:shadow-sm cursor-pointer group hover:bg-amber-50
                   `}
-                onClick={() => setShowModal(true)}
+                onClick={createTaskInTaskComp}
               >
                 <div className="flex flex-col justify-center flex-1">
                   <h3 className={`font-medium text-gray-800 `}>
@@ -238,7 +238,7 @@ function TasksComp({
                   className={`px-3 py-2 flex gap-3 items-center justify-between relative rounded-sm border transition-all duration-200 
                     bg-white border-gray-100 hover:border-purple-200 hover:shadow-sm cursor-pointer group hover:bg-amber-50
                   `}
-                  onClick={() => setShowModal(true)}
+                  onClick={createTaskInTaskComp}
                 >
                   <div className="flex flex-col justify-center flex-1">
                     <h3 className={`font-medium text-gray-800 `}>

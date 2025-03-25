@@ -636,6 +636,18 @@ function Calendar() {
     });
     setShowEventModal(true);
   };
+  const createTaskInTaskComp = () => {
+    const startDate = new Date();
+    const endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
+
+    setIsEditing(false);
+    setNewEventData({
+      title: "",
+      start: formatForInput(startDate),
+      end: formatForInput(endDate),
+    });
+    setShowModal(true);
+  };
 
   const handleEditEvent = () => {
     setIsEditing(true);
@@ -767,7 +779,7 @@ function Calendar() {
           </div> 
         </div> */}
         <div className="h-full">
-          <TasksComp setShowModal={setShowModal} showModal={showModal} />
+          <TasksComp createTaskInTaskComp={createTaskInTaskComp} />
         </div>
       </div>
 
