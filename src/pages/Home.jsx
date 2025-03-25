@@ -6,6 +6,7 @@ import {
   CalendarDaysIcon,
   CheckCircleIcon,
 } from "@heroicons/react/24/outline";
+import { useSelector } from "react-redux";
 
 // We'll use CSS variables for the color scheme
 const colorStyles = {
@@ -28,6 +29,15 @@ function Home() {
       setIsVisible(true);
     }, 500);
     return () => clearTimeout(timer);
+  }, []);
+
+  const userStatus = useSelector((state) => state.auth.status);
+
+  useEffect(() => {
+    if (userStatus) {
+      console.log(userStatus, "user status in jome page");
+      navigate("/pomodoro");
+    }
   }, []);
 
   return (

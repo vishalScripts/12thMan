@@ -62,7 +62,7 @@ function Navbar() {
           >
             {[
               { path: "/dashboard", label: "Dashboard" },
-              { path: "/promodoro", label: "Pomodoro" },
+              { path: "/pomodoro", label: "Pomodoro" },
               { path: "/calendar", label: "Calendar" },
             ].map((link) => (
               <>

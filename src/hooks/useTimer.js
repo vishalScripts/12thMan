@@ -64,7 +64,7 @@ export function useTimer(
 
           // Send notification when 5 minutes remain (300 seconds)
           if (newTotalTime === 300) {
-            sendNotification("Almost done!", "Only 5 minutes remaining!");
+            sendNotification("done!", "time for break!!!!!!!!!");
           }
 
           const newHours = Math.floor(newTotalTime / 3600);

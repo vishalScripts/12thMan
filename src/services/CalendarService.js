@@ -1,22 +1,29 @@
 import authService from "./AuthService";
-import { db, auth } from "../firebaseConfig"; // imported auth from firebaseConfig
+import { db, auth } from "../firebaseConfig";
 import {
   collection,
   addDoc,
   getDocs,
   doc,
   updateDoc,
-  query, // added import
-  where, // added import
+  getDoc,
+  setDoc,
+  query,
+  where,
+  deleteDoc,
 } from "firebase/firestore";
 
 export class CalendarService {
   constructor() {
     this.tasksCollection = collection(db, "tasks");
+    this.statsCollection = collection(db, "stats");
+    this.alarmsCollection = collection(db, "alarms");
   }
 
+  // ------------------------ AUTHENTICATED API CALL ------------------------
+
   async makeAuthenticatedCall(url, options = {}) {
-    let token = await authService.getValidToken(); // Get a valid token
+    let token = await authService.getValidToken();
 
     options.headers = {
       ...options.headers,
@@ -35,6 +42,75 @@ export class CalendarService {
     return response;
   }
 
+  // ------------------------ FIREBASE STATS MANAGEMENT ------------------------
+
+  async getUserStats() {
+    try {
+      const user = auth.currentUser;
+      if (!user) throw new Error("User is not authenticated");
+
+      const statsRef = doc(db, "stats", user.uid);
+      const statsSnap = await getDoc(statsRef);
+
+      if (!statsSnap.exists()) {
+        const defaultStats = {
+          tasksDone: 0,
+          hoursStudied: 0,
+          breakTime: 0,
+          pomodoros: 0,
+        };
+
+        await setDoc(statsRef, defaultStats);
+        return defaultStats;
+      }
+
+      return statsSnap.data();
+    } catch (error) {
+      console.error("Error fetching user stats:", error);
+      return null;
+    }
+  }
+
+  async updateStat(statKey, value) {
+    try {
+      const user = auth.currentUser;
+      if (!user) throw new Error("User is not authenticated");
+
+      const statsRef = doc(db, "stats", user.uid);
+      await updateDoc(statsRef, { [statKey]: value });
+
+      console.log(`Updated ${statKey} to ${value}`);
+    } catch (error) {
+      console.error(`Error updating ${statKey}:`, error);
+    }
+  }
+  async updateHourStudied() {
+    try {
+      const stats = await this.getUserStats();
+      await this.updateStat("tasksDone", stats.hoursStudied + 1);
+    } catch (error) {
+      console.log(error, "Error in updating hour studied");
+    }
+  }
+  async updatePomodoroStat() {
+    try {
+      const stats = await this.getUserStats();
+      await this.updateStat("tasksDone", stats.tasksDone + 1);
+    } catch (error) {
+      console.log(error, "Error in updating hour studied");
+    }
+  }
+  async updateBreakStat() {
+    try {
+      const stats = await this.getUserStats();
+      await this.updateStat("tasksDone", stats.breakTime + 1);
+    } catch (error) {
+      console.log(error, "Error in updating hour studied");
+    }
+  }
+
+  // ------------------------ GOOGLE CALENDAR EVENTS ------------------------
+
   async fetchEvents() {
     try {
       const response = await this.makeAuthenticatedCall(
@@ -42,9 +118,7 @@ export class CalendarService {
         { method: "GET" }
       );
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch events");
-      }
+      if (!response.ok) throw new Error("Failed to fetch events");
       return await response.json();
     } catch (error) {
       console.error("Error fetching events:", error);
@@ -64,7 +138,17 @@ export class CalendarService {
       );
 
       if (!response.ok) throw new Error("Failed to create event");
-      return await response.json();
+
+      const eventData = await response.json();
+
+      if (event.studySession) {
+        const studyHours =
+          (new Date(event.end) - new Date(event.start)) / 3600000;
+        const stats = await this.getUserStats();
+        await this.updateStat("hoursStudied", stats.hoursStudied + studyHours);
+      }
+
+      return eventData;
     } catch (error) {
       console.error("Error creating event:", error);
       return null;
@@ -90,21 +174,22 @@ export class CalendarService {
     }
   }
 
+  // ------------------------ FIREBASE TASKS ------------------------
+
   async createTask(taskData) {
     try {
-      // Use Firebase Auth to get the current user
       const user = auth.currentUser;
-      if (!user) {
-        throw new Error("User is not authenticated");
-      }
+      if (!user) throw new Error("User is not authenticated");
+
       const docRef = await addDoc(this.tasksCollection, {
         googleEventId: taskData.id || null,
         title: taskData.title,
         start: taskData.start,
         end: taskData.end,
         done: taskData.done,
-        userId: user.uid, // Associate task with current user
+        userId: user.uid,
       });
+
       console.log("Task created with ID:", docRef.id);
       return { id: docRef.id, ...taskData };
     } catch (error) {
@@ -115,12 +200,9 @@ export class CalendarService {
 
   async fetchTasks() {
     try {
-      // Use Firebase Auth to get the current user
       const user = auth.currentUser;
-      if (!user) {
-        throw new Error("User is not authenticated");
-      }
-      // Query to filter tasks by current user's uid
+      if (!user) throw new Error("User is not authenticated");
+
       const tasksQuery = query(
         this.tasksCollection,
         where("userId", "==", user.uid)
@@ -137,6 +219,12 @@ export class CalendarService {
     try {
       const taskRef = doc(db, "tasks", taskId);
       await updateDoc(taskRef, { done });
+
+      if (done) {
+        const stats = await this.getUserStats();
+        await this.updateStat("tasksDone", stats.tasksDone + 1);
+      }
+
       console.log("Task updated successfully");
       return true;
     } catch (error) {
@@ -145,32 +233,17 @@ export class CalendarService {
     }
   }
 
-  // New method to update the task (title, start, end, etc.)
-  async updateTask(taskId, updatedData) {
-    try {
-      const taskRef = doc(db, "tasks", taskId);
-      await updateDoc(taskRef, updatedData);
-      console.log("Task updated successfully");
-      return true;
-    } catch (error) {
-      console.error("Error updating task:", error);
-      return false;
-    }
-  }
-
-  // for alarms
+  // ------------------------ FIREBASE ALARMS ------------------------
 
   async fetchAlarms() {
     try {
-      const userId = auth.currentUser;
-      const alarmsRef = collection(db, "alarms");
-      const q = query(alarmsRef, where("userId", "==", userId));
-      const alarmsSnapshot = await getDocs(q);
-
-      return alarmsSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const user = auth.currentUser;
+      const alarmsQuery = query(
+        this.alarmsCollection,
+        where("userId", "==", user.uid)
+      );
+      const alarmsSnapshot = await getDocs(alarmsQuery);
+      return alarmsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     } catch (error) {
       console.error("Error fetching alarms:", error);
       throw error;
@@ -179,26 +252,17 @@ export class CalendarService {
 
   async createAlarm(alarmData) {
     try {
-      const userId = String(auth.currentUser);
-      const alarmsRef = collection(db, "alarms");
-      const docRef = await addDoc(alarmsRef, {
+      const user = auth.currentUser;
+      if (!user) throw new Error("User is not authenticated");
+
+      const docRef = await addDoc(this.alarmsCollection, {
         ...alarmData,
-        userId,
+        userId: user.uid,
       });
 
       return docRef.id;
     } catch (error) {
       console.error("Error creating alarm:", error);
-      throw error;
-    }
-  }
-
-  async updateAlarmStatus(alarmId, active) {
-    try {
-      const alarmRef = doc(db, "alarms", alarmId);
-      await updateDoc(alarmRef, { active });
-    } catch (error) {
-      console.error("Error updating alarm status:", error);
       throw error;
     }
   }
@@ -220,6 +284,15 @@ export class CalendarService {
     } catch (error) {
       console.error("Error deleting alarm:", error);
       throw error;
+    }
+  }
+
+  async completePomodoro() {
+    try {
+      const stats = await this.getUserStats();
+      await this.updateStat("pomodoros", stats.pomodoros + 1);
+    } catch (error) {
+      console.error("Error updating pomodoro count:", error);
     }
   }
 }

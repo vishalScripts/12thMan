@@ -24,7 +24,7 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: "/promodoro",
+        path: "/pomodoro",
         element: (
           <AuthLayout>
             <Promodoro />

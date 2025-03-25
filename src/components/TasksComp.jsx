@@ -21,6 +21,7 @@ import { Flex, Spin } from "antd";
 import Notification from "./Notification";
 import { motion, AnimatePresence } from "framer-motion";
 import uptodown from "../assets/uptodown.svg";
+import { incrementTasksDone } from "../store/statsSlice";
 
 // Color variables to match our landing page theme
 const COLORS = {
@@ -74,6 +75,9 @@ function TasksComp({
       const fetchedTasks = await calendarService.fetchTasks();
       dispatch(setTasks(fetchedTasks));
       dispatch(setLoading(false));
+      const fetchUserStats = await calendarService.getUserStats();
+      console.log(fetchUserStats);
+      dispatch(incrementTasksDone());
     } catch (error) {
       dispatch(setError(error.message));
     }
