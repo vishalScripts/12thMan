@@ -7,8 +7,8 @@
   --color-primary: #8f5fe8; /* Vibrant purple-blue for a futuristic, determined vibe */
   --color-secondary: #ff9fe8; /* Cheerful pink for motivation and warmth */
   --color-secondary-hover: #c9a9ff; /* Softer purple glow for interaction */
-  --color-accent: #6fd3c7; /* Refreshing teal for balance and clarity */
-  --color-accent-hover: #ffd789; /* Warm golden tone for progress and success */
+  --color-accent: #a5f0e5; /* Soft, light teal for gentle balance and clarity */
+  --color-accent-hover: #d1f7f2; /* Even lighter teal for subtle interaction */
 
   --animate-wiggle: wiggle 0.2s ease-in-out infinite;
   @keyframes wiggle {

@@ -127,7 +127,11 @@ function Signup() {
               </p>
             </div>
 
-            <Button type="submit" className="w-full border-none">
+            <Button
+              type="submit"
+              variant="primary"
+              className="w-full  border-1 py-3 "
+            >
               Sign Up
             </Button>
           </form>

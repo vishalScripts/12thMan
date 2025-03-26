@@ -60,13 +60,15 @@ function ModernThemePomodoro({
           <div className="flex gap-2">
             <Button
               onClick={type1}
-              className="!text-sm bg-slate-800 text-white"
+              className="!text-sm bg-slate-600 text-white"
+              variant="compact"
             >
               25-30
             </Button>
             <Button
               onClick={type2}
-              className="!text-sm bg-slate-800 text-white"
+              className="!text-sm bg-slate-600 text-white"
+              variant="compact"
             >
               55-60
             </Button>
@@ -75,7 +77,8 @@ function ModernThemePomodoro({
           {/* Custom Time Button */}
           <Button
             onClick={openModal}
-            className="bg-slate-800 text-white !text-sm"
+            className="bg-slate-600 text-white !text-sm"
+            variant="compact"
           >
             Custom Time
           </Button>
@@ -111,10 +114,14 @@ function ModernThemePomodoro({
                   />
                 </div>
                 <div className="flex gap-2">
-                  <Button onClick={handleCustomSubmit} className="">
+                  <Button
+                    onClick={handleCustomSubmit}
+                    className=""
+                    variant="primary"
+                  >
                     Done
                   </Button>
-                  <Button onClick={closeModal} className="bg-red-500">
+                  <Button onClick={closeModal} className="" variant="cancel">
                     Close
                   </Button>
                 </div>

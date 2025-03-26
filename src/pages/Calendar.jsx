@@ -193,24 +193,25 @@ const FormElem = ({
         </div>
         <div className="flex flex-wrap gap-1">
           {timePresets.map((preset) => (
-            <button
+            <Button
               key={preset.minutes}
               type="button"
               onClick={() => handlePresetClick(preset.minutes)}
-              className="px-2 py-1 text-xs cursor-pointer bg-gray-100 hover:bg-gray-200 rounded transition-all duration-200"
+              variant="compact"
             >
               {preset.label}
-            </button>
+            </Button>
           ))}
         </div>
         <div className="flex-shrink-0 ml-auto">
-          <button
+          <Button
+            variant="compact"
             type="button"
             onClick={setStartToNow}
-            className="text-xs cursor-pointer px-1 rounded hover:text-white duration-200 hover:bg-[#8f5fe8d9] text-primary hover:text-primary-dark"
+            className=""
           >
             Now
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -223,13 +224,13 @@ const FormElem = ({
             type="date"
             value={getDatePart(defaultStart)}
             onChange={handleStartDateChange}
-            className="w-3/5 p-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition duration-200 outline-none bg-gray-50 text-gray-800"
+            className="w-3/5 p-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition duration-200 outline-none bg-gray-50 text-gray-800 focus:scale-105"
           />
           <input
             type="time"
             value={getTimePart(defaultStart)}
             onChange={handleStartTimeChange}
-            className="w-2/5 p-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition duration-200 outline-none bg-gray-50 text-gray-800"
+            className="w-2/5 p-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition duration-200 outline-none bg-gray-50 text-gray-800 focus:scale-105"
           />
         </div>
         {errors.start && (
@@ -246,13 +247,13 @@ const FormElem = ({
             type="date"
             value={getDatePart(defaultEnd)}
             onChange={handleEndDateChange}
-            className="w-3/5 p-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition duration-200 outline-none bg-gray-50 text-gray-800"
+            className="w-3/5 p-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition duration-200 outline-none bg-gray-50 text-gray-800 focus:scale-105"
           />
           <input
             type="time"
             value={getTimePart(defaultEnd)}
             onChange={handleEndTimeChange}
-            className="w-2/5 p-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition duration-200 outline-none bg-gray-50 text-gray-800"
+            className="w-2/5 p-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition duration-200 outline-none bg-gray-50 text-gray-800 focus:scale-105"
           />
         </div>
         {errors.end && (
@@ -269,15 +270,13 @@ const FormElem = ({
           <Button
             type="button"
             onClick={() => setShowModal(false)}
-            className="px-3 py-1.5 text-sm text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-all duration-200 font-medium"
+            className=""
+            variant="cancel"
           >
             Cancel
           </Button>
         )}
-        <Button
-          type="submit"
-          className="px-3 py-1.5 text-sm text-white bg-primary hover:bg-secondary-hover rounded-lg transition-all duration-200 font-medium"
-        >
+        <Button type="submit" variant="primary" className="">
           {newEventData.id ? "Update" : "Create"}
         </Button>
       </div>

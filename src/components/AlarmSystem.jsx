@@ -19,6 +19,7 @@ import {
   toggleAlarmActive,
 } from "../store/alarmsSlice";
 import alarmAudio from "../assets/music/alarm.mp3";
+import Button from "./Button";
 
 const COLORS = {
   primary: "var(--color-primary, #8f5fe8)",
@@ -536,14 +537,13 @@ function SetAlarmForm({ tasks, createAlarm }) {
         </label>
         <div className="flex flex-wrap gap-2">
           {[2, 5, 15, 30, 60, 120, 1440].map((time) => (
-            <button
+            <Button
               type="button"
+              variant="compact"
               key={time}
               onClick={() => toggleMinutesBefore(time)}
-              className={`px-2 py-1 text-xs cursor-pointer hover:bg-gray-200 rounded transition-all duration-200 ${
-                minutesBefore.includes(time)
-                  ? "bg-gray-700 text-white"
-                  : "bg-gray-100 hover:bg-gray-200"
+              className={` text-slate-900 ${
+                minutesBefore.includes(time) ? "bg-primary text-white" : ""
               }`}
               disabled={isSubmitting}
             >
@@ -554,7 +554,7 @@ function SetAlarmForm({ tasks, createAlarm }) {
                 : time === 1440
                 ? "1d"
                 : `${time} m`}
-            </button>
+            </Button>
           ))}
         </div>
         {minutesBefore.length > 0 && (
@@ -575,13 +575,14 @@ function SetAlarmForm({ tasks, createAlarm }) {
         )}
       </div>
 
-      <button
+      <Button
+        variant="primary"
         type="submit"
         disabled={isSubmitting || minutesBefore.length === 0}
-        className={`w-full py-2 px-4 text-white font-medium rounded transition-colors cursor-pointer ${
+        className={`w-full  text-white font-medium rounded transition-colors cursor-pointer ${
           isSubmitting || minutesBefore.length === 0
             ? "bg-gray-400 cursor-not-allowed"
-            : "bg-purple-600 hover:bg-purple-700"
+            : ""
         }`}
       >
         {isSubmitting ? (
@@ -594,7 +595,7 @@ function SetAlarmForm({ tasks, createAlarm }) {
         ) : (
           `Set Alarm${minutesBefore.length > 1 ? "s" : ""}`
         )}
-      </button>
+      </Button>
 
       {message.text && (
         <div

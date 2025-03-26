@@ -130,7 +130,7 @@ function Login() {
               </p>
             </div>
 
-            <Button type="submit" className="w-full border-none">
+            <Button type="submit" variant="primary" className="w-full py-3">
               Login with Email
             </Button>
           </form>
@@ -144,6 +144,7 @@ function Login() {
 
             <div className="w-full">
               <Button
+                variant="secondary"
                 className="py-2 w-full flex items-center bg-white justify-center text-text shadow-2xl hover:border-1"
                 onClick={handleGoogleLogin}
               >

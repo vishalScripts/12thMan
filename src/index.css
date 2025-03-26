@@ -1,11 +1,10 @@
-@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Boldonse&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap");
 
-@theme {
-  --color-text: #18120f;
-  --color-background: #fef5f1;
-  --color-primary: #f36015;
-  --color-secondary: #c5ccab;
-  --color-accent: #cc967c;
+* {
+  font-family: "Roboto Mono", monospace;
+  font-optical-sizing: auto;
+  font-weight: <weight>;
+  font-style: normal;
 }
 
 /* Custom Thin Scrollbar */
