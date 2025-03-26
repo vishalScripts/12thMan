@@ -1,4 +1,6 @@
+import { FileInput } from "lucide-react";
 import Button from "../Button";
+import Input from "../Input";
 import Time from "../Time";
 import {
   ArrowPathIcon,
@@ -88,29 +90,32 @@ function ModernThemePomodoro({
             <div className="fixed inset-0 z-[99999] bg-opacity-50 flex justify-center items-center">
               <div className="bg-white p-6 rounded-lg">
                 <div className="flex gap-2 items-center mb-4">
-                  <input
+                  <Input
                     type="number"
                     name="hours"
                     value={customTime.hours}
                     onChange={handleCustomTimeChange}
-                    className="text-lg w-12 px-2 border rounded-md"
+                    className="text-lg !w-12 px-2 py-0 border rounded-md"
                     placeholder="Hours"
+                    variant="primary"
                   />
-                  <input
+                  <Input
                     type="number"
                     name="minutes"
                     value={customTime.minutes}
                     onChange={handleCustomTimeChange}
-                    className="text-lg w-12 px-2 border rounded-md"
+                    className="text-lg !w-12 px-2 py-0 border rounded-md"
                     placeholder="Minutes"
+                    variant="primary"
                   />
-                  <input
+                  <Input
                     type="number"
                     name="seconds"
                     value={customTime.seconds}
                     onChange={handleCustomTimeChange}
-                    className="text-lg w-12 px-2 border rounded-md"
+                    className="text-lg !w-12 px-2 py-0 border  rounded-md"
                     placeholder="Seconds"
+                    variant="primary"
                   />
                 </div>
                 <div className="flex gap-2">

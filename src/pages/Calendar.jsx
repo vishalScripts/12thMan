@@ -9,6 +9,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import TasksComp from "../components/TasksComp.jsx";
 import { setTasks, setLoading, setError } from "../store/tasksSlice";
 import Button from "../components/Button.jsx";
+import Input from "../components/Input.jsx";
 
 // Utility function to format Date objects into 'YYYY-MM-DDTHH:mm' (local time)
 const formatForInput = (date) => {
@@ -171,14 +172,16 @@ const FormElem = ({
         <label className="block text-sm font-medium text-gray-600 mb-1">
           Title
         </label>
-        <input
+        <Input
           placeholder="Enter task title..."
           type="text"
           value={newEventData.title}
           onChange={(e) =>
             setNewEventData((prev) => ({ ...prev, title: e.target.value }))
           }
-          className="w-full p-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition duration-200 outline-none bg-gray-50 text-gray-800"
+          className="
+          "
+          variant="primary"
         />
         {errors.title && (
           <div className="text-red-500 text-sm mt-1">{errors.title}</div>
@@ -220,17 +223,19 @@ const FormElem = ({
           Start:
         </label>
         <div className="flex gap-2">
-          <input
+          <Input
             type="date"
             value={getDatePart(defaultStart)}
             onChange={handleStartDateChange}
-            className="w-3/5 p-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition duration-200 outline-none bg-gray-50 text-gray-800 focus:scale-105"
+            className="w-3/5 "
+            variant="primary"
           />
-          <input
+          <Input
             type="time"
             value={getTimePart(defaultStart)}
             onChange={handleStartTimeChange}
-            className="w-2/5 p-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition duration-200 outline-none bg-gray-50 text-gray-800 focus:scale-105"
+            className=""
+            variant="primary"
           />
         </div>
         {errors.start && (
@@ -243,17 +248,19 @@ const FormElem = ({
           End:
         </label>
         <div className="flex gap-2">
-          <input
+          <Input
             type="date"
             value={getDatePart(defaultEnd)}
             onChange={handleEndDateChange}
-            className="w-3/5 p-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition duration-200 outline-none bg-gray-50 text-gray-800 focus:scale-105"
+            className=""
+            variant="primary"
           />
-          <input
+          <Input
             type="time"
             value={getTimePart(defaultEnd)}
             onChange={handleEndTimeChange}
-            className="w-2/5 p-2 border border-gray-200 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary transition duration-200 outline-none bg-gray-50 text-gray-800 focus:scale-105"
+            className=" "
+            variant="primary"
           />
         </div>
         {errors.end && (

@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import Button from "./Button";
 import Container from "./Container/Container";
 import imgSrc from "../assets/Signup.svg";
+import Input from "./Input";
 
 function Signup() {
   const [username, setUsername] = useState("");
@@ -73,48 +74,52 @@ function Signup() {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Username
               </label>
-              <input
+              <Input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full p-2 border border-gray-300 border-b-slate-900 bg-white outline-none focus:ring-1 ring-fuchsia-400 rounded-md shadow-2xs shadow-black hover:shadow-fuchsia-400 focus:shadow-fuchsia-400"
+                className=""
                 required
+                variant="secondary"
               />
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Name
               </label>
-              <input
+              <Input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full p-2 border border-gray-300 border-b-slate-900 bg-white outline-none focus:ring-1 ring-fuchsia-400 rounded-md shadow-2xs shadow-black hover:shadow-fuchsia-400 focus:shadow-fuchsia-400"
+                className=""
                 required
+                variant="secondary"
               />
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Email
               </label>
-              <input
+              <Input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-2 border border-gray-300 border-b-slate-900 bg-white outline-none focus:ring-1 ring-fuchsia-400 rounded-md shadow-2xs shadow-black hover:shadow-fuchsia-400 focus:shadow-fuchsia-400"
+                className=""
                 required
+                variant="secondary"
               />
             </div>
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Password
               </label>
-              <input
+              <Input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-2 border border-gray-300 border-b-slate-900 bg-white outline-none focus:ring-1 ring-fuchsia-400 rounded-md shadow-2xs shadow-black hover:shadow-fuchsia-400 focus:shadow-fuchsia-400"
+                className=""
                 required
+                variant="secondary"
               />
               <p
                 className={`text-red-600 italic px-1 transition-all duration-400 ${

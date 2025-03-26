@@ -7,6 +7,15 @@ import {
   CheckCircleIcon,
 } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
+import imgUrl from "../assets/Learning-amico.svg";
+
+// Images for the interactive section
+const featureImages = [
+  "https://i.pinimg.com/originals/93/9e/92/939e9273e3d6ef4f281cda31e9e62488.gif", // Original timer gif
+  "https://i.pinimg.com/originals/03/9e/95/039e95fff26286ee7b18b2f8f8a2420a.gif", // Productivity gif
+  "https://i.pinimg.com/originals/7a/f8/ce/7af8ced6fc14a1f2840b72187ba19248.gif", // Focus gif
+  "https://i.pinimg.com/originals/32/20/f9/3220f92c6e309a55730d016c84bb7783.gif", // Work progress gif
+];
 
 // We'll use CSS variables for the color scheme
 const colorStyles = {
@@ -22,6 +31,7 @@ const colorStyles = {
 function Home() {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
+  const [currentImage, setCurrentImage] = useState(featureImages[0]);
 
   useEffect(() => {
     // Set features section to visible after a short delay
@@ -35,7 +45,7 @@ function Home() {
 
   useEffect(() => {
     if (userStatus) {
-      console.log(userStatus, "user status in jome page");
+      console.log(userStatus, "user status in home page");
       navigate("/pomodoro");
     }
   }, []);
@@ -71,13 +81,13 @@ function Home() {
               >
                 <button
                   onClick={() => navigate("/signup")}
-                  className="px-8 py-3 rounded-lg font-medium bg-[var(--color-primary)] text-white shadow-lg shadow-[var(--color-primary)]/30 hover:shadow-[var(--color-primary)]/40 hover:translate-y-1 transition-all duration-300"
+                  className="px-8 py-3 rounded-lg font-medium bg-[var(--color-primary)] text-white shadow-lg shadow-[var(--color-primary)]/30 hover:shadow-[var(--color-primary)]/40 hover:translate-y-1 transition-all duration-300 cursor-pointer"
                 >
                   Get Started
                 </button>
                 <button
                   onClick={() => navigate("/learn-more")}
-                  className="px-8 py-3 rounded-lg font-medium border-2 border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10 transition-all duration-300"
+                  className="px-8 py-3 rounded-lg font-medium border-2 border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-primary)]/10 transition-all duration-300 cursor-pointer"
                 >
                   Learn More
                 </button>
@@ -89,12 +99,12 @@ function Home() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.7 }}
-              className="flex justify-center"
+              className="flex justify-center "
             >
-              <div className="relative">
-                <div className="absolute -inset-4 rounded-full bg-gradient-to-r from-[var(--color-primary)]/30 to-[#d33cb4]/30 blur-3xl opacity-70"></div>
+              <div className="relative ">
+                <div className="absolute -inset-x-64 -inset-y-24 rounded-full bg-gradient-to-r from-[var(--color-primary)]/30 to-[#d33cb4]/30 blur-3xl opacity-70"></div>
                 <img
-                  src="/pomodoro-illustration.svg"
+                  src={imgUrl}
                   alt="Focus Timer Illustration"
                   className="relative w-full max-w-lg h-auto"
                 />
@@ -186,47 +196,56 @@ function Home() {
               transition={{ duration: 0.7 }}
               className="space-y-6"
             >
-              <div className="flex items-start gap-4">
-                <div className="p-2 rounded-lg bg-[var(--color-accent)]/20 text-[var(--color-accent)]">
-                  <ClockIcon className="w-6 h-6" />
+              {[
+                {
+                  icon: <ClockIcon className="w-6 h-6" />,
+                  title: "Elegant Timer",
+                  description:
+                    "Customize work sessions and breaks with ambient sounds to maintain focus",
+                  imageIndex: 0,
+                  iconBg:
+                    "bg-[var(--color-accent)]/20 text-[var(--color-accent)]",
+                },
+                {
+                  icon: <CalendarDaysIcon className="w-6 h-6" />,
+                  title: "Calendar Integration",
+                  description:
+                    "Visualize your schedule with our Google Calendar-inspired view",
+                  imageIndex: 1,
+                  iconBg:
+                    "bg-[var(--color-secondary)]/20 text-[var(--color-secondary)]",
+                },
+                {
+                  icon: <CheckCircleIcon className="w-6 h-6" />,
+                  title: "Task Management",
+                  description:
+                    "Create, organize, and complete tasks with required deadlines",
+                  imageIndex: 2,
+                  iconBg:
+                    "bg-[var(--color-primary)]/20 text-[var(--color-primary)]",
+                },
+                {
+                  icon: <CheckCircleIcon className="w-6 h-6" />,
+                  title: "Progress Tracking",
+                  description:
+                    "Monitor your productivity and celebrate your achievements",
+                  imageIndex: 3,
+                  iconBg:
+                    "bg-[var(--color-secondary)]/20 text-[var(--color-secondary)]",
+                },
+              ].map((feature, index) => (
+                <div key={index} className="flex items-start gap-4 group">
+                  <div className={`p-2 rounded-lg ${feature.iconBg}`}>
+                    {feature.icon}
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-1">
+                      {feature.title}
+                    </h3>
+                    <p className="opacity-75">{feature.description}</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-1">Elegant Timer</h3>
-                  <p className="opacity-75">
-                    Customize work sessions and breaks with ambient sounds to
-                    maintain focus
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="p-2 rounded-lg bg-[var(--color-secondary)]/20 text-[var(--color-secondary)]">
-                  <CalendarDaysIcon className="w-6 h-6" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-1">
-                    Calendar Integration
-                  </h3>
-                  <p className="opacity-75">
-                    Visualize your schedule with our Google Calendar-inspired
-                    view
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <div className="p-2 rounded-lg bg-[var(--color-primary)]/20 text-[var(--color-primary)]">
-                  <CheckCircleIcon className="w-6 h-6" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-1">
-                    Task Management
-                  </h3>
-                  <p className="opacity-75">
-                    Create, organize, and complete tasks with required deadlines
-                  </p>
-                </div>
-              </div>
+              ))}
             </motion.div>
 
             <motion.div
@@ -241,18 +260,30 @@ function Home() {
               <div className="bg-gradient-to-br from-[var(--color-primary)]/5 to-[var(--color-secondary)]/5 p-1">
                 <div className="bg-white rounded-2xl p-6 relative">
                   {/* Timer display mockup */}
-                  <div className="p-8 rounded-xl bg-gradient-to-br from-[var(--color-primary)]/10 to-[var(--color-secondary)]/10 text-center">
-                    <h4 className="text-lg font-medium mb-6">Focus Session</h4>
-                    <div className="text-5xl font-bold text-[var(--color-primary)] mb-6">
-                      23:45
-                    </div>
-                    <div className="flex justify-center gap-4">
-                      <button className="px-6 py-2 rounded-lg bg-[var(--color-primary)] text-white">
-                        Pause
-                      </button>
-                      <button className="px-6 py-2 rounded-lg border border-[var(--color-primary)] text-[var(--color-primary)]">
-                        Skip
-                      </button>
+                  <div
+                    className="overflow-hidden relative aspect-video p-8 object-center object-contain rounded-xl text-center"
+                    style={{
+                      background: `url("${currentImage}")`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      transition: "background 0.3s ease-in-out",
+                    }}
+                  >
+                    <div className="h-full z-30 flex items-center flex-col justify-center absolute inset-0 bg-[#00000079]">
+                      <h4 className="text-lg font-medium mb-6 text-white">
+                        Focus Session
+                      </h4>
+                      <div className="text-5xl font-bold text-[var(--color-primary)] mb-6">
+                        23:45
+                      </div>
+                      <div className="flex justify-center gap-4">
+                        <button className="px-6 py-2 rounded-lg bg-[var(--color-primary)] text-white ">
+                          Pause
+                        </button>
+                        <button className="px-6 py-2 rounded-lg border border-[var(--color-primary)] text-[var(--color-primary)] bg-[#ffffffec]">
+                          Skip
+                        </button>
+                      </div>
                     </div>
                   </div>
 
