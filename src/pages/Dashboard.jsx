@@ -94,6 +94,8 @@ function Dashboard() {
     exit: { opacity: 0, x: -20, transition: { duration: 0.3 } },
   };
 
+  console.log(user, "userrrrrrrrrrrrrrr");
+
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-slate-800">
@@ -240,14 +242,6 @@ function Dashboard() {
                   </p>
                   <p className="text-right mt-2 text-gray-600 dark:text-gray-400">
                     — {randomQuote.author}
-                  </p>
-                </div>
-                <div className="bg-gradient-to-r from-secondary/10 to-accent/10 border-l-4 border-secondary p-6 rounded-lg">
-                  <h3 className="font-semibold text-lg mb-2 text-gray-800 dark:text-gray-100">
-                    Study Tip:
-                  </h3>
-                  <p className="text-lg text-gray-700 dark:text-gray-300">
-                    {randomTip}
                   </p>
                 </div>
               </div>

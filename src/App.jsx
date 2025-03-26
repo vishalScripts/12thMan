@@ -4,30 +4,26 @@ import "./App.css";
 import { Outlet, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUser } from "./store/authSlice";
-import authService from "./services/AuthService";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Navbar from "./components/Navbar";
-import { ToastContainer, toast } from "react-toastify";
-import AlarmSystem from "./components/AlarmSystem";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const auth = getAuth();
 
   useEffect(() => {
-    const autoLogin = async () => {
-      try {
-        const userData = await authService.getStoredUser();
-        if (userData) {
-          dispatch(setUser(userData));
-        }
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log(user, "uuuuuuuu");
+        dispatch(setUser(user)); // Store user in Redux
         navigate("/dashboard");
-      } catch (error) {
-        console.error("Auto login failed:", error);
       }
-    };
+    });
 
-    autoLogin();
-  }, [dispatch]);
+    return () => unsubscribe(); // Cleanup on unmount
+  }, []);
 
   return (
     <>
