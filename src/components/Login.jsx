@@ -51,7 +51,8 @@ function Login() {
     try {
       const userData = await authService.loginWithEmail(email, password);
       if (userData) {
-        dispatch(setUser(userData));
+        console.log(userData.user);
+        dispatch(setUser(userData.user));
         navigate("/dashboard");
       }
     } catch (error) {

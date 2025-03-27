@@ -129,10 +129,10 @@ function Dashboard() {
             </div>
             <div className="overflow-hidden">
               <p className="font-medium text-gray-800 dark:text-gray-100 truncate">
-                {user.displayName}
+                {user?.displayName}
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
-                {user.email}
+                {user?.email}
               </p>
             </div>
           </div>
@@ -223,7 +223,7 @@ function Dashboard() {
               <div className="bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-8 mb-6 transition-all duration-300 backdrop-blur-sm bg-opacity-90 dark:bg-opacity-90 border border-gray-100 dark:border-gray-700">
                 <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
                   <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
-                    Welcome back, {user.displayName.split(" ")[0]}!
+                    Welcome back, {user?.displayName?.split(" ")[0]}!
                   </h2>
                   <div className="text-sm bg-primary/10 text-primary px-3 py-1 rounded-full">
                     {new Date().toLocaleDateString(undefined, {
@@ -338,7 +338,7 @@ function Dashboard() {
                 <div className="relative group mb-4 md:mb-0">
                   <img
                     className="h-24 w-24 object-cover rounded-full border-4 border-primary transition duration-300 group-hover:border-accent"
-                    src={user.photoURL || "https://via.placeholder.com/96"}
+                    src={user?.photoURL || "https://via.placeholder.com/96"}
                     alt="Profile"
                   />
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
