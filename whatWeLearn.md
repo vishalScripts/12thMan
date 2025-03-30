@@ -134,3 +134,5 @@ export default UserProfile;
 ✔ **No need to manually manage loading & errors.**  
 ✔ **Code is cleaner and easier to maintain.**  
 ✔ **Redux automatically tracks API state.**
+
+hehe
