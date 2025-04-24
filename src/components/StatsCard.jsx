@@ -8,7 +8,7 @@ export default function StatsCard({ title, value, icon, color, index }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
-      className={`p-6 rounded-xl ${color} text-white shadow-lg`}
+      className={`p-6 rounded-xl ${color}  text-text shadow-lg`}
     >
       <div className="flex items-center justify-between">
         <div>

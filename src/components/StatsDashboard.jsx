@@ -22,18 +22,18 @@ const StatCard = ({ title, value, icon, color, percentage }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-white p-6 rounded-xl shadow-lg flex flex-col relative overflow-hidden"
+      className="bg-background p-6 rounded-xl shadow-lg flex flex-col relative overflow-hidden"
     >
       <div className="flex justify-between items-start mb-4">
         <div>
-          <h3 className="text-gray-500 text-sm font-medium">{title}</h3>
+          <h3 className="text-text/80 text-sm font-medium">{title}</h3>
           <p className="text-3xl font-bold mt-1">{value}</p>
         </div>
         <div className={`p-3 rounded-lg bg-${color}-100`}>{icon}</div>
       </div>
 
       {percentage !== undefined && (
-        <div className="w-full bg-gray-200 rounded-full h-2">
+        <div className="w-full bg-background rounded-full h-2">
           <motion.div
             className={`bg-${color}-500 h-2 rounded-full`}
             initial={{ width: 0 }}
@@ -115,7 +115,7 @@ const StatsDashboard = () => {
   const COLORS = ["#4F46E5", "#10B981", "#F59E0B", "#EF4444"];
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6 bg-background/50 min-h-screen">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -123,9 +123,7 @@ const StatsDashboard = () => {
         className="max-w-6xl mx-auto"
       >
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">
-            Productivity Stats
-          </h1>
+          <h1 className="text-3xl font-bold text-text">Productivity Stats</h1>
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -139,7 +137,7 @@ const StatsDashboard = () => {
           <StatCard
             title="Tasks Completed"
             value={stats.tasksDone}
-            icon={<CheckCircleIcon size={24} className="text-green-500" />}
+            icon={<CheckCircleIcon size={24} className="text-green-500 " />}
             color="green"
             percentage={
               stats.tasksDone > 0
@@ -182,7 +180,7 @@ const StatsDashboard = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white p-6 rounded-xl shadow-lg"
+            className="bg-secondary/20 p-6 rounded-xl shadow-lg"
           >
             <h2 className="text-xl font-semibold mb-4">Time Distribution</h2>
             <div className="h-64">
@@ -214,7 +212,7 @@ const StatsDashboard = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="bg-white p-6 rounded-xl shadow-lg"
+            className="bg-secondary/20 p-6 rounded-xl shadow-lg"
           >
             <h2 className="text-xl font-semibold mb-4">Productivity Metrics</h2>
             <div className="h-64">
@@ -241,7 +239,7 @@ const StatsDashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className="bg-white p-6 rounded-xl shadow-lg mb-8"
+          className="bg-secondary/20 p-6 rounded-xl shadow-lg mb-8"
         >
           <h2 className="text-xl font-semibold mb-4">Weekly Progress</h2>
           <div className="h-72">
@@ -279,7 +277,7 @@ const StatsDashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
           transition={{ duration: 0.5, delay: 0.5 }}
-          className="bg-white p-6 rounded-xl shadow-lg"
+          className="bg-secondary/20 p-6 rounded-xl shadow-lg"
         >
           <h2 className="text-xl font-semibold mb-4">Productivity Insights</h2>
 
