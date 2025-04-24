@@ -795,7 +795,7 @@ function Calendar() {
       )}
 
       {/* Sidebar: Create event form & Tasks component */}
-      <div className="w-[25%] bg-white shadow-xl p-4 flex flex-col gap-6 h-full overflow-y-auto border-r border-gray-200 rounded-l-xl">
+      <div className="w-[25%] bg-background shadow-xl p-4 flex flex-col gap-6 h-full overflow-y-auto border-r border-gray-200 rounded-l-xl">
         {/* <div className="flex gap-3 flex-col border-b pb-6">
           {/* <h2 className="text-2xl font-bold text-primary">Create Task</h2>
           <FormElem

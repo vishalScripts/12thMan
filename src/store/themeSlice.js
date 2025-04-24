@@ -1,20 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-// Load initial state from local storage
 const loadState = () => {
   try {
-    const storedState = localStorage.getItem("themeSettings");
-    return storedState
-      ? JSON.parse(storedState)
+    const stored = localStorage.getItem("themeSettings");
+    return stored
+      ? JSON.parse(stored)
       : {
+          theme: "light",
           layoutType: "normal",
           themeBackground: "",
           navbarHidden: false,
           isSidebarHidden: false,
         };
-  } catch (error) {
-    console.error("Error loading theme settings:", error);
+  } catch {
     return {
+      theme: "dark",
       layoutType: "normal",
       themeBackground: "",
       navbarHidden: false,
@@ -23,13 +23,18 @@ const loadState = () => {
   }
 };
 
-// Initial state with local storage support
 const initialState = loadState();
 
 const themeSlice = createSlice({
   name: "theme",
   initialState,
   reducers: {
+    setTheme: (state, action) => {
+      if (state.theme !== action.payload) {
+        state.theme = action.payload;
+        localStorage.setItem("themeSettings", JSON.stringify(state));
+      }
+    },
     changeThemeStructure: (state, action) => {
       state.layoutType = action.payload;
       localStorage.setItem("themeSettings", JSON.stringify(state));
@@ -50,9 +55,11 @@ const themeSlice = createSlice({
 });
 
 export const {
+  setTheme,
   changeThemeStructure,
   changeBackground,
   hideNavbar,
   toggleSidebar,
 } = themeSlice.actions;
+
 export default themeSlice.reducer;

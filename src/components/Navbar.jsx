@@ -6,105 +6,99 @@ import { useDispatch, useSelector } from "react-redux";
 import ProfileLogo from "./ProfileLogo";
 import { logoutUser } from "../store/authSlice";
 import AlarmSystem from "./AlarmSystem";
+import ThemeBtn from "./ThemeBtn";
 
 function Navbar() {
   const isNavbarHidden = useSelector((state) => state.theme.navbarHidden);
   const userStatus = useSelector((state) => state.auth.status);
+  const theme = useSelector((state) => state.theme.theme);
+
+  console.log(theme, Math.random());
   const location = useLocation();
   const navRef = useRef(null);
   const containerRef = useRef(null);
   const [bgPosition, setBgPosition] = useState({ left: 0, width: 0 });
 
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+
+  useEffect(() => {
+    const activeLink = document.querySelector(".active-nav-link");
+    if (activeLink && containerRef.current) {
+      const { left, width } = activeLink.getBoundingClientRect();
+      const containerLeft = containerRef.current.getBoundingClientRect().left;
+      setBgPosition({
+        left: left - containerLeft,
+        width,
+      });
+    }
+  }, [location.pathname]);
+
   const handleLogout = async () => {
     await authService.logout();
     dispatch(logoutUser());
   };
-  // Function to check if a link is active
-  const isActive = (path) => location.pathname === path;
-
-  // Set background position behind the active link
-  const updateActiveBackground = () => {
-    const activeLink = document.querySelector(".active-nav-link");
-    if (activeLink) {
-      const { left, width, height } = activeLink.getBoundingClientRect();
-      setBgPosition({
-        left: left - containerRef.current.getBoundingClientRect().left,
-        width,
-      });
-    }
-  };
-
-  // Update background when route changes
-  useEffect(() => {
-    updateActiveBackground();
-  }, [location.pathname]);
 
   return (
     <nav
       ref={navRef}
-      className={`relative h-[10vh] bg-white border-b-1 border-gray-300 shadow-sm w-full z-[99999999]`}
+      className={`relative h-[10vh] bg-background border-b border-border shadow-sm  w-full z-[99999999]`}
     >
-      {/* Moving Background Behind Active Link */}
-
-      <Container className="h-full place-items-center grid grid-cols-12 relative">
+      <Container className="h-full grid grid-cols-12 items-center relative">
         {/* Logo */}
-        <div className="h-full justify-self-start flex col-span-2 bg-white">
-          <Link to={"/"}>
+        <div className="col-span-2">
+          <Link to="/">
             <Logo />
           </Link>
         </div>
 
-        {/* Navigation Links */}
-        <div className="col-span-8 bg-[#0000001a] px-2 py-1 rounded-sm relative z-10">
+        {/* Nav Links */}
+        <div className="col-span-4 col-start-5 bg-accent/10 px-2 py-1 rounded-sm relative z-10 ">
           <ul
-            className="w-full items-center justify-center gap-6 flex-row flex relative"
             ref={containerRef}
+            className="flex gap-6 justify-center items-center w-full relative"
           >
+            <div
+              className="absolute h-full bg-secondary transition-all duration-500 ease-in-out rounded-sm"
+              style={{
+                left: `${bgPosition.left}px`,
+                width: `${bgPosition.width}px`,
+              }}
+            />
             {[
               { path: "/dashboard", label: "Dashboard" },
               { path: "/pomodoro", label: "Pomodoro" },
               { path: "/calendar", label: "Calendar" },
             ].map((link) => (
-              <>
-                <div
-                  className="absolute h-full  bg-secondary transition-all duration-1000 ease-out rounded-sm"
-                  style={{
-                    left: `${bgPosition.left}px`,
-                    width: `${bgPosition.width}px`,
-                    // height: `${bgPosition.height}px`,
-                  }}
-                ></div>
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`px-4 rounded-sm relative duration-300 z-10 ${
-                    isActive(link.path)
-                      ? "active-nav-link text-white"
-                      : "hover:text-gray-900"
-                  }`}
-                >
-                  <li className="text-lg font-medium">{link.label}</li>
-                </Link>
-              </>
+              <Link
+                key={link.path}
+                to={link.path}
+                className={`px-4 py-2 rounded-sm text-text relative z-10 duration-300 ${
+                  location.pathname === link.path
+                    ? "active-nav-link text-text font-bold"
+                    : "hover:text-text/55"
+                }`}
+              >
+                <li className="text-lg">{link.label}</li>
+              </Link>
             ))}
           </ul>
         </div>
 
-        {/* Profile & Alarm System */}
-        <div className="col-span-2 flex items-center  justify-center">
+        {/* Profile + Alarm + Theme */}
+        <div className="col-span-2 col-start-10  flex justify-end items-center gap-2">
           {userStatus ? (
             <ProfileLogo />
           ) : (
-            <button
-              onClick={handleLogout}
-              className="px-4 py-1 cursor-pointer bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-            >
-              <Link to="/login">Login</Link>
-            </button>
+            <Link to="/login">
+              <button className="px-4 py-1 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                Login
+              </button>
+            </Link>
           )}
-          <div>
-            <AlarmSystem />
-          </div>
+          <AlarmSystem />
+          <ThemeBtn variant={"navbar"} />
         </div>
       </Container>
     </nav>

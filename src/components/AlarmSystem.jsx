@@ -21,15 +21,6 @@ import {
 import alarmAudio from "../assets/music/alarm.mp3";
 import Button from "./Button";
 
-const COLORS = {
-  primary: "var(--color-primary, #8f5fe8)",
-  secondary: "var(--color-secondary, #ff9fe8)",
-  accent: "var(--color-accent, #6fd3c7)",
-  background: "var(--color-background, #fdfcff)",
-  text: "var(--color-text, #1a0e23)",
-  secondaryHover: "var(--color-secondary-hover, #c9a9ff)",
-};
-
 function AlarmSystem() {
   const tasks = useSelector((state) => state.tasks.tasks);
 
@@ -244,13 +235,13 @@ function AlarmSystem() {
 
   // Popover content
   const content = (
-    <div className="w-80 max-h-96 overflow-y-auto">
-      <div className="flex justify-between items-center mb-4 sticky top-0 bg-white z-10 py-2">
-        <h2 className="text-lg font-bold text-gray-800">Task Alarms</h2>
+    <div className="w-80  overflow-y-auto ">
+      <div className="flex justify-between items-center mb-4 sticky top-0 bg-background z-10 py-2">
+        <h2 className="text-lg font-bold text-text">Task Alarms</h2>
         <div className="flex items-center gap-2">
           <button
             onClick={toggleSound}
-            className="p-1 hover:bg-gray-100 rounded-full"
+            className="p-1 hover:bg-accent-hover/50 cursor-pointer duration-300 rounded-full"
             title={soundEnabled ? "Mute alarms" : "Enable alarm sound"}
           >
             {soundEnabled ? (
@@ -276,9 +267,7 @@ function AlarmSystem() {
         {activeNotifications.length > 0 && (
           <div className="mb-3">
             <div className="flex justify-between items-center mb-1">
-              <h3 className="text-md font-medium text-gray-700">
-                Active Alarms
-              </h3>
+              <h3 className="text-md font-medium text-text">Active Alarms</h3>
               <button
                 onClick={dismissAllNotifications}
                 className="text-xs text-blue-600 hover:text-blue-800"
@@ -322,9 +311,7 @@ function AlarmSystem() {
 
       {/* Upcoming Alarms */}
       <div className="mt-4">
-        <h3 className="text-md font-medium text-gray-700 mb-2">
-          Upcoming Alarms
-        </h3>
+        <h3 className="text-md font-medium text-text mb-2">Upcoming Alarms</h3>
         {loading ? (
           <div className="flex justify-center py-4">
             <Spin
@@ -334,9 +321,7 @@ function AlarmSystem() {
             />
           </div>
         ) : upcomingAlarms.length === 0 ? (
-          <p className="text-sm text-gray-500 italic py-2">
-            No upcoming alarms
-          </p>
+          <p className="text-sm text-text/80 italic py-2">No upcoming alarms</p>
         ) : (
           <ul className="space-y-2">
             {upcomingAlarms.map((alarm) => {
@@ -350,7 +335,7 @@ function AlarmSystem() {
                 >
                   <div>
                     <p className="font-medium text-sm">{task.title}</p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-text/80">
                       {new Date(alarm.time).toLocaleString(undefined, {
                         month: "short",
                         day: "numeric",
@@ -382,16 +367,14 @@ function AlarmSystem() {
 
       {/* Add New Alarm Section */}
       <div className="mt-6 border-t pt-4">
-        <h3 className="text-md font-medium text-gray-700 mb-3">
-          Set New Alarm
-        </h3>
+        <h3 className="text-md font-medium text-text mb-3">Set New Alarm</h3>
         <SetAlarmForm tasks={tasks} createAlarm={createAlarm} />
       </div>
     </div>
   );
 
   return (
-    <div className="relative">
+    <div className="bg-background">
       <Popover
         content={content}
         title={null}
@@ -399,14 +382,15 @@ function AlarmSystem() {
         open={popoverVisible}
         onOpenChange={setPopoverVisible}
         placement="bottomRight"
-        overlayClassName="alarm-popover"
+        overlayClassName=" alarm-popover !border-1 !border-border !rounded-md "
+        color="var(--color-background)"
       >
         <Badge count={activeNotifications.length} size="small">
           <button
-            className={`p-2 cursor-pointer hover:scale-105 duration-200 hover:rotate-6 rounded-full transition-colors relative ${
+            className={`flex items-center gap-2 p-2 rounded-md cursor-pointer hover:bg-opacity-20  transition-all duration-300 hover:scale-105 active:scale-90  ${
               currentlyPlaying
-                ? "animate-pulse bg-orange-100"
-                : "hover:bg-gray-100"
+                ? "animate-pulse bg-primary "
+                : "hover:bg-primary"
             }`}
           >
             {activeNotifications.length > 0 ? (
@@ -418,7 +402,7 @@ function AlarmSystem() {
                 }`}
               />
             ) : (
-              <BellAlertIcon className="w-6 h-6  text-gray-500" />
+              <BellAlertIcon className="w-5 h-5  text-text" />
             )}
           </button>
         </Badge>
@@ -506,13 +490,13 @@ function SetAlarmForm({ tasks, createAlarm }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-text saturate-50 mb-1">
           Task
         </label>
         <select
           value={selectedTask}
           onChange={(e) => setSelectedTask(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded text-sm"
+          className="w-full p-2 border border-gray-300 text-text saturate-0 rounded text-sm"
           disabled={isSubmitting}
         >
           <option value="">Select a task</option>
@@ -532,8 +516,8 @@ function SetAlarmForm({ tasks, createAlarm }) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Notify me, <span className="text-gray-800">Before:</span>
+        <label className="block text-sm font-medium text-text mb-1">
+          Notify me, <span className=" font-extrabold">Before:</span>
         </label>
         <div className="flex flex-wrap gap-2">
           {[2, 5, 15, 30, 60, 120, 1440].map((time) => (
@@ -558,7 +542,7 @@ function SetAlarmForm({ tasks, createAlarm }) {
           ))}
         </div>
         {minutesBefore.length > 0 && (
-          <div className="text-xs text-gray-600 mt-1">
+          <div className="text-xs text-text saturate-100 mt-1">
             Selected:{" "}
             {minutesBefore
               .map((m) =>

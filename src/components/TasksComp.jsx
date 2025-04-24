@@ -1,5 +1,3 @@
-// src/components/TasksComp.jsx
-
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -23,16 +21,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import uptodown from "../assets/uptodown.svg";
 import { incrementTasksDone } from "../store/statsSlice";
 
-// Color variables to match our landing page theme
-const COLORS = {
-  primary: "var(--color-primary, #8f5fe8)",
-  secondary: "var(--color-secondary, #ff9fe8)",
-  accent: "var(--color-accent, #6fd3c7)",
-  background: "var(--color-background, #fdfcff)",
-  text: "var(--color-text, #1a0e23)",
-  secondaryHover: "var(--color-secondary-hover, #c9a9ff)",
-};
-
 function TasksComp({
   className = "",
   fixedHeight,
@@ -40,7 +28,6 @@ function TasksComp({
   totalTime,
   isRunning,
   timer = false,
-
   createTaskInTaskComp,
 }) {
   const { tasks, loading, runningTask } = useSelector((state) => state.tasks);
@@ -123,7 +110,7 @@ function TasksComp({
   };
 
   return (
-    <div className={`${className}`}>
+    <div className={`${className} bg-[var(--acme-background)]`}>
       <AnimatePresence>
         {notifications.map((notif) => (
           <Notification
@@ -136,13 +123,15 @@ function TasksComp({
           />
         ))}
       </AnimatePresence>
-      <h2 className="text-lg text-center mb-2 bg-secondary font-bold text-gray-800">
+      <h2 className="text-lg text-center mb-2 bg-[var(--acme-secondary)] font-bold text-[var(--acme-text)]">
         Tasks
       </h2>
       <div className="flex justify-start gap-2 mb-2">
         <button
           className={`px-3 py-0 h-6 text-sm font-bold rounded cursor-pointer ${
-            filter === "all" ? "bg-slate-600 text-white" : "bg-gray-200"
+            filter === "all"
+              ? "bg-slate-600 text-white dark:bg-[var(--acme-primary)] dark:text-[var(--acme-background)]"
+              : "bg-gray-200 dark:bg-gray-700 dark:text-gray-300"
           }`}
           onClick={() => setFilter("all")}
         >
@@ -150,7 +139,9 @@ function TasksComp({
         </button>
         <button
           className={`px-3 py-0 h-6 text-sm font-bold rounded cursor-pointer ${
-            filter === "done" ? "bg-slate-600 text-white" : "bg-gray-200"
+            filter === "done"
+              ? "bg-slate-600 text-white dark:bg-[var(--acme-primary)] dark:text-[var(--acme-background)]"
+              : "bg-gray-200 dark:bg-gray-700 dark:text-gray-300"
           }`}
           onClick={() => setFilter("done")}
         >
@@ -158,7 +149,9 @@ function TasksComp({
         </button>
         <button
           className={`px-3 py-0 h-6 text-sm font-bold rounded cursor-pointer ${
-            filter === "today" ? "bg-slate-600 text-white" : "bg-gray-200"
+            filter === "today"
+              ? "bg-slate-600 text-white dark:bg-[var(--acme-primary)] dark:text-[var(--acme-background)]"
+              : "bg-gray-200 dark:bg-gray-700 dark:text-gray-300"
           }`}
           onClick={() => setFilter("today")}
         >
@@ -179,35 +172,24 @@ function TasksComp({
                 exit={{ opacity: 0, y: 10 }}
                 transition={{ duration: 0.3, delay: 1 * 0.05 }}
                 className={`px-3 py-2 flex gap-3 items-center justify-between relative rounded-sm border transition-all duration-200 
-                    bg-white border-gray-100 hover:border-purple-200 hover:shadow-sm cursor-pointer group hover:bg-amber-50
+                    bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 
+                    hover:border-[var(--acme-primary)] hover:shadow-sm cursor-pointer group 
+                    hover:bg-amber-50 dark:hover:bg-amber-900/30
                   `}
                 onClick={createTaskInTaskComp}
               >
                 <div className="flex flex-col justify-center flex-1">
-                  <h3 className={`font-medium text-gray-800 `}>
+                  <h3 className={`font-medium text-[var(--acme-text)]`}>
                     Create task...
                   </h3>
                 </div>
 
-                <div className="box-border p-1 duration-300 rounded-full group-hover:bg-amber-100">
-                  <PlusCircleIcon className="w-6 group-hover:scale-105 h-6 text-2xl text-amber-600" />
-                  {/* <svg
-                    className="w-4 h-4 text-amber-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg> */}
+                <div className="box-border p-1 duration-300 rounded-full group-hover:bg-amber-100 dark:group-hover:bg-amber-800/50">
+                  <PlusCircleIcon className="w-6 group-hover:scale-105 h-6 text-2xl text-amber-600 dark:text-amber-400" />
                 </div>
               </motion.li>
             )}
-            <div className="flex flex-col items-center justify-center h-32 text-gray-400">
+            <div className="flex flex-col items-center justify-center h-32 text-gray-400 dark:text-gray-500">
               <svg
                 className="w-12 h-12 mb-2"
                 fill="none"
@@ -236,31 +218,20 @@ function TasksComp({
                   exit={{ opacity: 0, y: 10 }}
                   transition={{ duration: 0.3, delay: 1 * 0.05 }}
                   className={`px-3 py-2 flex gap-3 items-center justify-between relative rounded-sm border transition-all duration-200 
-                    bg-white border-gray-100 hover:border-purple-200 hover:shadow-sm cursor-pointer group hover:bg-amber-50
+                    bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 
+                    hover:border-[var(--acme-primary)] hover:shadow-sm cursor-pointer group 
+                    hover:bg-amber-50 dark:hover:bg-amber-900/30
                   `}
                   onClick={createTaskInTaskComp}
                 >
                   <div className="flex flex-col justify-center flex-1">
-                    <h3 className={`font-medium text-gray-800 `}>
+                    <h3 className={`font-medium text-[var(--acme-text)]`}>
                       Create task...
                     </h3>
                   </div>
 
-                  <div className="box-border p-1 duration-300 rounded-full group-hover:bg-amber-100">
-                    <PlusCircleIcon className="w-6 group-hover:scale-105 h-6 text-2xl text-amber-600" />
-                    {/* <svg
-                    className="w-4 h-4 text-amber-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg> */}
+                  <div className="box-border p-1 duration-300 rounded-full group-hover:bg-amber-100 dark:group-hover:bg-amber-800/50">
+                    <PlusCircleIcon className="w-6 group-hover:scale-105 h-6 text-2xl text-amber-600 dark:text-amber-400" />
                   </div>
                 </motion.li>
               )}
@@ -282,35 +253,37 @@ function TasksComp({
                   className={`p-3 flex gap-3 items-center justify-between relative rounded-sm border transition-all duration-200 
                     ${
                       runningTask.id === task.id
-                        ? "bg-amber-50 border-amber-200 shadow-md"
+                        ? "bg-amber-50 dark:bg-amber-900/40 border-amber-200 dark:border-amber-700/70 shadow-md"
                         : task.done
-                        ? "bg-green-50 border-green-200"
-                        : "bg-white border-gray-100 hover:border-purple-200 hover:shadow-sm"
+                        ? "bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-700/70"
+                        : "bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:border-[var(--acme-primary)] hover:shadow-sm"
                     }
                     ${timer && !task.done ? "cursor-pointer" : ""}
                   `}
                 >
                   <div className="flex flex-col justify-center flex-1">
                     <h3
-                      className={`font-medium text-gray-800 ${
-                        task.done ? "line-through text-gray-500" : ""
+                      className={`font-medium text-[var(--acme-text)] ${
+                        task.done
+                          ? "line-through text-gray-500 dark:text-gray-400"
+                          : ""
                       }`}
                     >
                       {task.title}
                     </h3>
                     {!task.done && (
-                      <div className="mt-1   items-center justify-start flex">
-                        <div className="flex  flex-col h-8 w-2 min-h-full items-center justify-center">
+                      <div className="mt-1 items-center justify-start flex">
+                        <div className="flex flex-col h-8 w-2 min-h-full items-center justify-center">
                           {" "}
                           <img
                             src={uptodown}
-                            className=" h-[60%] opacity-50 object-cover w-2  object-center"
+                            className="h-[60%] opacity-50 object-cover w-2 object-center"
                             alt=""
-                            srcset=""
+                            srcSet=""
                           />
                         </div>
                         <div>
-                          <p className="text-xs text-gray-500 flex items-center">
+                          <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
                             {new Date(task.start).toLocaleString(undefined, {
                               month: "short",
                               day: "numeric",
@@ -319,7 +292,7 @@ function TasksComp({
                             })}
                           </p>
 
-                          <p className="text-xs text-gray-500 flex items-center">
+                          <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
                             {new Date(task.end).toLocaleString(undefined, {
                               month: "short",
                               day: "numeric",
@@ -334,9 +307,9 @@ function TasksComp({
 
                   {timer ? (
                     runningTask.id === task.id && (
-                      <div className="p-2 rounded-full bg-amber-100">
+                      <div className="p-2 rounded-full bg-amber-100 dark:bg-amber-800/70">
                         <svg
-                          className="w-4 h-4 text-amber-600"
+                          className="w-4 h-4 text-amber-600 dark:text-amber-300"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -356,7 +329,7 @@ function TasksComp({
                         <Spin
                           indicator={
                             <LoadingOutlined
-                              style={{ color: COLORS.primary }}
+                              style={{ color: "var(--acme-primary)" }}
                               spin
                             />
                           }
@@ -369,8 +342,8 @@ function TasksComp({
                           }}
                           className={`w-6 h-6 flex items-center justify-center rounded-full border-2 transition-all duration-200 hover:scale-110 cursor-pointer ${
                             task.done
-                              ? "border-green-500 bg-green-500 text-white"
-                              : "border-purple-300 hover:border-purple-500 bg-white"
+                              ? "border-green-500 bg-green-500 text-white dark:border-green-400 dark:bg-green-400 dark:text-gray-900"
+                              : "border-[var(--acme-primary)] hover:border-[var(--acme-primary)] bg-white dark:bg-gray-800"
                           }`}
                         >
                           {task.done && (

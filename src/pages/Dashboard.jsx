@@ -18,23 +18,13 @@ import authService from "../services/AuthService";
 import { logoutUser } from "../store/authSlice";
 import StatsDashboard from "../components/StatsDashboard";
 import TextToSpeech from "../components/TextToSpeech;";
+import ThemeBtn from "../components/ThemeBtn";
 
 function Dashboard() {
   const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState("home");
-  const [darkMode, setDarkMode] = useState(() => {
-    const savedTheme = localStorage.getItem("theme");
-    return (
-      savedTheme === "dark" ||
-      (!savedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches)
-    );
-  });
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode);
-    localStorage.setItem("theme", darkMode ? "dark" : "light");
-  }, [darkMode]);
+  const darkMode = useSelector((state) => state.theme.theme === "dark");
 
   const handleLogout = async () => {
     await authService.logout();
@@ -98,40 +88,79 @@ function Dashboard() {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-slate-800">
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{
+          background:
+            "linear-gradient(to bottom right, var(--acme-background), var(--acme-accent-hover))",
+        }}
+      >
         <div className="animate-pulse flex flex-col items-center">
-          <div className="w-24 h-24 bg-primary rounded-full mb-4"></div>
-          <div className="h-4 w-48 bg-secondary rounded mb-3"></div>
-          <div className="h-3 w-32 bg-secondary rounded"></div>
+          <div
+            className="w-24 h-24 rounded-full mb-4"
+            style={{ backgroundColor: "var(--acme-primary)" }}
+          ></div>
+          <div
+            className="h-4 w-48 rounded mb-3"
+            style={{ backgroundColor: "var(--acme-secondary)" }}
+          ></div>
+          <div
+            className="h-3 w-32 rounded"
+            style={{ backgroundColor: "var(--acme-secondary)" }}
+          ></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex transition-all duration-300 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-slate-800 text-gray-800 dark:text-gray-100">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white dark:bg-gray-800 shadow-xl transition-all duration-300 backdrop-blur-sm bg-opacity-90 dark:bg-opacity-90 border-r border-gray-200 dark:border-gray-700">
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-          <h1 className="text-2xl font-bold text-primary dark:text-primary">
-            StudyDash
-          </h1>
-        </div>
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+    <div
+      className="min-h-screen flex transition-all duration-300"
+      style={{
+        background:
+          "linear-gradient(to bottom right, var(--acme-background), var(--acme-background))",
+        color: "var(--acme-text)",
+      }}
+    >
+      {/* Sidebar - Modified to stick when scrolling */}
+      <aside
+        className="w-64 sticky h-[100vh] top-0 left-0 overflow-y-auto  shadow-xl transition-all duration-300 backdrop-blur-sm border-r z-10"
+        style={{
+          backgroundColor: "var(--acme-background)",
+          borderColor: "var(--acme-secondary-hover)",
+          opacity: 0.9,
+        }}
+      >
+        <div
+          className="px-6 py-4 border-b"
+          style={{ borderColor: "var(--acme-secondary-hover)" }}
+        >
           <div className="flex items-center space-x-3">
             <div className="relative">
               <img
                 src={user.photoURL || "https://via.placeholder.com/40"}
                 alt="Profile"
-                className="w-10 h-10 rounded-full border-2 border-primary"
+                className="w-10 h-10 rounded-full border-2"
+                style={{ borderColor: "var(--acme-primary)" }}
               />
-              <span className="absolute bottom-0 right-0 block w-3 h-3 bg-green-500 rounded-full ring-2 ring-white dark:ring-gray-800"></span>
+              <span
+                className="absolute bottom-0 right-0 block w-3 h-3 bg-green-500 rounded-full ring-2"
+                style={{
+                  ringColor: "var(--acme-background)",
+                }}
+              ></span>
             </div>
             <div className="overflow-hidden">
-              <p className="font-medium text-gray-800 dark:text-gray-100 truncate">
+              <p
+                className="font-medium truncate"
+                style={{ color: "var(--acme-text)" }}
+              >
                 {user?.displayName}
               </p>
-              <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+              <p
+                className="text-sm truncate"
+                style={{ color: "var(--acme-text)", opacity: 0.7 }}
+              >
                 {user?.email}
               </p>
             </div>
@@ -143,31 +172,59 @@ function Dashboard() {
               {
                 key: "home",
                 label: "Home",
-                icon: <FiHome className="mr-3 text-primary" />,
+                icon: (
+                  <FiHome
+                    className="mr-3"
+                    style={{ color: "var(--acme-primary)" }}
+                  />
+                ),
               },
               {
                 key: "stats",
                 label: "Stats",
-                icon: <FiBarChart2 className="mr-3 text-secondary" />,
+                icon: (
+                  <FiBarChart2
+                    className="mr-3"
+                    style={{ color: "var(--acme-secondary)" }}
+                  />
+                ),
               },
               {
                 key: "profile",
                 label: "Profile",
-                icon: <FiUser className="mr-3 text-accent" />,
+                icon: (
+                  <FiUser
+                    className="mr-3"
+                    style={{ color: "var(--acme-accent)" }}
+                  />
+                ),
               },
               {
                 key: "settings",
                 label: "Settings",
-                icon: <FiSettings className="mr-3 text-orange-500" />,
+                icon: (
+                  <FiSettings
+                    className="mr-3"
+                    style={{ color: "var(--acme-secondary-hover)" }}
+                  />
+                ),
               },
             ].map((item) => (
               <li
                 key={item.key}
-                className={`flex items-center px-6 py-3 hover:bg-primary/10 cursor-pointer transition-all duration-200 ${
-                  activeTab === item.key
-                    ? "bg-primary/10 border-l-4 border-primary"
-                    : ""
+                className={`flex items-center px-6 py-3 cursor-pointer transition-all duration-200 ${
+                  activeTab === item.key ? "border-l-4" : ""
                 }`}
+                style={{
+                  borderColor:
+                    activeTab === item.key
+                      ? "var(--acme-primary)"
+                      : "transparent",
+                  backgroundColor:
+                    activeTab === item.key
+                      ? "rgba(var(--acme-primary-rgb), 0.1)"
+                      : "transparent",
+                }}
                 onClick={() => setActiveTab(item.key)}
               >
                 {item.icon}
@@ -175,7 +232,8 @@ function Dashboard() {
               </li>
             ))}
             <li
-              className="flex items-center px-6 py-3 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer text-red-500 mt-6 transition-all duration-200"
+              className="flex items-center px-6 py-3 cursor-pointer mt-6 transition-all duration-200"
+              style={{ color: "#e53e3e" }}
               onClick={handleLogout}
             >
               <FiLogOut className="mr-3 text-xl" />
@@ -183,29 +241,9 @@ function Dashboard() {
             </li>
           </ul>
         </nav>
-
-        <div className="absolute bottom-4 left-0 right-0 px-6">
-          <div className="p-3 bg-gray-100 dark:bg-gray-700 rounded-lg">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                {darkMode ? "Dark Mode" : "Light Mode"}
-              </span>
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => setDarkMode(!darkMode)}
-                className={`p-1.5 rounded-lg ${
-                  darkMode
-                    ? "bg-primary/10 text-primary"
-                    : "bg-gray-200 text-gray-800"
-                }`}
-              >
-                {darkMode ? <FiSun size={18} /> : <FiMoon size={18} />}
-              </motion.button>
-            </div>
-          </div>
-        </div>
       </aside>
+
+      {/* Add a spacer div to push content to the right */}
 
       {/* Main Content */}
       <main className="flex-1 overflow-auto transition-all duration-300 p-6 md:p-10">
@@ -220,12 +258,28 @@ function Dashboard() {
               className="max-w-4xl mx-auto"
             >
               {/* Greeting Section */}
-              <div className="bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-8 mb-6 transition-all duration-300 backdrop-blur-sm bg-opacity-90 dark:bg-opacity-90 border border-gray-100 dark:border-gray-700">
+              <div
+                className="shadow-lg rounded-2xl p-8 mb-6 transition-all duration-300 backdrop-blur-sm border"
+                style={{
+                  backgroundColor: "var(--acme-background)",
+                  borderColor: "var(--acme-secondary-hover)",
+                  opacity: 0.9,
+                }}
+              >
                 <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-                  <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
+                  <h2
+                    className="text-3xl font-bold"
+                    style={{ color: "var(--acme-text)" }}
+                  >
                     Welcome back, {user?.displayName?.split(" ")[0]}!
                   </h2>
-                  <div className="text-sm bg-primary/10 text-primary px-3 py-1 rounded-full">
+                  <div
+                    className="text-sm px-3 py-1 rounded-full"
+                    style={{
+                      backgroundColor: "rgba(var(--acme-primary-rgb), 0.1)",
+                      color: "var(--acme-primary)",
+                    }}
+                  >
                     {new Date().toLocaleDateString(undefined, {
                       weekday: "long",
                       month: "long",
@@ -233,32 +287,74 @@ function Dashboard() {
                     })}
                   </div>
                 </div>
-                <div className="bg-gradient-to-r from-primary/10 to-secondary/10 border-l-4 border-primary p-6 mb-6 rounded-lg">
-                  <h3 className="font-semibold text-lg mb-2 text-gray-800 dark:text-gray-100">
+                <div
+                  className="p-6 mb-6 rounded-lg border-l-4"
+                  style={{
+                    borderColor: "var(--acme-primary)",
+                    background:
+                      "linear-gradient(to right, rgba(var(--acme-primary-rgb), 0.1), rgba(var(--acme-secondary-rgb), 0.1))",
+                  }}
+                >
+                  <h3
+                    className="font-semibold text-lg mb-2"
+                    style={{ color: "var(--acme-text)" }}
+                  >
                     Today's Motivational Quote:
                   </h3>
-                  <p className="italic text-lg text-gray-700 dark:text-gray-300">
+                  <p
+                    className="italic text-lg"
+                    style={{ color: "var(--acme-text)", opacity: 0.8 }}
+                  >
                     "{randomQuote.quote}"
                   </p>
-                  <p className="text-right mt-2 text-gray-600 dark:text-gray-400">
+                  <p
+                    className="text-right mt-2"
+                    style={{ color: "var(--acme-text)", opacity: 0.6 }}
+                  >
                     — {randomQuote.author}
                   </p>
                 </div>
               </div>
 
               {/* Stats Section */}
-              <div className="bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-8 mb-6 transform transition duration-300  hover:shadow-xl backdrop-blur-sm bg-opacity-90 dark:bg-opacity-90 border border-gray-100 dark:border-gray-700">
-                <h2 className="text-2xl font-bold mb-6 flex items-center text-gray-800 dark:text-gray-100">
-                  <FiBarChart2 className="mr-2 text-secondary" />
+              <div
+                className="shadow-lg rounded-2xl p-8 mb-6 transform transition duration-300 hover:shadow-xl backdrop-blur-sm border"
+                style={{
+                  backgroundColor: "var(--acme-background)",
+                  borderColor: "var(--acme-secondary-hover)",
+                  opacity: 0.9,
+                }}
+              >
+                <h2
+                  className="text-2xl font-bold mb-6 flex items-center"
+                  style={{ color: "var(--acme-text)" }}
+                >
+                  <FiBarChart2
+                    className="mr-2"
+                    style={{ color: "var(--acme-secondary)" }}
+                  />
                   Your Stats
                 </h2>
                 <StatsDashboard />
               </div>
 
               {/* Quick Actions */}
-              <div className="bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-8 transform transition duration-300 hover:scale-[1.01] hover:shadow-xl backdrop-blur-sm bg-opacity-90 dark:bg-opacity-90 border border-gray-100 dark:border-gray-700">
-                <h2 className="text-2xl font-bold mb-6 flex items-center text-gray-800 dark:text-gray-100">
-                  <FiTarget className="mr-2 text-accent" />
+              <div
+                className="shadow-lg rounded-2xl p-8 transform transition duration-300 hover:scale-[1.01] hover:shadow-xl backdrop-blur-sm border"
+                style={{
+                  backgroundColor: "var(--acme-background)",
+                  borderColor: "var(--acme-secondary-hover)",
+                  opacity: 0.9,
+                }}
+              >
+                <h2
+                  className="text-2xl font-bold mb-6 flex items-center"
+                  style={{ color: "var(--acme-text)" }}
+                >
+                  <FiTarget
+                    className="mr-2"
+                    style={{ color: "var(--acme-accent)" }}
+                  />
                   Quick Actions
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -266,31 +362,30 @@ function Dashboard() {
                     {
                       icon: <FiBook className="mr-2" />,
                       label: "Start Study Session",
-                      from: "from-primary",
-                      to: "to-primary/90",
+                      bg: "var(--acme-primary)",
                     },
                     {
                       icon: <FiRefreshCw className="mr-2" />,
                       label: "Review Progress",
-                      from: "from-secondary",
-                      to: "to-secondary/90",
+                      bg: "var(--acme-secondary)",
                     },
                     {
                       icon: <FiTarget className="mr-2" />,
                       label: "Set New Goals",
-                      from: "from-accent",
-                      to: "to-accent/90",
+                      bg: "var(--acme-accent)",
                     },
                     {
                       icon: <FiFolder className="mr-2" />,
                       label: "Browse Resources",
-                      from: "from-orange-500",
-                      to: "to-orange-600",
+                      bg: "var(--acme-secondary-hover)",
                     },
                   ].map((btn, idx) => (
                     <button
                       key={idx}
-                      className={`bg-gradient-to-r ${btn.from} ${btn.to} text-white py-4 px-4 rounded-xl transition duration-200 shadow-md flex items-center justify-center hover:shadow-lg hover:translate-y-[-2px]`}
+                      className="text-white py-4 px-4 rounded-xl transition duration-200 shadow-md flex items-center justify-center hover:shadow-lg hover:translate-y-[-2px]"
+                      style={{
+                        background: `linear-gradient(to right, ${btn.bg}, ${btn.bg})`,
+                      }}
                     >
                       {btn.icon}
                       {btn.label}
@@ -308,13 +403,27 @@ function Dashboard() {
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="max-w-4xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-8 transition-all duration-300 backdrop-blur-sm bg-opacity-90 dark:bg-opacity-90 border border-gray-100 dark:border-gray-700"
+              className="max-w-4xl mx-auto shadow-lg rounded-2xl p-8 transition-all duration-300 backdrop-blur-sm border"
+              style={{
+                backgroundColor: "var(--acme-background)",
+                borderColor: "var(--acme-secondary-hover)",
+                opacity: 0.9,
+              }}
             >
-              <h2 className="text-2xl font-bold mb-6 flex items-center text-gray-800 dark:text-gray-100">
-                <FiBarChart2 className="mr-2 text-secondary" />
+              <h2
+                className="text-2xl font-bold mb-6 flex items-center"
+                style={{ color: "var(--acme-text)" }}
+              >
+                <FiBarChart2
+                  className="mr-2"
+                  style={{ color: "var(--acme-secondary)" }}
+                />
                 Detailed Statistics
               </h2>
-              <p className="mb-6 text-gray-600 dark:text-gray-400">
+              <p
+                className="mb-6"
+                style={{ color: "var(--acme-text)", opacity: 0.6 }}
+              >
                 View your detailed learning analytics and progress tracking
               </p>
               <StatsDashboard />
@@ -328,16 +437,31 @@ function Dashboard() {
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="max-w-4xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-8 transition-all duration-300 backdrop-blur-sm bg-opacity-90 dark:bg-opacity-90 border border-gray-100 dark:border-gray-700"
+              className="max-w-4xl mx-auto shadow-lg rounded-2xl p-8 transition-all duration-300 backdrop-blur-sm border"
+              style={{
+                backgroundColor: "var(--acme-background)",
+                borderColor: "var(--acme-secondary-hover)",
+                opacity: 0.9,
+              }}
             >
-              <h2 className="text-2xl font-bold mb-6 flex items-center text-gray-800 dark:text-gray-100">
-                <FiUser className="mr-2 text-accent" />
+              <h2
+                className="text-2xl font-bold mb-6 flex items-center"
+                style={{ color: "var(--acme-text)" }}
+              >
+                <FiUser
+                  className="mr-2"
+                  style={{ color: "var(--acme-accent)" }}
+                />
                 Profile
               </h2>
               <div className="flex flex-col md:flex-row items-center md:space-x-6 mb-8">
                 <div className="relative group mb-4 md:mb-0">
                   <img
-                    className="h-24 w-24 object-cover rounded-full border-4 border-primary transition duration-300 group-hover:border-accent"
+                    className="h-24 w-24 object-cover rounded-full border-4 transition duration-300"
+                    style={{
+                      borderColor: "var(--acme-primary)",
+                      borderColorHover: "var(--acme-accent)",
+                    }}
                     src={user?.photoURL || "https://via.placeholder.com/96"}
                     alt="Profile"
                   />
@@ -348,51 +472,97 @@ function Dashboard() {
                   </div>
                 </div>
                 <div>
-                  <h4 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
+                  <h4
+                    className="text-2xl font-semibold"
+                    style={{ color: "var(--acme-text)" }}
+                  >
                     {user.displayName}
                   </h4>
-                  <p className="text-gray-500 dark:text-gray-400">
+                  <p style={{ color: "var(--acme-text)", opacity: 0.6 }}>
                     {user.email}
                   </p>
                   <div className="mt-2">
-                    <span className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 text-xs px-2 py-1 rounded-full">
+                    <span
+                      className="text-xs px-2 py-1 rounded-full"
+                      style={{
+                        backgroundColor: "rgba(52, 211, 153, 0.1)",
+                        color: "rgb(52, 211, 153)",
+                      }}
+                    >
                       Active Student
                     </span>
                   </div>
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-700 transition-colors duration-300">
-                  <h5 className="font-medium mb-2 text-gray-600 dark:text-gray-300">
+                <div
+                  className="p-4 rounded-lg transition-colors duration-300"
+                  style={{
+                    backgroundColor: "rgba(var(--acme-text-rgb), 0.05)",
+                  }}
+                >
+                  <h5
+                    className="font-medium mb-2"
+                    style={{ color: "var(--acme-text)", opacity: 0.7 }}
+                  >
                     Account Created:
                   </h5>
-                  <p className="text-gray-800 dark:text-gray-100">
+                  <p style={{ color: "var(--acme-text)" }}>
                     {new Date(Number(user.createdAt)).toLocaleString()}
                   </p>
                 </div>
-                <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-700 transition-colors duration-300">
-                  <h5 className="font-medium mb-2 text-gray-600 dark:text-gray-300">
+                <div
+                  className="p-4 rounded-lg transition-colors duration-300"
+                  style={{
+                    backgroundColor: "rgba(var(--acme-text-rgb), 0.05)",
+                  }}
+                >
+                  <h5
+                    className="font-medium mb-2"
+                    style={{ color: "var(--acme-text)", opacity: 0.7 }}
+                  >
                     Last Login:
                   </h5>
-                  <p className="text-gray-800 dark:text-gray-100">
+                  <p style={{ color: "var(--acme-text)" }}>
                     {new Date(Number(user.lastLoginAt)).toLocaleString()}
                   </p>
                 </div>
               </div>
-              <div className="mt-6 border-t border-gray-200 dark:border-gray-700 pt-6">
-                <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">
+              <div
+                className="mt-6 border-t pt-6"
+                style={{ borderColor: "var(--acme-secondary-hover)" }}
+              >
+                <h3
+                  className="text-xl font-semibold mb-4"
+                  style={{ color: "var(--acme-text)" }}
+                >
                   Profile Actions
                 </h3>
                 <div className="flex flex-col md:flex-row gap-4">
-                  <button className="bg-gradient-to-r from-primary to-primary/90 text-white py-2 px-6 rounded-lg hover:shadow-lg transition duration-200 shadow-md">
+                  <button
+                    className="text-white py-2 px-6 rounded-lg hover:shadow-lg transition duration-200 shadow-md"
+                    style={{
+                      background:
+                        "linear-gradient(to right, var(--acme-primary), var(--acme-primary))",
+                    }}
+                  >
                     Edit Profile
                   </button>
-                  <button className="bg-gradient-to-r from-gray-500 to-gray-600 text-white py-2 px-6 rounded-lg hover:shadow-lg transition duration-200 shadow-md">
+                  <button
+                    className="text-white py-2 px-6 rounded-lg hover:shadow-lg transition duration-200 shadow-md"
+                    style={{
+                      background:
+                        "linear-gradient(to right, var(--acme-secondary-hover), var(--acme-secondary-hover))",
+                    }}
+                  >
                     Change Password
                   </button>
                   <button
                     onClick={handleLogout}
-                    className="bg-gradient-to-r from-red-500 to-red-600 text-white py-2 px-6 rounded-lg hover:shadow-lg transition duration-200 shadow-md"
+                    className="text-white py-2 px-6 rounded-lg hover:shadow-lg transition duration-200 shadow-md"
+                    style={{
+                      background: "linear-gradient(to right, #e53e3e, #c53030)",
+                    }}
                   >
                     Logout
                   </button>
@@ -408,41 +578,74 @@ function Dashboard() {
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="max-w-4xl mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-8 transition-all duration-300 backdrop-blur-sm bg-opacity-90 dark:bg-opacity-90 border border-gray-100 dark:border-gray-700"
+              className="max-w-4xl mx-auto shadow-lg rounded-2xl p-8 transition-all duration-300 backdrop-blur-sm border"
+              style={{
+                backgroundColor: "var(--acme-background)",
+                borderColor: "var(--acme-secondary-hover)",
+                opacity: 0.9,
+              }}
             >
-              <h2 className="text-2xl font-bold mb-6 flex items-center text-gray-800 dark:text-gray-100">
-                <FiSettings className="mr-2 text-primary" />
+              <h2
+                className="text-2xl font-bold mb-6 flex items-center"
+                style={{ color: "var(--acme-text)" }}
+              >
+                <FiSettings
+                  className="mr-2"
+                  style={{ color: "var(--acme-primary)" }}
+                />
                 Settings
               </h2>
               <div className="space-y-8">
-                <div className="border-b border-gray-200 dark:border-gray-700 pb-6">
-                  <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">
+                <div
+                  className="border-b pb-6"
+                  style={{ borderColor: "var(--acme-secondary-hover)" }}
+                >
+                  <h3
+                    className="text-xl font-semibold mb-4"
+                    style={{ color: "var(--acme-text)" }}
+                  >
                     Appearance
                   </h3>
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="font-medium text-gray-800 dark:text-gray-100">
+                      <h4
+                        className="font-medium"
+                        style={{ color: "var(--acme-text)" }}
+                      >
                         Dark Mode
                       </h4>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                      <p
+                        className="text-sm"
+                        style={{ color: "var(--acme-text)", opacity: 0.6 }}
+                      >
                         Toggle between light and dark theme
                       </p>
                     </div>
                     <motion.button
                       whileHover={{ scale: 1.2, rotate: 10 }}
                       onClick={() => setDarkMode(!darkMode)}
-                      className={`p-2 rounded-lg ${
-                        darkMode
-                          ? "bg-primary/10 text-primary"
-                          : "bg-gray-200 text-gray-800"
-                      }`}
+                      className="p-2 rounded-lg"
+                      style={{
+                        backgroundColor: darkMode
+                          ? "rgba(var(--acme-primary-rgb), 0.1)"
+                          : "rgba(229, 231, 235, 1)",
+                        color: darkMode
+                          ? "var(--acme-primary)"
+                          : "var(--acme-text)",
+                      }}
                     >
                       {darkMode ? <FiSun size={24} /> : <FiMoon size={24} />}
                     </motion.button>
                   </div>
                 </div>
-                <div className="border-b border-gray-200 dark:border-gray-700 pb-6">
-                  <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">
+                <div
+                  className="border-b pb-6"
+                  style={{ borderColor: "var(--acme-secondary-hover)" }}
+                >
+                  <h3
+                    className="text-xl font-semibold mb-4"
+                    style={{ color: "var(--acme-text)" }}
+                  >
                     Notifications
                   </h3>
                   <div className="space-y-4">
@@ -463,10 +666,16 @@ function Dashboard() {
                         className="flex items-center justify-between"
                       >
                         <div>
-                          <h4 className="font-medium text-gray-800 dark:text-gray-100">
+                          <h4
+                            className="font-medium"
+                            style={{ color: "var(--acme-text)" }}
+                          >
                             {item.title}
                           </h4>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                          <p
+                            className="text-sm"
+                            style={{ color: "var(--acme-text)", opacity: 0.6 }}
+                          >
                             {item.description}
                           </p>
                         </div>
@@ -476,33 +685,60 @@ function Dashboard() {
                             className="sr-only peer"
                             defaultChecked={item.defaultChecked}
                           />
-                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+                          <div
+                            className="w-11 h-6 peer-focus:outline-none peer-focus:ring-4 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all"
+                            style={{
+                              backgroundColor:
+                                "rgba(var(--acme-text-rgb), 0.2)",
+                              peerFocusRingColor: "var(--acme-primary)",
+                              peerCheckedBackgroundColor: "var(--acme-primary)",
+                            }}
+                          ></div>
                         </label>
                       </div>
                     ))}
                   </div>
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">
+                  <h3
+                    className="text-xl font-semibold mb-4"
+                    style={{ color: "var(--acme-text)" }}
+                  >
                     Privacy
                   </h3>
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="font-medium text-gray-800 dark:text-gray-100">
+                      <h4
+                        className="font-medium"
+                        style={{ color: "var(--acme-text)" }}
+                      >
                         Public Profile
                       </h4>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                      <p
+                        className="text-sm"
+                        style={{ color: "var(--acme-text)", opacity: 0.6 }}
+                      >
                         Allow others to see your profile
                       </p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" className="sr-only peer" />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+                      <div
+                        className="w-11 h-6 peer-focus:outline-none peer-focus:ring-4 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:rounded-full after:h-5 after:w-5 after:transition-all"
+                        style={{
+                          backgroundColor: "rgba(var(--acme-text-rgb), 0.2)",
+                          peerFocusRingColor: "var(--acme-primary)",
+                          peerCheckedBackgroundColor: "var(--acme-primary)",
+                        }}
+                      ></div>
                     </label>
                   </div>
                 </div>
                 <div className="mt-6 pt-6">
-                  <button className="bg-primary hover:bg-primary/90 text-white py-2 px-6 rounded-lg transition duration-200 hover:shadow-lg">
+                  <button
+                    className="text-white py-2 px-6 rounded-lg transition duration-200 hover:shadow-lg"
+                    style={{ backgroundColor: "var(--acme-primary)" }}
+                  >
                     Save Settings
                   </button>
                 </div>
