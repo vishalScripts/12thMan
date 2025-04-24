@@ -34,7 +34,6 @@ function TasksComp({
   const dispatch = useDispatch();
   const [filter, setFilter] = useState("all");
   const [notifications, setNotifications] = useState([]);
-  console.log(runningTask);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -42,7 +41,6 @@ function TasksComp({
       dispatch(setLoading(true));
       try {
         const fetchedTasks = await calendarService.fetchTasks();
-        console.log(fetchedTasks, "this is what fatched task looks like");
         dispatch(setTasks(fetchedTasks));
       } catch (error) {
         dispatch(setError(error.message));
@@ -62,8 +60,6 @@ function TasksComp({
       const fetchedTasks = await calendarService.fetchTasks();
       dispatch(setTasks(fetchedTasks));
       dispatch(setLoading(false));
-      const fetchUserStats = await calendarService.getUserStats();
-      console.log(fetchUserStats);
       dispatch(incrementTasksDone());
     } catch (error) {
       dispatch(setError(error.message));
@@ -74,7 +70,6 @@ function TasksComp({
   const filteredTasks = tasks.filter((task) => {
     if (filter === "done") return task.done;
     if (filter === "today") {
-      // Compare local dates
       const taskDate = new Date(task.start).toLocaleDateString();
       const todayLocal = new Date().toLocaleDateString();
       return taskDate === todayLocal;
@@ -102,8 +97,6 @@ function TasksComp({
   const addNotification = (message, type) => {
     const id = Date.now();
     setNotifications((prev) => [...prev, { id, message, type }]);
-
-    // Remove notification after 3 seconds
     setTimeout(() => {
       setNotifications((prev) => prev.filter((notif) => notif.id !== id));
     }, 3000);
@@ -130,8 +123,8 @@ function TasksComp({
         <button
           className={`px-3 py-0 h-6 text-sm font-bold rounded cursor-pointer ${
             filter === "all"
-              ? "bg-slate-600 text-white dark:bg-[var(--acme-primary)] dark:text-[var(--acme-background)]"
-              : "bg-gray-200 dark:bg-gray-700 dark:text-gray-300"
+              ? "bg-[var(--acme-primary)] text-[var(--acme-background)]"
+              : "bg-[var(--acme-accent-hover)] text-[var(--acme-text)]"
           }`}
           onClick={() => setFilter("all")}
         >
@@ -140,8 +133,8 @@ function TasksComp({
         <button
           className={`px-3 py-0 h-6 text-sm font-bold rounded cursor-pointer ${
             filter === "done"
-              ? "bg-slate-600 text-white dark:bg-[var(--acme-primary)] dark:text-[var(--acme-background)]"
-              : "bg-gray-200 dark:bg-gray-700 dark:text-gray-300"
+              ? "bg-[var(--acme-primary)] text-[var(--acme-background)]"
+              : "bg-[var(--acme-accent-hover)] text-[var(--acme-text)]"
           }`}
           onClick={() => setFilter("done")}
         >
@@ -150,8 +143,8 @@ function TasksComp({
         <button
           className={`px-3 py-0 h-6 text-sm font-bold rounded cursor-pointer ${
             filter === "today"
-              ? "bg-slate-600 text-white dark:bg-[var(--acme-primary)] dark:text-[var(--acme-background)]"
-              : "bg-gray-200 dark:bg-gray-700 dark:text-gray-300"
+              ? "bg-[var(--acme-primary)] text-[var(--acme-background)]"
+              : "bg-[var(--acme-accent-hover)] text-[var(--acme-text)]"
           }`}
           onClick={() => setFilter("today")}
         >
@@ -159,7 +152,6 @@ function TasksComp({
         </button>
       </div>
 
-      {/* Tasks List */}
       <div className={`${fixedHeight} overflow-y-auto`}>
         {filteredTasks.length === 0 ? (
           <>
@@ -172,10 +164,9 @@ function TasksComp({
                 exit={{ opacity: 0, y: 10 }}
                 transition={{ duration: 0.3, delay: 1 * 0.05 }}
                 className={`px-3 py-2 flex gap-3 items-center justify-between relative rounded-sm border transition-all duration-200 
-                    bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 
+                    bg-[var(--acme-background)] border-[var(--acme-border)] 
                     hover:border-[var(--acme-primary)] hover:shadow-sm cursor-pointer group 
-                    hover:bg-amber-50 dark:hover:bg-amber-900/30
-                  `}
+                    hover:bg-[var(--acme-secondary-hover)]`}
                 onClick={createTaskInTaskComp}
               >
                 <div className="flex flex-col justify-center flex-1">
@@ -184,12 +175,12 @@ function TasksComp({
                   </h3>
                 </div>
 
-                <div className="box-border p-1 duration-300 rounded-full group-hover:bg-amber-100 dark:group-hover:bg-amber-800/50">
-                  <PlusCircleIcon className="w-6 group-hover:scale-105 h-6 text-2xl text-amber-600 dark:text-amber-400" />
+                <div className="box-border p-1 duration-300 rounded-full group-hover:bg-[var(--acme-secondary)]">
+                  <PlusCircleIcon className="w-6 group-hover:scale-105 h-6 text-2xl text-[var(--acme-primary)]" />
                 </div>
               </motion.li>
             )}
-            <div className="flex flex-col items-center justify-center h-32 text-gray-400 dark:text-gray-500">
+            <div className="flex flex-col items-center justify-center h-32 text-[var(--acme-accent)]">
               <svg
                 className="w-12 h-12 mb-2"
                 fill="none"
@@ -218,10 +209,9 @@ function TasksComp({
                   exit={{ opacity: 0, y: 10 }}
                   transition={{ duration: 0.3, delay: 1 * 0.05 }}
                   className={`px-3 py-2 flex gap-3 items-center justify-between relative rounded-sm border transition-all duration-200 
-                    bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 
+                    bg-[var(--acme-background)] border-[var(--acme-border)] 
                     hover:border-[var(--acme-primary)] hover:shadow-sm cursor-pointer group 
-                    hover:bg-amber-50 dark:hover:bg-amber-900/30
-                  `}
+                    hover:bg-[var(--acme-secondary-hover)]`}
                   onClick={createTaskInTaskComp}
                 >
                   <div className="flex flex-col justify-center flex-1">
@@ -230,8 +220,8 @@ function TasksComp({
                     </h3>
                   </div>
 
-                  <div className="box-border p-1 duration-300 rounded-full group-hover:bg-amber-100 dark:group-hover:bg-amber-800/50">
-                    <PlusCircleIcon className="w-6 group-hover:scale-105 h-6 text-2xl text-amber-600 dark:text-amber-400" />
+                  <div className="box-border p-1 duration-300 rounded-full group-hover:bg-[var(--acme-secondary)]">
+                    <PlusCircleIcon className="w-6 group-hover:scale-105 h-6 text-2xl text-[var(--acme-primary)]" />
                   </div>
                 </motion.li>
               )}
@@ -253,10 +243,10 @@ function TasksComp({
                   className={`p-3 flex gap-3 items-center justify-between relative rounded-sm border transition-all duration-200 
                     ${
                       runningTask.id === task.id
-                        ? "bg-amber-50 dark:bg-amber-900/40 border-amber-200 dark:border-amber-700/70 shadow-md"
+                        ? "bg-[var(--acme-secondary-hover)] border-[var(--acme-primary)] shadow-md"
                         : task.done
-                        ? "bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-700/70"
-                        : "bg-white dark:bg-gray-800 border-gray-100 dark:border-gray-700 hover:border-[var(--acme-primary)] hover:shadow-sm"
+                        ? "bg-[var(--acme-accent-hover)] border-[var(--acme-accent)]"
+                        : "bg-[var(--acme-background)] border-[var(--acme-border)] hover:border-[var(--acme-primary)] hover:shadow-sm"
                     }
                     ${timer && !task.done ? "cursor-pointer" : ""}
                   `}
@@ -265,7 +255,7 @@ function TasksComp({
                     <h3
                       className={`font-medium text-[var(--acme-text)] ${
                         task.done
-                          ? "line-through text-gray-500 dark:text-gray-400"
+                          ? "line-through text-[var(--acme-accent)]"
                           : ""
                       }`}
                     >
@@ -274,7 +264,6 @@ function TasksComp({
                     {!task.done && (
                       <div className="mt-1 items-center justify-start flex">
                         <div className="flex flex-col h-8 w-2 min-h-full items-center justify-center">
-                          {" "}
                           <img
                             src={uptodown}
                             className="h-[60%] opacity-50 object-cover w-2 object-center"
@@ -283,7 +272,7 @@ function TasksComp({
                           />
                         </div>
                         <div>
-                          <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
+                          <p className="text-xs text-[var(--acme-accent)] flex items-center">
                             {new Date(task.start).toLocaleString(undefined, {
                               month: "short",
                               day: "numeric",
@@ -292,7 +281,7 @@ function TasksComp({
                             })}
                           </p>
 
-                          <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center">
+                          <p className="text-xs text-[var(--acme-accent)] flex items-center">
                             {new Date(task.end).toLocaleString(undefined, {
                               month: "short",
                               day: "numeric",
@@ -307,9 +296,9 @@ function TasksComp({
 
                   {timer ? (
                     runningTask.id === task.id && (
-                      <div className="p-2 rounded-full bg-amber-100 dark:bg-amber-800/70">
+                      <div className="p-2 rounded-full bg-[var(--acme-secondary)]">
                         <svg
-                          className="w-4 h-4 text-amber-600 dark:text-amber-300"
+                          className="w-4 h-4 text-[var(--acme-primary)]"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -342,8 +331,8 @@ function TasksComp({
                           }}
                           className={`w-6 h-6 flex items-center justify-center rounded-full border-2 transition-all duration-200 hover:scale-110 cursor-pointer ${
                             task.done
-                              ? "border-green-500 bg-green-500 text-white dark:border-green-400 dark:bg-green-400 dark:text-gray-900"
-                              : "border-[var(--acme-primary)] hover:border-[var(--acme-primary)] bg-white dark:bg-gray-800"
+                              ? "border-[var(--acme-accent)] bg-[var(--acme-accent)] text-[var(--acme-background)]"
+                              : "border-[var(--acme-primary)] hover:border-[var(--acme-primary)] bg-[var(--acme-background)]"
                           }`}
                         >
                           {task.done && (
