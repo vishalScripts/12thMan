@@ -390,6 +390,8 @@ function AlarmSystem() {
             className={`flex items-center gap-2 p-2 rounded-md cursor-pointer hover:bg-opacity-20  transition-all duration-300 hover:scale-105 active:scale-90  ${
               currentlyPlaying
                 ? "animate-pulse bg-primary "
+                : popoverVisible
+                ? "bg-primary" // Red background when popover is open
                 : "hover:bg-primary"
             }`}
           >

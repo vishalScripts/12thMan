@@ -19,6 +19,8 @@ import { logoutUser } from "../store/authSlice";
 import StatsDashboard from "../components/StatsDashboard";
 import TextToSpeech from "../components/TextToSpeech;";
 import ThemeBtn from "../components/ThemeBtn";
+import Home from "../components/Home";
+import Sidebar from "../components/Sidebar";
 
 function Dashboard() {
   const user = useSelector((state) => state.auth.user);
@@ -123,126 +125,12 @@ function Dashboard() {
       }}
     >
       {/* Sidebar - Modified to stick when scrolling */}
-      <aside
-        className="w-64 sticky h-[100vh] top-0 left-0 overflow-y-auto  shadow-xl transition-all duration-300 backdrop-blur-sm border-r z-10"
-        style={{
-          backgroundColor: "var(--acme-background)",
-          borderColor: "var(--acme-secondary-hover)",
-          opacity: 0.9,
-        }}
-      >
-        <div
-          className="px-6 py-4 border-b"
-          style={{ borderColor: "var(--acme-secondary-hover)" }}
-        >
-          <div className="flex items-center space-x-3">
-            <div className="relative">
-              <img
-                src={user.photoURL || "https://via.placeholder.com/40"}
-                alt="Profile"
-                className="w-10 h-10 rounded-full border-2"
-                style={{ borderColor: "var(--acme-primary)" }}
-              />
-              <span
-                className="absolute bottom-0 right-0 block w-3 h-3 bg-green-500 rounded-full ring-2"
-                style={{
-                  ringColor: "var(--acme-background)",
-                }}
-              ></span>
-            </div>
-            <div className="overflow-hidden">
-              <p
-                className="font-medium truncate"
-                style={{ color: "var(--acme-text)" }}
-              >
-                {user?.displayName}
-              </p>
-              <p
-                className="text-sm truncate"
-                style={{ color: "var(--acme-text)", opacity: 0.7 }}
-              >
-                {user?.email}
-              </p>
-            </div>
-          </div>
-        </div>
-        <nav className="mt-4">
-          <ul>
-            {[
-              {
-                key: "home",
-                label: "Home",
-                icon: (
-                  <FiHome
-                    className="mr-3"
-                    style={{ color: "var(--acme-primary)" }}
-                  />
-                ),
-              },
-              {
-                key: "stats",
-                label: "Stats",
-                icon: (
-                  <FiBarChart2
-                    className="mr-3"
-                    style={{ color: "var(--acme-secondary)" }}
-                  />
-                ),
-              },
-              {
-                key: "profile",
-                label: "Profile",
-                icon: (
-                  <FiUser
-                    className="mr-3"
-                    style={{ color: "var(--acme-accent)" }}
-                  />
-                ),
-              },
-              {
-                key: "settings",
-                label: "Settings",
-                icon: (
-                  <FiSettings
-                    className="mr-3"
-                    style={{ color: "var(--acme-secondary-hover)" }}
-                  />
-                ),
-              },
-            ].map((item) => (
-              <li
-                key={item.key}
-                className={`flex items-center px-6 py-3 cursor-pointer transition-all duration-200 ${
-                  activeTab === item.key ? "border-l-4" : ""
-                }`}
-                style={{
-                  borderColor:
-                    activeTab === item.key
-                      ? "var(--acme-primary)"
-                      : "transparent",
-                  backgroundColor:
-                    activeTab === item.key
-                      ? "rgba(var(--acme-primary-rgb), 0.1)"
-                      : "transparent",
-                }}
-                onClick={() => setActiveTab(item.key)}
-              >
-                {item.icon}
-                <span>{item.label}</span>
-              </li>
-            ))}
-            <li
-              className="flex items-center px-6 py-3 cursor-pointer mt-6 transition-all duration-200"
-              style={{ color: "#e53e3e" }}
-              onClick={handleLogout}
-            >
-              <FiLogOut className="mr-3 text-xl" />
-              <span>Logout</span>
-            </li>
-          </ul>
-        </nav>
-      </aside>
-
+      <Sidebar
+        user={user}
+        activeTab={activeTab}
+        handleLogout={handleLogout}
+        setActiveTab={setActiveTab}
+      />
       {/* Add a spacer div to push content to the right */}
 
       {/* Main Content */}
@@ -255,144 +143,9 @@ function Dashboard() {
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="max-w-4xl mx-auto"
+              className="  mx-auto"
             >
-              {/* Greeting Section */}
-              <div
-                className="shadow-lg rounded-2xl p-8 mb-6 transition-all duration-300 backdrop-blur-sm border"
-                style={{
-                  backgroundColor: "var(--acme-background)",
-                  borderColor: "var(--acme-secondary-hover)",
-                  opacity: 0.9,
-                }}
-              >
-                <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
-                  <h2
-                    className="text-3xl font-bold"
-                    style={{ color: "var(--acme-text)" }}
-                  >
-                    Welcome back, {user?.displayName?.split(" ")[0]}!
-                  </h2>
-                  <div
-                    className="text-sm px-3 py-1 rounded-full"
-                    style={{
-                      backgroundColor: "rgba(var(--acme-primary-rgb), 0.1)",
-                      color: "var(--acme-primary)",
-                    }}
-                  >
-                    {new Date().toLocaleDateString(undefined, {
-                      weekday: "long",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </div>
-                </div>
-                <div
-                  className="p-6 mb-6 rounded-lg border-l-4"
-                  style={{
-                    borderColor: "var(--acme-primary)",
-                    background:
-                      "linear-gradient(to right, rgba(var(--acme-primary-rgb), 0.1), rgba(var(--acme-secondary-rgb), 0.1))",
-                  }}
-                >
-                  <h3
-                    className="font-semibold text-lg mb-2"
-                    style={{ color: "var(--acme-text)" }}
-                  >
-                    Today's Motivational Quote:
-                  </h3>
-                  <p
-                    className="italic text-lg"
-                    style={{ color: "var(--acme-text)", opacity: 0.8 }}
-                  >
-                    "{randomQuote.quote}"
-                  </p>
-                  <p
-                    className="text-right mt-2"
-                    style={{ color: "var(--acme-text)", opacity: 0.6 }}
-                  >
-                    — {randomQuote.author}
-                  </p>
-                </div>
-              </div>
-
-              {/* Stats Section */}
-              <div
-                className="shadow-lg rounded-2xl p-8 mb-6 transform transition duration-300 hover:shadow-xl backdrop-blur-sm border"
-                style={{
-                  backgroundColor: "var(--acme-background)",
-                  borderColor: "var(--acme-secondary-hover)",
-                  opacity: 0.9,
-                }}
-              >
-                <h2
-                  className="text-2xl font-bold mb-6 flex items-center"
-                  style={{ color: "var(--acme-text)" }}
-                >
-                  <FiBarChart2
-                    className="mr-2"
-                    style={{ color: "var(--acme-secondary)" }}
-                  />
-                  Your Stats
-                </h2>
-                <StatsDashboard />
-              </div>
-
-              {/* Quick Actions */}
-              <div
-                className="shadow-lg rounded-2xl p-8 transform transition duration-300 hover:scale-[1.01] hover:shadow-xl backdrop-blur-sm border"
-                style={{
-                  backgroundColor: "var(--acme-background)",
-                  borderColor: "var(--acme-secondary-hover)",
-                  opacity: 0.9,
-                }}
-              >
-                <h2
-                  className="text-2xl font-bold mb-6 flex items-center"
-                  style={{ color: "var(--acme-text)" }}
-                >
-                  <FiTarget
-                    className="mr-2"
-                    style={{ color: "var(--acme-accent)" }}
-                  />
-                  Quick Actions
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {[
-                    {
-                      icon: <FiBook className="mr-2" />,
-                      label: "Start Study Session",
-                      bg: "var(--acme-primary)",
-                    },
-                    {
-                      icon: <FiRefreshCw className="mr-2" />,
-                      label: "Review Progress",
-                      bg: "var(--acme-secondary)",
-                    },
-                    {
-                      icon: <FiTarget className="mr-2" />,
-                      label: "Set New Goals",
-                      bg: "var(--acme-accent)",
-                    },
-                    {
-                      icon: <FiFolder className="mr-2" />,
-                      label: "Browse Resources",
-                      bg: "var(--acme-secondary-hover)",
-                    },
-                  ].map((btn, idx) => (
-                    <button
-                      key={idx}
-                      className="text-white py-4 px-4 rounded-xl transition duration-200 shadow-md flex items-center justify-center hover:shadow-lg hover:translate-y-[-2px]"
-                      style={{
-                        background: `linear-gradient(to right, ${btn.bg}, ${btn.bg})`,
-                      }}
-                    >
-                      {btn.icon}
-                      {btn.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <Home />
             </motion.div>
           )}
 

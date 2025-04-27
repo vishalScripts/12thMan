@@ -5,10 +5,10 @@ function Button({ children, className = "", variant = "primary", ...props }) {
     primary:
       "text-white bg-primary hover:bg-secondary-hover border-purple-200 hover:border-primary ",
     secondary:
-      "text-[#1a0e23] bg-[#ff9fe8] hover:bg-[#c9a9ff] border-[#8f5fe8]",
+      "text-text bg-secondary hover:bg-secondary-hover hover-border-secondary border-secondary-hover",
     cancel:
       "text-[#1a0e23] bg-gray-100 hover:bg-gray-200 border-gray-200 hover:border-gray-300",
-    accent: "text-[#1a0e23] bg-[#a5f0e5] hover:bg-[#d1f7f2] border-[#8f5fe8]",
+    accent: "text-text bg-accent hover:bg-accent-hover border-primary ",
     compact:
       "px-2 !py-1 text-xs text-primary cursor-pointer bg-gray-200 hover:bg-primary hover:text-white rounded-sm transition-all duration-200 border-none ",
   };
@@ -22,10 +22,7 @@ function Button({ children, className = "", variant = "primary", ...props }) {
     duration-200 
     font-medium
     cursor-pointer
-    focus:outline-none
-    focus:ring-2
-    focus:ring-offset-2
-    focus:ring-primary
+    
   `;
 
   return (

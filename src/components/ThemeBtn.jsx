@@ -72,7 +72,9 @@ export default function ThemeBtn({ variant = "navbar" }) {
       {/* Single Theme Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center gap-2 p-2 rounded-md hover:bg-opacity-20 hover:bg-[var(--color-primary)] transition-all duration-300 hover:scale-105 active:scale-90   `}
+        className={`flex items-center gap-2 p-2 rounded-md hover:bg-opacity-20 hover:bg-[var(--color-primary)] transition-all duration-300 hover:scale-105 active:scale-90 ${
+          isOpen && "bg-[var(--color-primary)]"
+        }  `}
         title="Change Theme"
       >
         <span className="text-xl text-text cursor-pointer">
