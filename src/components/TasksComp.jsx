@@ -29,6 +29,7 @@ function TasksComp({
   isRunning,
   timer = false,
   createTaskInTaskComp,
+  heading=true
 }) {
   const { tasks, loading, runningTask } = useSelector((state) => state.tasks);
   const dispatch = useDispatch();
@@ -116,7 +117,7 @@ function TasksComp({
           />
         ))}
       </AnimatePresence>
-      <h2 className="text-lg text-center mb-2 bg-[var(--acme-secondary)] font-bold text-[var(--acme-text)]">
+      <h2 className={`${heading? "" : "hidden"} text-lg text-center mb-2 bg-[var(--acme-secondary)] font-bold text-[var(--acme-text)]`}>
         Tasks
       </h2>
       <div className="flex justify-start gap-2 mb-2">

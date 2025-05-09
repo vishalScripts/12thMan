@@ -7,6 +7,7 @@ import { setUser } from "./store/authSlice";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import Navbar from "./components/Navbar";
 import { ToastContainer } from "react-toastify";
+import Background from "./components/Background";
 
 function App() {
   const dispatch = useDispatch();
@@ -28,7 +29,8 @@ function App() {
   return (
     <>
       <Navbar />
-      <main className="bg-background ">
+      <main className=" bg-background ">
+        
         <Outlet />
       </main>
       <ToastContainer />

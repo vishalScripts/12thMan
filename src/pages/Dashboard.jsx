@@ -118,11 +118,7 @@ function Dashboard() {
   return (
     <div
       className="min-h-screen flex transition-all duration-300"
-      style={{
-        background:
-          "linear-gradient(to bottom right, var(--acme-background), var(--acme-background))",
-        color: "var(--acme-text)",
-      }}
+      
     >
       {/* Sidebar - Modified to stick when scrolling */}
       <Sidebar

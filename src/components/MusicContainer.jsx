@@ -7,19 +7,20 @@ function MusicContainer() {
   const [currentSong, setCurrentSong] = useState(musicList.lofi); // Default song
 
   return (
-    <div className="grid grid-rows-12 h-full bg-transparent">
-      <h2 className="row-start-1 text-lg text-center mb-2 bg-secondary font-bold text-gray-800">
-        Music
-      </h2>
-      <iframe
-        style={{ borderRadius: "12px" }}
+    <div className=" h-full w-full overflow-hidden  bg-transparent">
+     
+     <div className="relative w-full pb-[56.25%] rounded-2xl shadow-xl overflow-hidden">
+     <iframe
+        style={{ borderRadius: "12px", position: "absolute", width: "100%", bottom: "0" }}
         src="https://open.spotify.com/embed/playlist/37i9dQZF1DX8Uebhn9wzrS?utm_source=generator"
-        width="100%"
-        height="430"
+        height={"400"}
         frameBorder="0"
         allowFullScreen
         allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+        
       ></iframe>
+</div>
+
     </div>
   );
 }

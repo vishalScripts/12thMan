@@ -1,6 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { HiChevronDown, HiChevronUp } from "react-icons/hi";
 import { FaPlay } from "react-icons/fa";
+import TasksComp from "./TasksComp"
+import MusicContainer from "./MusicContainer"
+
 
 import Button from "./Button";
 import Timers from "./timers";
@@ -15,20 +18,20 @@ function Home() {
   }, [mins]);
 
   return (
-    <div className="w-full grid grid-cols-2 grid-rows-6  place-items-center ">
-      <div className=" col-start-1 row-start-1 row-end-4 min-h-90  w-full bg-primary/30 rounded-md p-4 flex h-full shadow border border-border flex-col items-center">
+    <div className="w-full  gap-4 grid grid-cols-2 grid-rows-6  place-items-center ">
+      <div className=" col-start-1 row-start-1 row-end-3   w-full bg-primary/30 rounded-md p-4 flex h-full shadow-md shadow-primary/30 border-primary/60 border flex-col items-center">
         {timerActive ? (
           <div className="" onClick={() => setTimerActive(false)}>
             <Button variant="accent">X</Button>
-            <Timers.PixelBlocksTimer mins={mins} />
+            <Timers.StepTimer mins={mins} />
           </div>
         ) : (
           <div>
-            <h2 className="text-2xl ">Get ready to focus </h2>
-            <div className="h-full w-full  flex items-center  justify-center ">
+            <h2 className="text-2xl text-text">Get ready to focus </h2>
+            <div className="h-full w-full  flex items-center flex-col gap-4 justify-center ">
               <div className=" flex flex-col gap-2">
                 <div className="flex-row  aspect-video h-25  border-primary border rounded-md items-center justify-between  flex">
-                  <h1 className="text-6xl font-bold  w-3/4 items-center border-r-2 border-primary/50 justify-center flex  h-full bg-primary/40   ">
+                  <h1 className="text-6xl font-bold text-text  w-3/4 items-center border-r-2 border-primary/50 justify-center flex  h-full bg-primary/40   ">
                     {mins}
                   </h1>
                   <div className=" h-full w-1/4    flex gap-0.5 flex-col ">
@@ -36,7 +39,7 @@ function Home() {
                       onClick={() => setMins((prev) => prev + 30)}
                       className=" flex items-center justify-center group hover:bg-primary/60 cursor-pointer   bg-primary/40 h-1/2  group "
                     >
-                      <HiChevronUp className="text-2xl group-active:scale-110 group-hover:text-3xl duration-100 " />
+                      <HiChevronUp className="text-2xl text-text group-active:scale-110 group-hover:text-3xl duration-100 " />
                     </button>
                     <button
                       onClick={() =>
@@ -44,11 +47,11 @@ function Home() {
                       }
                       className=" flex items-center justify-center group hover:bg-primary/60 cursor-pointer  bg-primary/40 h-1/2  group  "
                     >
-                      <HiChevronDown className="text-2xl group-active:scale-110 group-hover:text-3xl duration-100" />
+                      <HiChevronDown className="text-2xl text-text group-active:scale-110 group-hover:text-3xl duration-100" />
                     </button>
                   </div>
                 </div>
-                <p className="text-center font-light ">
+                <p className="text-center text-text/50 font-light ">
                   Total breaks: {breaks}
                 </p>
                 <Button
@@ -61,11 +64,33 @@ function Home() {
                   Start
                 </Button>
               </div>
+                <div className="bg-background/30 px-6 py-2 rounded-md">
+                  <h3 className="text-text">Current task...</h3>
+                </div>
+                
             </div>
           </div>
         )}
       </div>
-      <div></div>
+
+        {/* div 2 */}
+        <div className="col-start-2 row-start-1 row-end-4 max-h-[80vh]   w-full bg-primary/30 rounded-md p-4 flex h-full shadow-md shadow-primary/30 border-primary/60 border flex-col items-center overflow-y-scroll scrollbar-thin">
+          <TasksComp className="w-full bg-transparent" heading={false}/>
+        </div>
+
+
+      {/* div 3*/}
+      <div className="col-start-1 row-start-3 row-end-6   w-full bg-primary/30 rounded-md p-4 flex h-full shadow-md shadow-primary/30 border-primary/60 border flex-col items-center">
+      
+      </div>
+
+      
+
+        {/* div 4 */}
+
+      <div className="col-start-2 row-start-4 row-end-6   w-full bg-primary/30 rounded-md p-4 flex h-full shadow-md shadow-primary/30 border-primary/60 border flex-col items-center">
+        <MusicContainer />
+      </div>
     </div>
   );
 }

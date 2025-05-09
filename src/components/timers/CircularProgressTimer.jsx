@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 
-export default function CircularProgressTimer() {
-  const totalTime = 22 * 60;
+export default function CircularProgressTimer({mins}) {
+  const totalTime = mins * 60;
   const [timeLeft, setTimeLeft] = useState(totalTime);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 1000);
+    }, 10);
     return () => clearInterval(timer);
   }, []);
 
